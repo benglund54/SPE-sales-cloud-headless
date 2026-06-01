@@ -1,0 +1,332 @@
+/* ===== CLAUDE THEME ===== */
+/* Light background, thin icon rail on left, beige user bubbles, flat agent text */
+
+[data-theme="claude"] {
+  --font-family: 'Inter', system-ui, sans-serif;
+  --bg-primary: #fbfaf7;
+  --bg-secondary: #f4f2ed;
+  --text-primary: #2d2d2d;
+  --text-secondary: #7f7a73;
+  --text-muted: #aba49c;
+  --accent: #da7756;
+  --user-bubble-bg: #f0ece4;
+  --user-bubble-text: #2d2d2d;
+  --agent-bubble-bg: transparent;
+  --agent-bubble-text: #2d2d2d;
+  --input-bg: #ffffff;
+  --input-border: #e8e4dc;
+  --input-text: #2d2d2d;
+  --border-color: #e8e4dc;
+  --header-bg: #faf9f7;
+  --header-text: #2d2d2d;
+  --header-border: #e8e4dc;
+  --avatar-agent-bg: transparent;
+  --avatar-agent-text: #da7756;
+  --avatar-user-bg: transparent;
+  --avatar-user-text: transparent;
+  --bubble-radius: 20px;
+  --input-radius: 16px;
+  --app-rail-width: 0px;
+  --app-rail-bg: #faf9f7;
+  --app-rail-text: #8b8680;
+  --app-rail-active-bg: rgba(0, 0, 0, 0.06);
+  --send-btn-bg: #32302b;
+  --send-btn-text: #ffffff;
+  --sidebar-bg: #f8f7f3;
+  --sidebar-width: 250px;
+}
+
+[data-theme="claude"] .sidebar {
+  border-right: 1px solid #e7e3db;
+  background: var(--sidebar-bg);
+}
+
+[data-theme="claude"] .sidebar-header {
+  gap: 10px;
+  padding: 10px 10px 8px;
+}
+
+[data-theme="claude"] .claude-top-row {
+  padding: 2px 0 4px;
+}
+
+[data-theme="claude"] .claude-logo-image {
+  height: 26px;
+  width: auto;
+  object-fit: contain;
+}
+
+[data-theme="claude"] .claude-nav .sidebar-nav-item {
+  font-size: 13px;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+[data-theme="claude"] .claude-nav .sidebar-nav-item svg {
+  color: #716b65;
+}
+
+[data-theme="claude"] .claude-recents {
+  padding-top: 2px;
+}
+
+[data-theme="claude"] .claude-recents .channel-list-label {
+  padding: 8px 16px 6px;
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+[data-theme="claude"] .claude-recents-item {
+  margin: 2px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  padding: 7px 10px;
+  gap: 8px;
+}
+
+[data-theme="claude"] .claude-recents-text {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+[data-theme="claude"] .claude-recents-more {
+  color: #9a948c;
+  font-weight: 700;
+}
+
+[data-theme="claude"] .claude-footer {
+  border-top: 1px solid #e7e3db;
+  padding: 8px 10px 10px;
+}
+
+[data-theme="claude"] .claude-footer-user {
+  gap: 6px;
+  align-items: stretch;
+  flex-direction: column;
+}
+
+[data-theme="claude"] .claude-luminary-logo {
+  width: 92px;
+  height: 22px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+[data-theme="claude"] .claude-footer-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+[data-theme="claude"] .claude-footer .sidebar-user-name {
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+[data-theme="claude"] .claude-footer .sidebar-user-plan {
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+[data-theme="claude"] .claude-footer .sidebar-upgrade-btn {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+[data-theme="claude"] .message-agent .message-avatar {
+  background: transparent;
+}
+
+/* Claude asterisk/sparkle icon for agent avatar */
+[data-theme="claude"] .agent-avatar {
+  font-size: 20px;
+  color: #da7756;
+  background: transparent;
+}
+
+/* Hide user avatar in Claude (messages just show bubble) */
+[data-theme="claude"] .user-avatar {
+  display: none;
+}
+
+[data-theme="claude"] .message-user .message-body {
+  max-width: 70%;
+}
+
+[data-theme="claude"] .message-user .message-content {
+  border-radius: 20px;
+}
+
+[data-theme="claude"] .message-agent .message-content {
+  padding: 4px 0;
+  max-width: 100%;
+}
+
+[data-theme="claude"] .message-list-inner {
+  max-width: 860px;
+}
+
+[data-theme="claude"] .header {
+  min-height: 46px;
+  border-bottom: 1px solid #ece7df;
+  background: #fcfbf9;
+}
+
+[data-theme="claude"] .claude-header {
+  padding: 0 14px !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+[data-theme="claude"] .claude-header-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+[data-theme="claude"] .claude-header-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+[data-theme="claude"] .claude-plan-chip {
+  font-size: 11px;
+  color: #8a837b;
+  background: #f3efe7;
+  border: 1px solid #e6e0d6;
+  border-radius: 999px;
+  padding: 3px 8px;
+}
+
+[data-theme="claude"] .claude-share-btn {
+  border: 1px solid #ddd7cc;
+  background: #ffffff;
+  color: #5f5851;
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+[data-theme="claude"] .claude-share-btn:hover {
+  background: #f8f5ef;
+}
+
+[data-theme="claude"] .input-bar-inner {
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="claude"] .input-bar {
+  padding: 10px 20px 12px;
+  border-top: 1px solid #ebe7df;
+  background: #fcfbf9;
+}
+
+[data-theme="claude"] .claude-composer {
+  position: relative;
+  max-width: 920px;
+  border-radius: 18px;
+  border-color: #e4ddd3;
+  box-shadow: 0 1px 3px rgba(37, 32, 27, 0.1);
+  padding: 10px 14px 9px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+[data-theme="claude"] .claude-composer .input-textarea {
+  font-size: 15px;
+  line-height: 1.45;
+  min-height: 24px;
+  max-height: 150px;
+}
+
+[data-theme="claude"] .claude-composer .input-textarea::placeholder {
+  color: #9b948b;
+}
+
+[data-theme="claude"] .claude-composer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+[data-theme="claude"] .claude-plus-btn {
+  border: none;
+  background: transparent;
+  color: #6f6a63;
+  font-size: 20px;
+  line-height: 1;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  cursor: pointer;
+}
+
+[data-theme="claude"] .claude-plus-btn:hover {
+  color: #3f3a34;
+}
+
+[data-theme="claude"] .claude-tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+[data-theme="claude"] .claude-model-pill {
+  font-size: 17px;
+  color: #5f5952;
+  font-weight: 500;
+}
+
+[data-theme="claude"] .claude-tool-btn {
+  border: none;
+  background: transparent;
+  color: #5f5952;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+[data-theme="claude"] .claude-tool-btn:hover {
+  color: #302b26;
+}
+
+[data-theme="claude"] .claude-send-dot {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  width: 8px;
+  height: 8px;
+  border: none;
+  border-radius: 50%;
+  background: #22b8a6;
+  padding: 0;
+  cursor: pointer;
+}
+
+[data-theme="claude"] .claude-send-dot:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+[data-theme="claude"] .markdown-content th {
+  background: rgba(0, 0, 0, 0.03);
+}

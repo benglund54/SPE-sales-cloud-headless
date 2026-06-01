@@ -1,0 +1,395 @@
+/* ===== MICROSOFT TEAMS THEME ===== */
+/* Purple icon rail with labels, white sidebar with filter tabs, flat messages, channel tabs */
+
+[data-theme="teams"] {
+  --font-family: 'Segoe UI', system-ui, sans-serif;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f3f2f8;
+  --text-primary: #242424;
+  --text-secondary: #616161;
+  --text-muted: #adadad;
+  --accent: #5b5fc7;
+  --user-bubble-bg: transparent;
+  --user-bubble-text: #242424;
+  --agent-bubble-bg: transparent;
+  --agent-bubble-text: #242424;
+  --input-bg: #ffffff;
+  --input-border: #edebe9;
+  --input-text: #242424;
+  --border-color: #edebe9;
+  --sidebar-bg: #f7f7fb;
+  --sidebar-text: #242424;
+  --sidebar-text-secondary: #616161;
+  --sidebar-active: #e7e9fb;
+  --header-bg: #ffffff;
+  --header-text: #242424;
+  --header-border: #edebe9;
+  --avatar-agent-bg: #ffffff;
+  --avatar-agent-text: #ffffff;
+  --avatar-user-bg: #0078d4;
+  --avatar-user-text: #ffffff;
+  --bubble-radius: 8px;
+  --input-radius: 4px;
+  --sidebar-width: 300px;
+  --app-rail-width: 68px;
+  --app-rail-bg: #464775;
+  --app-rail-text: rgba(255, 255, 255, 0.75);
+  --app-rail-active-bg: rgba(255, 255, 255, 0.2);
+  --send-btn-bg: #5b5fc7;
+  --send-btn-text: #ffffff;
+}
+
+[data-theme="teams"] .teams-rail {
+  border-right: none;
+}
+
+[data-theme="teams"] .teams-rail .rail-logo {
+  color: #ffffff;
+}
+
+[data-theme="teams"] .rail-icon-labeled span {
+  color: inherit;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+[data-theme="teams"] .rail-icon-labeled {
+  position: relative;
+}
+
+[data-theme="teams"] .rail-icon-active {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="teams"] .rail-icon-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: #ffffff;
+}
+
+[data-theme="teams"] .teams-rail-badge {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  min-width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: #d13438;
+  color: #ffffff;
+  font-size: 9px;
+  line-height: 14px;
+  text-align: center;
+  padding: 0 3px;
+  font-weight: 700;
+}
+
+[data-theme="teams"] .sidebar {
+  border-right: 1px solid #edebe9;
+}
+
+[data-theme="teams"] .sidebar-title {
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.01em;
+}
+
+[data-theme="teams"] .channel-item {
+  border-radius: 8px;
+  margin: 2px 8px;
+  min-height: 34px;
+}
+
+[data-theme="teams"] .channel-list-label {
+  text-transform: none;
+  font-size: 12px;
+  letter-spacing: 0;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+[data-theme="teams"] .channel-item-active {
+  background: #dfe3fa;
+  color: #454bb8;
+  font-weight: 600;
+}
+
+[data-theme="teams"] .header {
+  border-bottom: 1px solid #edebe9;
+  min-height: 62px;
+}
+
+[data-theme="teams"] .header-channel-title {
+  font-weight: 700;
+  color: #242424;
+}
+
+[data-theme="teams"] .message {
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+
+[data-theme="teams"] .message:hover {
+  background: #f3f2f8;
+}
+
+[data-theme="teams"] .message-list-inner {
+  max-width: 980px;
+  padding: 6px 24px 16px;
+  gap: 18px;
+}
+
+[data-theme="teams"] .input-bar-inner {
+  border-radius: 10px;
+  max-width: 980px;
+  padding: 10px 14px;
+}
+
+[data-theme="teams"] .send-button {
+  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+}
+
+[data-theme="teams"] .markdown-content th {
+  background: #f3f2f8;
+}
+
+[data-theme="teams"] .teams-header-left {
+  padding: 10px 18px 0;
+}
+
+[data-theme="teams"] .teams-header-utility {
+  height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid #f1f2f5;
+  padding: 0 12px;
+}
+
+[data-theme="teams"] .teams-utility-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #616161;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+[data-theme="teams"] .teams-utility-btn:hover {
+  background: #f3f4f8;
+}
+
+[data-theme="teams"] .teams-search {
+  margin-left: 6px;
+  width: min(420px, 46vw);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 1px solid #e2e5ec;
+  border-radius: 4px;
+  color: #6b7280;
+  font-size: 12px;
+  background: #ffffff;
+}
+
+[data-theme="teams"] .teams-utility-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+[data-theme="teams"] .teams-profile-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7b83eb, #5b5fc7);
+}
+
+[data-theme="teams"] .teams-header-tabs {
+  padding: 0 18px;
+}
+
+[data-theme="teams"] .teams-tab {
+  padding: 11px 14px;
+  font-size: 12px;
+}
+
+[data-theme="teams"] .teams-tab-active {
+  color: #454bb8;
+  border-bottom-color: #454bb8;
+}
+
+[data-theme="teams"] .teams-channel-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  font-size: 11px;
+  background: #5b5fc7;
+}
+
+[data-theme="teams"] .filter-tab {
+  padding: 5px 12px;
+  font-size: 11px;
+  border-radius: 999px;
+}
+
+[data-theme="teams"] .filter-tab-active {
+  background: #e1e5fb;
+  color: #464eb8;
+}
+
+[data-theme="teams"] .teams-item-icon {
+  background: #e9ebf8;
+  color: #585fbb;
+}
+
+[data-theme="teams"] .teams-avatar {
+  background: #d9dff8;
+  color: #3f4baa;
+  border-radius: 8px;
+}
+
+[data-theme="teams"] .teams-avatar-icon {
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="teams"] .teams-avatar-violet {
+  background: linear-gradient(145deg, #7b83eb, #5b5fc7);
+}
+
+[data-theme="teams"] .teams-avatar-teal {
+  background: linear-gradient(145deg, #22b8cf, #0ea5a7);
+}
+
+[data-theme="teams"] .teams-avatar-blue {
+  background: linear-gradient(145deg, #4f8df7, #2f5fd5);
+}
+
+[data-theme="teams"] .teams-avatar-magenta {
+  background: linear-gradient(145deg, #d16df8, #a83dd8);
+}
+
+[data-theme="teams"] .teams-avatar-amber {
+  background: linear-gradient(145deg, #f5b24a, #d4881f);
+}
+
+[data-theme="teams"] .teams-avatar-red {
+  background: linear-gradient(145deg, #f46a6a, #d23b3b);
+}
+
+[data-theme="teams"] .teams-avatar-green {
+  background: linear-gradient(145deg, #46bf83, #2f995f);
+}
+
+[data-theme="teams"] .teams-avatar-icon svg {
+  stroke: #ffffff;
+}
+
+[data-theme="teams"] .teams-row-label {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+[data-theme="teams"] .teams-row-meta {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+[data-theme="teams"] .teams-unread-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: #5b5fc7;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 0 4px;
+}
+
+[data-theme="teams"] .teams-collapse-btn {
+  margin-left: auto;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+[data-theme="teams"] .teams-collapse-btn:hover {
+  background: #ebeef9;
+}
+
+[data-theme="teams"] .deal-card {
+  background: #ffffff;
+  border: 1px solid #d8dcf1;
+  border-radius: 12px;
+  color: #1f2937;
+  padding: 16px 18px;
+  box-shadow: 0 1px 2px rgba(22, 30, 84, 0.06);
+}
+
+[data-theme="teams"] .deal-card-clickable:hover {
+  border-color: #7e83e8;
+  box-shadow: 0 6px 18px rgba(70, 78, 184, 0.14);
+  transform: translateY(-1px);
+}
+
+[data-theme="teams"] .deal-card-parent {
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+
+[data-theme="teams"] .deal-card-row {
+  margin-bottom: 10px;
+}
+
+[data-theme="teams"] .deal-card-amount {
+  font-size: 24px;
+  color: #111827;
+}
+
+[data-theme="teams"] .deal-card-badge {
+  letter-spacing: 0.04em;
+}
+
+[data-theme="teams"] .deal-card-content {
+  font-size: 14px;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+[data-theme="teams"] .deal-card-meta {
+  color: #6b7280;
+}
+
+[data-theme="teams"] .deal-card-context-pill {
+  background: #eef0fb;
+  color: #3f4baa;
+  border: 1px solid #d6dbf5;
+}

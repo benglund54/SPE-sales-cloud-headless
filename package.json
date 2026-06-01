@@ -1,0 +1,17 @@
+{
+  "name": "seller-demo-app",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": ["shared", "client", "server"],
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w server\" \"npm run dev -w client\"",
+    "dev:server": "npm run dev -w server",
+    "dev:client": "npm run dev -w client",
+    "build": "npm run build -w client && npm run build -w server",
+    "heroku-postbuild": "npm run build",
+    "start": "npm run start -w server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
