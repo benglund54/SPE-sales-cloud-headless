@@ -283,11 +283,10 @@ export function Sidebar({ theme }: Props) {
           {theme === 'chatgpt' && (
             <div className="sidebar-footer">
               <div className="sidebar-user">
-                <img
-                  className="sidebar-luminary-logo"
-                  src="/@fs/Users/benglund/.cursor/projects/Users-benglund-DevProjects-SPE-seller-demo-app/assets/imgi_1_luminary-logo-transparent-aece773d-6fe3-4d94-995a-5b5632cd145b.png"
-                  alt="Luminary Studios"
-                />
+                <div className="sidebar-luminary-logo luminary-logo-mark" aria-label="Luminary Studios">
+                  <span className="luminary-logo-badge">L</span>
+                  <span className="luminary-logo-text">Luminary</span>
+                </div>
                 <div className="sidebar-user-info">
                   <span className="sidebar-user-name">Luminary Studios</span>
                   <span className="sidebar-user-plan">Enterprise workspace</span>
@@ -299,11 +298,10 @@ export function Sidebar({ theme }: Props) {
           {theme === 'claude' && (
             <div className="sidebar-footer claude-footer">
               <div className="sidebar-user claude-footer-user">
-                <img
-                  className="sidebar-luminary-logo claude-luminary-logo"
-                  src="/@fs/Users/benglund/.cursor/projects/Users-benglund-DevProjects-SPE-seller-demo-app/assets/imgi_1_luminary-logo-transparent-242f6aab-ea6d-4e13-baef-d27763eb53a4.png"
-                  alt="Luminary Studios"
-                />
+                <div className="sidebar-luminary-logo claude-luminary-logo luminary-logo-mark" aria-label="Luminary Studios">
+                  <span className="luminary-logo-badge">L</span>
+                  <span className="luminary-logo-text">Luminary</span>
+                </div>
                 <div className="claude-footer-meta-row">
                   <div className="sidebar-user-info">
                     <span className="sidebar-user-name">Luminary Studios</span>
