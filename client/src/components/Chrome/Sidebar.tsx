@@ -2,6 +2,7 @@ import type { ThemeId } from '../../types';
 import { themes } from '../../themes';
 import { ChannelList } from './ChannelList';
 import { ChatGPTLogo } from '../icons/ChatGPTLogo';
+import { ClaudeLogo } from '../icons/ClaudeLogo';
 
 interface Props {
   theme: ThemeId;
@@ -158,11 +159,10 @@ export function Sidebar({ theme }: Props) {
             {theme === 'claude' && (
               <>
                 <div className="sidebar-top-row claude-top-row">
-                  <img
-                    className="claude-logo-image"
-                    src="/@fs/Users/benglund/.cursor/projects/Users-benglund-DevProjects-SPE-seller-demo-app/assets/Screenshot_2026-05-21_at_5.35.26_PM-6012deea-7b61-4bf6-91b2-6e12086ad1d0.png"
-                    alt="Claude"
-                  />
+                  <div className="claude-logo-image" aria-label="Claude logo">
+                    <ClaudeLogo size={18} color="#d97757" />
+                    <span>Claude</span>
+                  </div>
                   <button className="sidebar-icon-btn" title="Toggle sidebar">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="8" y1="6" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="18"/></svg>
                   </button>
