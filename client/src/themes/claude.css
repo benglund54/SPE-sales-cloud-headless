@@ -51,13 +51,10 @@
 }
 
 [data-theme="claude"] .claude-logo-image {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: #2f2a25;
-  font-size: 28px;
-  font-weight: 500;
-  line-height: 1;
+  width: 68px;
+  height: 20px;
+  object-fit: contain;
+  object-position: left center;
 }
 
 [data-theme="claude"] .claude-nav .sidebar-nav-item {

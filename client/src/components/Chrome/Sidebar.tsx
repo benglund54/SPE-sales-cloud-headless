@@ -2,7 +2,9 @@ import type { ThemeId } from '../../types';
 import { themes } from '../../themes';
 import { ChannelList } from './ChannelList';
 import { ChatGPTLogo } from '../icons/ChatGPTLogo';
-import { ClaudeLogo } from '../icons/ClaudeLogo';
+
+const CLAUDE_LOGO_PNG =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEQAAAAUCAYAAAA0nZtFAAACyUlEQVR4AezXC27cMAwEUDcX6/ZkTU/W9mStnrGT0B955WyADZAEnogih0OK/rR5mr5+FhP4GshiHNN0NJBL48LzdWU3c3Px48Am+CCHnn632ta2jF/rgRAg9K9J/Lzie1v5gL8enA9w8Rr1oZfe9KgnZzndTB0IsQj9aEoV39r+V4PL4VPsL8cHQ/p8U1sZiGE4KBGCfxgr4BhSdfPhV98jbf3s9T7cUwZSh0G0J6AY9OI9vycKenH+o/hRTC7gAHsEu1wDqQMYOawnYoSnoFfQO23gsWs9jYcnXmP8wA81Jg8SVwMnEOsBJ3wrvGgbSP0Yjhx0hKMZzYIBetV8h+QaThoQ16BVzhpHMRricqKvhnp8e1jzw9XT3IOBzMZe9p0+RUho3Aq1AXsDcgirfQWfWPXFphl9w8BNrNrxWeU4qx7C4Ys96xkIMiTAfg8oDO+h1dM4oz8fuAnlnIYDzfV6GUglvEbut0wfKCnscQX7e5HDjeqoj+usbH0AHUP1JHrSNv9TRZZ4CyM8HEV9tFJ4LnpL/ETcAU/QJz2llwxhoeEJMaHp+iPhanYXd32EZxh4hgCLwl31cwH65zKmyXn3erk0oYuBCELbT6YnwN6DGM5erPoMzZ4usEdQ/8U74kfzLJ/mXv/ONd/AJ4yGegcFcqAWermSxJGG2HtIo3IAx1qbseev4Etttl4Sj6a9u2zFCT/7Xo2a4zWWJ1+N5Dx7QgiBoSQJIUkSJQGeYQBbDJdN3N4aHX55tKzVjwc41U+vx+fHVz854YupIR6I6cnemhx7Mfz04Juy+ahKEpAI7gr4I87AxKwEA7yAT7OAxx9bLpsP6OJD9bPlAhvYQAMf9MpHC8da92zAwwc2DVyQhwPim4HMzvZLIiACW3ILLS7+NULAF5PPjp8PbvmTE1720bHyRctqD0c58nAhPL4Z9ZWZHZ/9138AAAD//9ELolsAAAAGSURBVAMA57y+KQl6DsEAAAAASUVORK5CYII=';
 
 interface Props {
   theme: ThemeId;
@@ -159,10 +161,7 @@ export function Sidebar({ theme }: Props) {
             {theme === 'claude' && (
               <>
                 <div className="sidebar-top-row claude-top-row">
-                  <div className="claude-logo-image" aria-label="Claude logo">
-                    <ClaudeLogo size={18} color="#d97757" />
-                    <span>Claude</span>
-                  </div>
+                  <img className="claude-logo-image" src={CLAUDE_LOGO_PNG} alt="Claude" />
                   <button className="sidebar-icon-btn" title="Toggle sidebar">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="8" y1="6" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="18"/></svg>
                   </button>
