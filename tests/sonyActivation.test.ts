@@ -102,14 +102,25 @@ test('Claude scene has the 13-section deterministic briefing order', () => {
   assert.equal(SONY_ACTIVATION_CONTEXT.scenes.claude.sectionOrder.length, 13);
 });
 
-test('three evidence signals (game activity, film/streaming, soundtrack)', () => {
+test('three QUALITATIVE contributing signals (no per-channel numeric score)', () => {
   const sigs = SONY_ACTIVATION_CONTEXT.evidenceSignals;
   assert.equal(sigs.length, 3);
   const labels = sigs.map((s) => s.label.toLowerCase());
-  assert.ok(labels.some((l) => l.includes('game')));
+  assert.ok(labels.some((l) => l.includes('play activity') || l.includes('playstation')));
   assert.ok(labels.some((l) => l.includes('film') || l.includes('streaming')));
   assert.ok(labels.some((l) => l.includes('soundtrack')));
-  assert.ok(sigs.every((s) => typeof s.score === 'number'));
+  // HX-2a: contributing signals must NOT carry a numeric score.
+  assert.ok(sigs.every((s) => !('score' in (s as Record<string, unknown>))));
+  assert.ok(sigs.every((s) => s.detail.length > 0));
+});
+
+test('authoritative model scores carry their correct meanings and values', () => {
+  const scores = SONY_ACTIVATION_CONTEXT.modelScores;
+  const byLabel = Object.fromEntries(scores.map((m) => [m.label, m.value]));
+  assert.equal(byLabel['Engagement Score'], 82.3);
+  assert.equal(byLabel['Cross-Affinity Score'], 84.0);
+  assert.equal(byLabel['Whitespace Score'], 53.9);
+  assert.equal(scores.length, 3);
 });
 
 test('release moments: Brand New Day active; Beyond the Spider-Verse in development, no dates', () => {
@@ -189,4 +200,24 @@ test('findForbiddenKeys detects a planted secret-shaped key', () => {
   const offenders = findForbiddenKeys(planted);
   assert.ok(offenders.length >= 1);
   assert.ok(offenders.some((o) => o.includes('access_token')));
+});
+
+// --- HX-2a regression: reject unsupported channel-level score mapping ------
+
+test('validator rejects a per-channel numeric score on a contributing signal', () => {
+  const bad = structuredClone(SONY_ACTIVATION_CONTEXT) as any;
+  bad.evidenceSignals[0].score = 82.3; // the exact bad mapping we removed
+  const { valid, errors } = validateSonyActivationContext(bad);
+  assert.equal(valid, false);
+  assert.ok(errors.some((e) => e.toLowerCase().includes('score')));
+});
+
+test('validator rejects a mislabeled / wrong-valued model score', () => {
+  const badLabel = structuredClone(SONY_ACTIVATION_CONTEXT) as any;
+  badLabel.modelScores[0].label = 'Game Activity';
+  assert.equal(validateSonyActivationContext(badLabel).valid, false);
+
+  const badValue = structuredClone(SONY_ACTIVATION_CONTEXT) as any;
+  badValue.modelScores[0].value = 99.9;
+  assert.equal(validateSonyActivationContext(badValue).valid, false);
 });

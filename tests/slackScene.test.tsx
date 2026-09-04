@@ -45,11 +45,73 @@ test('renders the priority score 91.58', () => {
   assert.ok(html.includes('91.58'));
 });
 
-test('renders the three evidence signals with scores', () => {
-  assert.ok(/game activity/i.test(html));
+test('renders the three contributing signals qualitatively (no channel scores)', () => {
+  assert.ok(/play activity|playstation/i.test(html));
   assert.ok(/film.*streaming|streaming/i.test(html));
   assert.ok(/soundtrack/i.test(html));
+});
+
+test('renders the three model scores with their AUTHORITATIVE meanings', () => {
+  assert.ok(html.includes('Engagement Score'));
+  assert.ok(html.includes('Cross-Affinity Score'));
+  assert.ok(html.includes('Whitespace Score'));
   assert.ok(html.includes('82.3') && html.includes('84') && html.includes('53.9'));
+});
+
+// --- HX-2a regression: no unsupported channel-level score mapping ----------
+
+/**
+ * Extract short windows of text around each model-score number and around
+ * each contributing-signal label so we can assert the two are never adjacent.
+ */
+function textWindowsAround(source: string, needle: string, radius = 60): string[] {
+  const flat = source.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+  const windows: string[] = [];
+  let i = flat.indexOf(needle);
+  while (i !== -1) {
+    windows.push(flat.slice(Math.max(0, i - radius), i + needle.length + radius).toLowerCase());
+    i = flat.indexOf(needle, i + 1);
+  }
+  return windows;
+}
+
+test('Engagement Score (82.3) is never labeled as game / play activity', () => {
+  for (const w of textWindowsAround(html, '82.3')) {
+    assert.equal(/game|play activity/.test(w), false, `82.3 near channel: "${w}"`);
+  }
+});
+
+test('Cross-Affinity Score (84) is never labeled as film/streaming affinity', () => {
+  // Check the model value in its labeled context, not the bare "84".
+  const flat = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').toLowerCase();
+  // The film/streaming signal line must not contain a numeric score.
+  const filmIdx = flat.indexOf('film and streaming');
+  if (filmIdx !== -1) {
+    const around = flat.slice(filmIdx, filmIdx + 120);
+    assert.equal(/\b\d{2,3}(\.\d)?\b/.test(around), false, `film/streaming line has a number: "${around}"`);
+  }
+});
+
+test('Whitespace Score (53.9) is never labeled as soundtrack affinity', () => {
+  const flat = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').toLowerCase();
+  const sdIdx = flat.indexOf('soundtrack-listening affinity');
+  if (sdIdx !== -1) {
+    const around = flat.slice(sdIdx, sdIdx + 120);
+    assert.equal(around.includes('53.9'), false, `soundtrack line shows 53.9: "${around}"`);
+  }
+  for (const w of textWindowsAround(html, '53.9')) {
+    assert.equal(/soundtrack/.test(w), false, `53.9 near soundtrack: "${w}"`);
+  }
+});
+
+test('no contributing-signal label sits adjacent to a numeric score', () => {
+  const flat = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').toLowerCase();
+  for (const label of ['play activity', 'film and streaming affinity', 'soundtrack-listening affinity']) {
+    const idx = flat.indexOf(label);
+    if (idx === -1) continue;
+    const around = flat.slice(idx, idx + label.length + 20);
+    assert.equal(/\b\d{2,3}(\.\d)?\b/.test(around), false, `channel "${label}" adjacent to a number`);
+  }
 });
 
 test('renders OpCo roles: Pictures lead; PlayStation + Sony Music pending', () => {

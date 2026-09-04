@@ -14,9 +14,16 @@ const ACTIVATION_ACTION_LABEL = 'Review governed activation in Salesforce';
  * The one structured collaboration artifact that arrives in the Slack channel.
  * Renders ENTIRELY from the HX-1 Activation context — no invented business
  * data, names, timestamps, counts, reactions, or executed approvals.
+ *
+ * Metric semantics (HX-2a): the three model numbers are shown ONLY with their
+ * authoritative meanings (Engagement / Cross-Affinity / Whitespace). The three
+ * contributing signals are qualitative and carry NO per-channel number.
+ *
+ * Layout is a compact two-column grid so the artifact fits a 16:9 presentation
+ * viewport without scrolling.
  */
 export function CollaborationRequest({ context, activationUrl }: Props) {
-  const { audience, governance, opCoRoles, evidenceSignals, releaseMoments, scenes, provenance } =
+  const { audience, governance, opCoRoles, modelScores, evidenceSignals, releaseMoments, scenes, provenance } =
     context;
   const lead = opCoRoles.find((r) => r.participationStatus === 'Accountable');
   const participants = opCoRoles.filter((r) => r.participationStatus === 'Pending');
@@ -36,124 +43,121 @@ export function CollaborationRequest({ context, activationUrl }: Props) {
       </header>
 
       <h1 className="sony-collab-title">{scenes.slack.title}</h1>
-
-      {/* Provenance — polished, audience-safe label only */}
       <div className="sony-collab-source">Source: {provenance.displayLabel}</div>
 
-      {/* Why now */}
-      <section className="sony-collab-section">
-        <h2 className="sony-collab-h2">Why now</h2>
-        <p>{scenes.slack.whyNow}</p>
-        <ul className="sony-collab-release-list">
-          {releaseMoments.map((m) => (
-            <li key={m.title} className="sony-collab-release">
-              <span className="sony-collab-release-title">{m.title}</span>
-              <span
-                className={`sony-collab-chip ${
-                  m.status === 'Active release moment'
-                    ? 'sony-chip-active'
-                    : 'sony-chip-dev'
-                }`}
-              >
-                {m.status}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {/* Proposed connected fan experience */}
-      <section className="sony-collab-section">
-        <h2 className="sony-collab-h2">Proposed connected fan experience</h2>
-        <p className="sony-collab-summary">{scenes.slack.experienceSummary}</p>
-        <p>{context.proposedFanExperience}</p>
-      </section>
-
-      {/* Qualified audience + priority score */}
-      <section className="sony-collab-section sony-collab-metrics">
-        <div className="sony-metric">
+      {/* Headline metric strip — audience, priority, and the three model
+          scores with their AUTHORITATIVE meanings. */}
+      <section className="sony-collab-metrics" aria-label="Opportunity metrics">
+        <div className="sony-metric sony-metric-primary">
           <span className="sony-metric-value">{audience.size}</span>
           <span className="sony-metric-label">Qualified {context.region} audience</span>
           <span className="sony-metric-sub">{audience.name}</span>
         </div>
-        <div className="sony-metric">
+        <div className="sony-metric sony-metric-primary">
           <span className="sony-metric-value">{audience.opportunityScore}</span>
-          <span className="sony-metric-label">Priority score</span>
+          <span className="sony-metric-label">Opportunity / Priority Score</span>
           <span className="sony-metric-sub">
             #{audience.qualifiedOpportunityRank} qualified opportunity
           </span>
         </div>
+        {modelScores.map((m) => (
+          <div key={m.label} className="sony-metric sony-metric-score">
+            <span className="sony-metric-value">{m.value}</span>
+            <span className="sony-metric-label">{m.label}</span>
+          </div>
+        ))}
       </section>
 
-      {/* Evidence */}
-      <section className="sony-collab-section">
-        <h2 className="sony-collab-h2">Relevant evidence</h2>
-        <ul className="sony-collab-evidence">
-          {evidenceSignals.map((sig) => (
-            <li key={sig.label} className="sony-evidence-row">
-              <div className="sony-evidence-head">
-                <span className="sony-evidence-label">{sig.label}</span>
-                <span className="sony-evidence-score">{sig.score}</span>
-              </div>
-              <div className="sony-evidence-bar" aria-hidden="true">
-                <span
-                  className="sony-evidence-bar-fill"
-                  style={{ width: `${Math.max(0, Math.min(100, sig.score))}%` }}
-                />
-              </div>
-              <p className="sony-evidence-detail">{sig.detail}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
+      {/* Two-column body keeps the artifact within a single 16:9 screen. */}
+      <div className="sony-collab-grid">
+        {/* LEFT column */}
+        <div className="sony-collab-col">
+          <section className="sony-collab-section">
+            <h2 className="sony-collab-h2">Why now</h2>
+            <p>{scenes.slack.whyNow}</p>
+            <ul className="sony-collab-release-list">
+              {releaseMoments.map((m) => (
+                <li key={m.title} className="sony-collab-release">
+                  <span className="sony-collab-release-title">{m.title}</span>
+                  <span
+                    className={`sony-collab-chip ${
+                      m.status === 'Active release moment' ? 'sony-chip-active' : 'sony-chip-dev'
+                    }`}
+                  >
+                    {m.status}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
 
-      {/* Operating-company roles */}
-      <section className="sony-collab-section">
-        <h2 className="sony-collab-h2">Operating companies</h2>
-        <ul className="sony-collab-opcos">
-          {lead && (
-            <li className="sony-opco">
-              <span className="sony-opco-name">{lead.name}</span>
-              <span className="sony-opco-role sony-opco-lead">{lead.role}</span>
-            </li>
-          )}
-          {participants.map((p) => (
-            <li key={p.name} className="sony-opco">
-              <span className="sony-opco-name">{p.name}</span>
-              <span className="sony-opco-role sony-opco-pending">
-                {p.role} · {p.participationStatus}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
+          <section className="sony-collab-section">
+            <h2 className="sony-collab-h2">Proposed connected fan experience</h2>
+            <p>{context.proposedFanExperience}</p>
+          </section>
 
-      {/* Lifecycle + rights review */}
-      <section className="sony-collab-section sony-collab-lifecycle">
-        <div className="sony-lifecycle-row">
-          <span className="sony-lifecycle-key">Current lifecycle</span>
-          <span className="sony-lifecycle-val">{governance.currentLifecycleStage}</span>
+          {/* Contributing signals — QUALITATIVE only, no per-channel numbers */}
+          <section className="sony-collab-section">
+            <h2 className="sony-collab-h2">Contributing signals</h2>
+            <ul className="sony-collab-signals">
+              {evidenceSignals.map((sig) => (
+                <li key={sig.label} className="sony-signal-row">
+                  <span className="sony-signal-label">{sig.label}</span>
+                  <span className="sony-signal-detail">{sig.detail}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
         </div>
-        <div className="sony-lifecycle-arrow" aria-hidden="true">→</div>
-        <div className="sony-lifecycle-row">
-          <span className="sony-lifecycle-key">Next state</span>
-          <span className="sony-lifecycle-val">{governance.nextLifecycleStage}</span>
-        </div>
-        <div className="sony-lifecycle-row">
-          <span className="sony-lifecycle-key">Rights review</span>
-          <span className="sony-lifecycle-val sony-lifecycle-warn">{governance.rightsReview}</span>
-        </div>
-      </section>
 
-      {/* Three shared decisions */}
-      <section className="sony-collab-section">
-        <h2 className="sony-collab-h2">Decisions requested</h2>
-        <ol className="sony-collab-decisions">
-          {context.decisions.shared.map((decision) => (
-            <li key={decision}>{decision}</li>
-          ))}
-        </ol>
-      </section>
+        {/* RIGHT column */}
+        <div className="sony-collab-col">
+          <section className="sony-collab-section">
+            <h2 className="sony-collab-h2">Operating companies</h2>
+            <ul className="sony-collab-opcos">
+              {lead && (
+                <li className="sony-opco">
+                  <span className="sony-opco-name">{lead.name}</span>
+                  <span className="sony-opco-role sony-opco-lead">{lead.role}</span>
+                </li>
+              )}
+              {participants.map((p) => (
+                <li key={p.name} className="sony-opco">
+                  <span className="sony-opco-name">{p.name}</span>
+                  <span className="sony-opco-role sony-opco-pending">
+                    {p.role} · {p.participationStatus}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section className="sony-collab-section sony-collab-lifecycle">
+            <div className="sony-lifecycle-row">
+              <span className="sony-lifecycle-key">Current lifecycle</span>
+              <span className="sony-lifecycle-val">{governance.currentLifecycleStage}</span>
+            </div>
+            <div className="sony-lifecycle-arrow" aria-hidden="true">→</div>
+            <div className="sony-lifecycle-row">
+              <span className="sony-lifecycle-key">Next state</span>
+              <span className="sony-lifecycle-val">{governance.nextLifecycleStage}</span>
+            </div>
+            <div className="sony-lifecycle-row">
+              <span className="sony-lifecycle-key">Rights review</span>
+              <span className="sony-lifecycle-val sony-lifecycle-warn">{governance.rightsReview}</span>
+            </div>
+          </section>
+
+          <section className="sony-collab-section">
+            <h2 className="sony-collab-h2">Decisions requested</h2>
+            <ol className="sony-collab-decisions">
+              {context.decisions.shared.map((decision) => (
+                <li key={decision}>{decision}</li>
+              ))}
+            </ol>
+          </section>
+        </div>
+      </div>
 
       {/* Exact status banner */}
       <div className="sony-collab-banner" role="status">

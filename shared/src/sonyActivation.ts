@@ -52,17 +52,29 @@ export interface Audience {
 }
 
 /**
- * One line of supporting evidence, e.g. game-play activity, film/streaming
- * affinity, or soundtrack-listening affinity. `score` reuses an existing
- * qualified signal from the audience model (no new invented metric).
+ * One qualitative contributing signal (e.g. PlayStation Spider-Man play
+ * activity, Spider-Verse film/streaming affinity, soundtrack-listening
+ * affinity). These are grounded descriptions only — they deliberately carry
+ * NO channel-level numeric score, because no separately supported per-channel
+ * number exists. The authoritative model numbers live in `modelScores`.
  */
 export interface EvidenceSignal {
-  /** Human-readable evidence category. */
+  /** Human-readable contributing-signal category. */
   label: string;
-  /** Qualified signal value (0–100 scale, from the governed model). */
-  score: number;
   /** Short qualitative descriptor for executive readability. */
   detail: string;
+}
+
+/**
+ * An authoritative audience-model score with its correct meaning. These are
+ * the only numbers with supported semantics (Engagement, Cross-Affinity,
+ * Whitespace) and must never be relabeled as an individual channel.
+ */
+export interface ModelScore {
+  /** Authoritative metric name, e.g. "Engagement Score". */
+  label: string;
+  /** Numeric value from the governed audience model. */
+  value: number;
 }
 
 /**
@@ -151,7 +163,10 @@ export interface SonyActivationContext {
   // Audience & signals
   audience: Audience;
 
-  // Supporting evidence lines (game activity, film/streaming, soundtrack)
+  // Authoritative audience-model scores (correctly labeled meanings)
+  modelScores: ModelScore[];
+
+  // Qualitative contributing signals (NO per-channel numeric scores)
   evidenceSignals: EvidenceSignal[];
 
   // Release posture for referenced Spider-Man properties
@@ -214,20 +229,26 @@ const rawContext: SonyActivationContext = {
     whitespaceScore: 53.9,
   },
 
+  // Authoritative model scores — the ONLY numbers with supported semantics.
+  // Sourced from the audience model above; never relabeled as a channel.
+  modelScores: [
+    { label: 'Engagement Score', value: 82.3 },
+    { label: 'Cross-Affinity Score', value: 84.0 },
+    { label: 'Whitespace Score', value: 53.9 },
+  ],
+
+  // Grounded contributing signals — qualitative only, NO per-channel numbers.
   evidenceSignals: [
     {
-      label: 'Spider-Man game activity',
-      score: 82.3,
+      label: 'PlayStation Spider-Man play activity',
       detail: 'Sustained EMEA player engagement across the Spider-Man game portfolio.',
     },
     {
-      label: 'Film & streaming affinity',
-      score: 84.0,
-      detail: 'Strong cross-affinity between EMEA players and Spider-Man film and streaming viewing.',
+      label: 'Spider-Verse film and streaming affinity',
+      detail: 'Strong overlap between EMEA players and Spider-Man film and streaming viewing.',
     },
     {
       label: 'Soundtrack-listening affinity',
-      score: 53.9,
       detail: 'Meaningful whitespace in Spider-Man soundtrack and artist listening among the cohort.',
     },
   ],
@@ -444,11 +465,33 @@ export function validateSonyActivationContext(input: unknown): ValidationResult 
     if (a.whitespaceScore !== 53.9) push('audience.whitespaceScore must be 53.9');
   }
 
-  // Evidence signals — exactly three labeled lines with numeric scores
+  // Authoritative model scores — exactly the three supported meanings/values.
+  const expectedScores: Record<string, number> = {
+    'Engagement Score': 82.3,
+    'Cross-Affinity Score': 84.0,
+    'Whitespace Score': 53.9,
+  };
+  if (!Array.isArray(c.modelScores) || c.modelScores.length !== 3) {
+    push('modelScores must have exactly 3 entries');
+  } else {
+    for (const [label, value] of Object.entries(expectedScores)) {
+      const found = c.modelScores.find((m: any) => m?.label === label);
+      if (!found) push(`modelScores missing "${label}"`);
+      else if (found.value !== value) push(`modelScores "${label}" must be ${value}`);
+    }
+  }
+
+  // Contributing signals — exactly three QUALITATIVE lines (label + detail).
+  // They must NOT carry a per-channel numeric score (HX-2a correction).
   if (!Array.isArray(c.evidenceSignals) || c.evidenceSignals.length !== 3) {
     push('evidenceSignals must have exactly 3 entries');
-  } else if (!c.evidenceSignals.every((s: any) => isNonEmptyString(s?.label) && typeof s?.score === 'number' && isNonEmptyString(s?.detail))) {
-    push('each evidenceSignal needs label, numeric score, and detail');
+  } else {
+    if (!c.evidenceSignals.every((s: any) => isNonEmptyString(s?.label) && isNonEmptyString(s?.detail))) {
+      push('each evidenceSignal needs label and detail');
+    }
+    if (c.evidenceSignals.some((s: any) => typeof s?.score === 'number' || 'score' in (s ?? {}))) {
+      push('evidenceSignal must NOT carry a per-channel numeric score');
+    }
   }
 
   // Release moments — Brand New Day active; only "In Development" is a valid

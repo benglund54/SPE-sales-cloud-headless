@@ -185,21 +185,21 @@
   margin-bottom: 18px;
 }
 
-.sony-collab-section { margin-bottom: 18px; }
+.sony-collab-section { margin-bottom: 14px; }
+.sony-collab-section:last-child { margin-bottom: 0; }
 .sony-collab-h2 {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--sony-text-dim);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
-.sony-collab-section p { font-size: 15px; line-height: 1.55; color: var(--sony-text); }
-.sony-collab-summary { font-weight: 600; margin-bottom: 6px; }
+.sony-collab-section p { font-size: 14px; line-height: 1.5; color: var(--sony-text); }
 
-.sony-collab-release-list { list-style: none; display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
-.sony-collab-release { display: flex; align-items: center; gap: 8px; }
-.sony-collab-release-title { font-size: 14px; font-weight: 600; }
+.sony-collab-release-list { list-style: none; display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+.sony-collab-release { display: flex; align-items: center; gap: 6px; }
+.sony-collab-release-title { font-size: 13px; font-weight: 600; }
 .sony-collab-chip {
   font-size: 11px;
   font-weight: 600;
@@ -209,38 +209,36 @@
 .sony-chip-active { background: rgba(46, 182, 125, 0.15); color: #4bd69b; border: 1px solid rgba(46, 182, 125, 0.4); }
 .sony-chip-dev { background: rgba(163, 163, 181, 0.12); color: var(--sony-text-dim); border: 1px solid var(--sony-border); }
 
-.sony-collab-metrics { display: flex; gap: 16px; }
+/* Headline metric strip — audience + priority + 3 authoritative model scores */
+.sony-collab-metrics {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
 .sony-metric {
-  flex: 1;
   background: var(--sony-surface-2);
   border: 1px solid var(--sony-border);
   border-radius: 10px;
-  padding: 16px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
-.sony-metric-value { font-size: 28px; font-weight: 800; color: #fff; }
-.sony-metric-label { font-size: 13px; font-weight: 600; }
-.sony-metric-sub { font-size: 12px; color: var(--sony-text-dim); }
+.sony-metric-primary { border-color: rgba(107, 138, 253, 0.4); }
+.sony-metric-value { font-size: 24px; font-weight: 800; color: #fff; line-height: 1.1; }
+.sony-metric-label { font-size: 12px; font-weight: 600; }
+.sony-metric-sub { font-size: 11px; color: var(--sony-text-dim); }
 
-.sony-collab-evidence { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-.sony-evidence-head { display: flex; justify-content: space-between; align-items: baseline; }
-.sony-evidence-label { font-size: 14px; font-weight: 600; }
-.sony-evidence-score { font-size: 14px; font-weight: 700; color: var(--sony-accent); }
-.sony-evidence-bar {
-  height: 6px;
-  background: var(--sony-surface-2);
-  border-radius: 999px;
-  overflow: hidden;
-  margin: 6px 0 4px;
-}
-.sony-evidence-bar-fill {
-  display: block;
-  height: 100%;
-  background: linear-gradient(90deg, var(--sony-accent), var(--sony-accent-2));
-}
-.sony-evidence-detail { font-size: 13px; color: var(--sony-text-dim); }
+/* Contributing signals — qualitative label + detail, NO per-channel number */
+.sony-collab-signals { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.sony-signal-row { display: flex; flex-direction: column; gap: 1px; }
+.sony-signal-label { font-size: 13px; font-weight: 600; }
+.sony-signal-detail { font-size: 12px; color: var(--sony-text-dim); line-height: 1.4; }
+
+/* Two-column body */
+.sony-collab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.sony-collab-col { min-width: 0; }
 
 .sony-collab-opcos { list-style: none; display: flex; flex-direction: column; gap: 8px; }
 .sony-opco {
