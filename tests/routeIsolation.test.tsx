@@ -55,3 +55,16 @@ test('ActivationProvider is mounted only within the Sony experience', () => {
   assert.equal(app.includes('ActivationProvider'), false);
   assert.equal(mainTsx.includes('ActivationProvider'), false);
 });
+
+test('scene navigator and Teams scene live only in the Sony module', () => {
+  const app = read('client/src/App.tsx');
+  const mainTsx = read('client/src/main.tsx');
+  for (const src of [app, mainTsx]) {
+    assert.equal(src.includes('SceneNavigator'), false, 'navigator must not leak into legacy bootstrap');
+    assert.equal(src.includes('TeamsScene'), false, 'Teams scene must not leak into legacy bootstrap');
+  }
+  // The navigator is wired inside the Sony experience.
+  const sony = read('client/src/sony/SonyExperience.tsx');
+  assert.ok(sony.includes('SceneNavigator'));
+  assert.ok(sony.includes('TeamsScene'));
+});

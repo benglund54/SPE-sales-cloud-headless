@@ -1,7 +1,9 @@
-/* Sony Headless 360 — Slack scene (HX-2).
-   Scoped under .sony-slack / .sony-state so it never affects the legacy app. */
+/* Sony Headless 360 — Slack (HX-2) + Teams (HX-3) scenes and navigator.
+   Scoped under .sony-* so it never affects the legacy app. */
 
+.sony-shell,
 .sony-slack,
+.sony-teams,
 .sony-state {
   --sony-bg: #10101a;
   --sony-surface: #1a1a24;
@@ -14,9 +16,58 @@
   --sony-active: #2eb67d;
   --sony-warn: #e0a52e;
   --sony-danger: #e05a5a;
+  --sony-teams-accent: #7b83eb;
+  --sony-nav-h: 52px;
   --sony-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-family: var(--sony-font);
   color: var(--sony-text);
+}
+
+/* ---- Shell + scene viewport + navigator ------------------------------- */
+.sony-shell {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  background: var(--sony-bg);
+  overflow: hidden;
+}
+.sony-scene-viewport {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+.sony-nav {
+  height: var(--sony-nav-h);
+  flex-shrink: 0;
+  border-top: 1px solid var(--sony-border);
+  background: #0b0b12;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sony-nav-segments {
+  display: inline-flex;
+  gap: 4px;
+  background: var(--sony-surface-2);
+  border: 1px solid var(--sony-border);
+  border-radius: 999px;
+  padding: 4px;
+}
+.sony-nav-segment {
+  border: none;
+  background: transparent;
+  color: var(--sony-text-dim);
+  font-family: var(--sony-font);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 22px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.sony-nav-segment-active {
+  background: linear-gradient(135deg, var(--sony-accent), var(--sony-accent-2));
+  color: #fff;
 }
 
 /* ---- Loading / error states ------------------------------------------- */
@@ -34,10 +85,10 @@
 .sony-state-detail { font-size: 14px; color: var(--sony-text-dim); }
 .sony-state-error .sony-state-title { color: var(--sony-danger); }
 
-/* ---- Slack shell ------------------------------------------------------- */
+/* ---- Slack scene ------------------------------------------------------- */
 .sony-slack {
-  height: 100vh;
-  width: 100vw;
+  flex: 1;
+  min-width: 0;
   display: flex;
   background: var(--sony-bg);
   overflow: hidden;
@@ -314,3 +365,133 @@
   letter-spacing: 0.05em;
   opacity: 0.8;
 }
+
+/* ---- Teams scene (HX-3) ------------------------------------------------ */
+.sony-teams {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  background: var(--sony-bg);
+  overflow: hidden;
+}
+.sony-teams-rail {
+  width: 74px;
+  flex-shrink: 0;
+  background: #0b0b12;
+  border-right: 1px solid var(--sony-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 0;
+  gap: 14px;
+}
+.sony-teams-rail-wordmark {
+  font-size: 9px; font-weight: 800; letter-spacing: 0.06em;
+  text-align: center; color: var(--sony-text-dim); line-height: 1.2;
+}
+.sony-teams-rail-icon {
+  width: 42px; height: 42px; border-radius: 12px;
+  background: var(--sony-surface-2); display: flex; align-items: center;
+  justify-content: center; font-size: 14px; font-weight: 800; color: var(--sony-text-dim);
+}
+.sony-teams-rail-active {
+  background: linear-gradient(135deg, #5b5fc7, var(--sony-teams-accent)); color: #fff;
+}
+.sony-teams-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.sony-teams-header {
+  height: 52px; flex-shrink: 0; border-bottom: 1px solid var(--sony-border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; background: var(--sony-surface);
+}
+.sony-teams-header-left { display: flex; align-items: baseline; gap: 12px; }
+.sony-teams-team { font-weight: 700; font-size: 15px; }
+.sony-teams-conversation { font-size: 15px; color: var(--sony-text-dim); }
+.sony-teams-wordmark {
+  font-size: 12px; font-weight: 800; letter-spacing: 0.08em; color: var(--sony-text-dim);
+}
+.sony-teams-messages {
+  flex: 1; overflow-y: auto; display: flex; flex-direction: column;
+  gap: 12px; padding: 20px 24px; align-items: stretch;
+}
+.sony-teams-turn { max-width: 980px; width: 100%; margin: 0 auto; }
+.sony-teams-turn-role { font-size: 12px; font-weight: 700; color: var(--sony-text-dim); }
+.sony-teams-turn-user { align-self: flex-end; text-align: right; }
+.sony-teams-turn-user .sony-teams-turn-text {
+  display: inline-block; background: var(--sony-surface-2);
+  border: 1px solid var(--sony-border); border-radius: 12px 12px 2px 12px;
+  padding: 8px 14px; font-size: 14px; margin-top: 2px;
+}
+.sony-teams-assistant-meta { display: flex; align-items: center; gap: 10px; }
+.sony-teams-context-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.04em;
+  color: var(--sony-teams-accent); border: 1px solid rgba(123, 131, 235, 0.4);
+  background: rgba(123, 131, 235, 0.12); border-radius: 999px; padding: 2px 8px;
+}
+.sony-teams-turn-assistant .sony-teams-turn-text { font-size: 14px; margin: 4px 0 10px; line-height: 1.5; }
+.sony-teams-composer { flex-shrink: 0; padding: 0 24px 16px; }
+.sony-teams-composer-box {
+  border: 1px solid var(--sony-border); border-radius: 10px;
+  background: var(--sony-surface); padding: 12px 16px; max-width: 980px; margin: 0 auto;
+}
+.sony-teams-composer-placeholder { color: var(--sony-text-dim); font-size: 14px; }
+
+/* ---- PlayStation Participation Decision card -------------------------- */
+.sony-ps {
+  background: var(--sony-surface); border: 1px solid var(--sony-border);
+  border-left: 4px solid var(--sony-teams-accent); border-radius: 14px;
+  padding: 20px 24px 18px;
+}
+.sony-ps-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.sony-ps-artifact-tag {
+  font-size: 11px; font-weight: 600; color: var(--sony-teams-accent);
+  background: rgba(123, 131, 235, 0.12); border: 1px solid rgba(123, 131, 235, 0.35);
+  border-radius: 999px; padding: 4px 12px;
+}
+.sony-ps-required {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--sony-warn);
+}
+.sony-ps-title { font-size: 20px; font-weight: 700; line-height: 1.25; margin-bottom: 14px; }
+.sony-ps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.sony-ps-col { min-width: 0; }
+.sony-ps-section { margin-bottom: 12px; }
+.sony-ps-h2 {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--sony-text-dim); margin-bottom: 6px;
+}
+.sony-ps-why { list-style: disc; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+.sony-ps-why li { font-size: 13px; line-height: 1.45; }
+.sony-ps-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+.sony-ps-metric {
+  background: var(--sony-surface-2); border: 1px solid var(--sony-border);
+  border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px;
+}
+.sony-ps-metric-value { font-size: 20px; font-weight: 800; color: #fff; line-height: 1.1; }
+.sony-ps-metric-label { font-size: 11px; font-weight: 600; color: var(--sony-text-dim); }
+.sony-ps-status {
+  background: var(--sony-surface-2); border: 1px solid var(--sony-border);
+  border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px;
+}
+.sony-ps-status-row { display: flex; justify-content: space-between; font-size: 13px; }
+.sony-ps-status-key { color: var(--sony-text-dim); }
+.sony-ps-status-val { font-weight: 600; }
+.sony-ps-pending { color: var(--sony-warn); }
+.sony-ps-decisions { padding-left: 20px; display: flex; flex-direction: column; gap: 5px; }
+.sony-ps-decisions li { font-size: 14px; line-height: 1.45; }
+.sony-ps-governance { display: flex; flex-direction: column; gap: 10px; }
+.sony-ps-gov-block { border-radius: 10px; padding: 10px 12px; }
+.sony-ps-gov-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+.sony-ps-gov-block ul { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+.sony-ps-gov-block li { font-size: 12px; line-height: 1.4; padding-left: 16px; position: relative; }
+.sony-ps-gov-permitted { background: rgba(46, 182, 125, 0.08); border: 1px solid rgba(46, 182, 125, 0.35); }
+.sony-ps-gov-permitted .sony-ps-gov-title { color: #4bd69b; }
+.sony-ps-gov-permitted li::before { content: '✓'; position: absolute; left: 0; color: #4bd69b; }
+.sony-ps-gov-restricted { background: rgba(224, 90, 90, 0.07); border: 1px solid rgba(224, 90, 90, 0.3); }
+.sony-ps-gov-restricted .sony-ps-gov-title { color: #f08a8a; }
+.sony-ps-gov-restricted li::before { content: '—'; position: absolute; left: 0; color: #f08a8a; }
+.sony-ps-banner {
+  margin-top: 12px; background: rgba(224, 165, 46, 0.1);
+  border: 1px solid rgba(224, 165, 46, 0.4); border-radius: 8px;
+  padding: 10px 14px; font-size: 13px; font-weight: 600; color: var(--sony-warn); text-align: center;
+}
+.sony-ps-actions { margin-top: 14px; display: flex; }

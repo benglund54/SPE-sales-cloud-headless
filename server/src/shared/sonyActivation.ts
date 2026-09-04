@@ -260,7 +260,7 @@ const rawContext: SonyActivationContext = {
     },
     {
       label: 'Soundtrack-listening affinity',
-      detail: 'Meaningful whitespace in Spider-Man soundtrack and artist listening among the cohort.',
+      detail: 'Soundtrack-listening affinity is present within the qualified cohort.',
     },
   ],
 
