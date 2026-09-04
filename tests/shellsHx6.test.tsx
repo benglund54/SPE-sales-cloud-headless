@@ -36,7 +36,7 @@ test('Teams shell: pale app body + rail + chat sidebar + white conversation + co
   // Opens on the IP360 Planning notification (decision card appears after
   // the presenter selects the Advisor and submits — see teamsScene.test.tsx).
   assert.ok(teams.includes('IP360 Planning'));
-  assert.ok(teams.includes('Spider-Man EMEA connected-fan opportunity ready for review'));
+  assert.ok(teams.includes('Spider-Man EMEA opportunity ready for review'));
 });
 
 test('Teams notification preserves metrics + status banner', () => {

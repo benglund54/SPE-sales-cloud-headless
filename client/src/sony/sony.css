@@ -733,18 +733,41 @@
 /* ---- Teams: planning-channel notification + interactive composer ------- */
 .tms-conv-avatar-plain { background: #7b83eb; color: #fff; font-size: 12px; font-weight: 700; }
 .tms-chat-btn { display: flex; align-items: center; gap: 10px; width: 100%; background: transparent; border: none; padding: 0; text-align: left; cursor: pointer; }
+/* Expanded Teams adaptive card (HX-6V-E): wide, responsive two-column. */
 .tms-notify {
-  margin-top: 4px; max-width: 640px; background: #fff; border: 1px solid #e6e8ef;
-  border-radius: 10px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(20,30,60,0.07);
+  margin-top: 4px; width: 100%; max-width: 900px; background: #fff; border: 1px solid #e6e8ef;
+  border-radius: 12px; padding: 20px 24px 18px; box-shadow: 0 1px 4px rgba(20,30,60,0.08);
 }
-.tms-notify-tag { font-size: 11px; font-weight: 700; color: #b5791a; background: rgba(181,121,26,0.1); border-radius: 999px; padding: 3px 10px; }
-.tms-notify-title { font-size: 16px; font-weight: 800; margin: 8px 0 4px; color: #242424; }
-.tms-notify-sub { font-size: 13px; color: #5b5b5b; margin-bottom: 10px; }
-.tms-notify-metrics { display: flex; flex-wrap: wrap; gap: 6px 8px; margin-bottom: 10px; }
-.tms-notify-metrics span { font-size: 12px; background: #f4f5fb; border: 1px solid #e6e8ef; border-radius: 6px; padding: 4px 9px; }
-.tms-notify-lifecycle { font-size: 12px; color: #5b5b5b; margin-bottom: 10px; }
-.tms-notify-banner { font-size: 12.5px; font-weight: 600; color: #b5791a; background: rgba(181,121,26,0.08); border: 1px solid rgba(181,121,26,0.35); border-radius: 6px; padding: 8px 12px; text-align: center; margin-bottom: 12px; }
-.tms-notify-cta { font-size: 13px; font-weight: 600; color: #fff; background: #5b5fc7; border: none; border-radius: 6px; padding: 9px 16px; cursor: pointer; }
+.tms-notify-tag { font-size: 11px; font-weight: 700; color: #5b5fc7; background: rgba(91,95,199,0.1); border: 1px solid rgba(91,95,199,0.28); border-radius: 999px; padding: 3px 10px; }
+.tms-notify-title { font-size: 19px; font-weight: 800; margin: 10px 0 3px; color: #242424; line-height: 1.25; }
+.tms-notify-source { font-size: 12px; color: #616161; margin-bottom: 2px; }
+.tms-notify-audience { font-size: 12px; color: #616161; margin-bottom: 12px; }
+.tms-notify-metrics { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.tms-chip { font-size: 12.5px; color: #242424; background: #f4f5fb; border: 1px solid #e6e8ef; border-radius: 8px; padding: 6px 11px; }
+.tms-chip b { font-weight: 800; }
+.tms-notify-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-bottom: 14px; }
+.tms-notify-col { min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+.tms-notify-block h3.tms-notify-h { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #5b5b5b; margin-bottom: 5px; }
+.tms-notify-block p { font-size: 13.5px; line-height: 1.55; color: #242424; }
+.tms-notify-moments { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+.tms-notify-moments li { font-size: 13.5px; }
+.tms-notify-signals { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+.tms-notify-signals li { font-size: 13px; color: #444; padding-left: 12px; position: relative; }
+.tms-notify-signals li::before { content: '·'; position: absolute; left: 2px; color: #8a8a8a; }
+.tms-notify-opcos { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.tms-notify-opcos li { font-size: 13.5px; display: flex; align-items: center; gap: 8px; }
+.tms-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.tms-dot-lead { background: #2eb67d; }
+.tms-dot-pending { background: #e0a52e; }
+.tms-notify-rights { color: #b5791a !important; }
+.tms-notify-decisions { padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+.tms-notify-decisions li { font-size: 13.5px; line-height: 1.45; }
+.tms-notify-banner { font-size: 13px; font-weight: 600; color: #b5791a; background: rgba(181,121,26,0.08); border: 1px solid rgba(181,121,26,0.35); border-radius: 8px; padding: 10px 14px; text-align: center; margin-bottom: 14px; }
+.tms-notify-cta { font-size: 13.5px; font-weight: 600; color: #fff; background: #5b5fc7; border: none; border-radius: 8px; padding: 10px 18px; cursor: pointer; }
+/* Collapse to one column only when width genuinely requires it. */
+@media (max-width: 900px) {
+  .tms-notify-grid { grid-template-columns: 1fr; gap: 14px; }
+}
 .tms-progress { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #5b5b5b; margin: 6px 0; }
 .tms-progress-dot { width: 8px; height: 8px; border-radius: 50%; background: #5b5fc7; animation: sony-pulse 1s ease-in-out infinite; }
 .tms-composer-field {

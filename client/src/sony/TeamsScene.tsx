@@ -43,9 +43,14 @@ export function TeamsScene({ context, activationUrl, reducedMotion = false }: Pr
   });
   const scrollRef = useFollowScroll<HTMLDivElement>(`${view}:${convo.phase}:${convo.currentStage ?? ''}:${convo.revealed}`);
 
-  const { audience, governance, modelScores } = context;
+  const { audience, governance, modelScores, releaseMoments, opCoRoles, evidenceSignals } = context;
   const engagement = modelScores.find((m) => m.label === 'Engagement Score');
   const crossAffinity = modelScores.find((m) => m.label === 'Cross-Affinity Score');
+  const whitespace = modelScores.find((m) => m.label === 'Whitespace Score');
+  const lead = opCoRoles.find((r) => r.participationStatus === 'Accountable');
+  const participants = opCoRoles.filter((r) => r.participationStatus === 'Pending');
+  const bnd = releaseMoments.find((r) => r.title === 'Spider-Man: Brand New Day');
+  const bsv = releaseMoments.find((r) => r.title === 'Beyond the Spider-Verse');
 
   return (
     <div className="tms" data-theme="teams">
@@ -126,22 +131,80 @@ export function TeamsScene({ context, activationUrl, reducedMotion = false }: Pr
                     <span className="tms-turn-name">{ASSISTANT}</span>
                     <span className="tms-context-label">{CONTEXT_LABEL}</span>
                   </div>
-                  {/* Teams-native notification card (not Slack styling) */}
+                  {/* Teams-native adaptive card — same information hierarchy as
+                      the Slack notification, rendered in Teams styling. Wide,
+                      responsive two-column layout (collapses to one column when
+                      width genuinely requires it via CSS). */}
                   <article className="tms-notify" aria-label="Governed opportunity notification">
                     <div className="tms-notify-head">
-                      <span className="tms-notify-tag">Governed opportunity · Draft</span>
+                      <span className="tms-notify-tag">Cross-Sony Collaboration Request</span>
                     </div>
-                    <h2 className="tms-notify-title">Spider-Man EMEA connected-fan opportunity ready for review</h2>
-                    <p className="tms-notify-sub">Accountable lead: Sony Pictures · PlayStation &amp; Sony Music participation pending</p>
+                    <h2 className="tms-notify-title">Spider-Man EMEA opportunity ready for review</h2>
+                    <p className="tms-notify-source">Source: Governed Sony IP360 CRM signals</p>
+                    <p className="tms-notify-audience">Audience: {audience.name}</p>
+
+                    {/* Metric chips */}
                     <div className="tms-notify-metrics">
-                      <span><b>{audience.size}</b> qualified audience</span>
-                      <span><b>{audience.opportunityScore}</b> priority · #{audience.qualifiedOpportunityRank}</span>
-                      <span><b>{engagement?.value}</b> engagement</span>
-                      <span><b>{crossAffinity?.value}</b> cross-affinity</span>
+                      <span className="tms-chip"><b>{audience.size}</b> qualified {context.region} audience</span>
+                      <span className="tms-chip"><b>{audience.opportunityScore}</b> opportunity / priority · #{audience.qualifiedOpportunityRank}</span>
+                      <span className="tms-chip"><b>{engagement?.value}</b> engagement score</span>
+                      <span className="tms-chip"><b>{crossAffinity?.value}</b> cross-affinity score</span>
+                      <span className="tms-chip"><b>{whitespace?.value}</b> whitespace score</span>
                     </div>
-                    <div className="tms-notify-lifecycle">
-                      {governance.currentLifecycleStage} → {governance.nextLifecycleStage} · Rights review: pending
+
+                    <div className="tms-notify-grid">
+                      {/* LEFT column */}
+                      <div className="tms-notify-col">
+                        <section className="tms-notify-block">
+                          <h3 className="tms-notify-h">Why now</h3>
+                          <p>{context.scenes.slack.whyNow}</p>
+                        </section>
+                        <section className="tms-notify-block">
+                          <h3 className="tms-notify-h">IP moments</h3>
+                          <ul className="tms-notify-moments">
+                            <li><b>{bnd?.title}</b> — {bnd?.status}</li>
+                            <li><b>{bsv?.title}</b> — {bsv?.status}</li>
+                          </ul>
+                        </section>
+                        <section className="tms-notify-block">
+                          <h3 className="tms-notify-h">Connected fan idea</h3>
+                          <p>{context.scenes.slack.experienceSummary}. Pictures-led fan moment extended through eligible PlayStation and Sony Music experiences.</p>
+                        </section>
+                        <section className="tms-notify-block">
+                          <h3 className="tms-notify-h">Contributing signals</h3>
+                          <ul className="tms-notify-signals">
+                            {evidenceSignals.map((s) => <li key={s.label}>{s.label}</li>)}
+                          </ul>
+                        </section>
+                      </div>
+
+                      {/* RIGHT column */}
+                      <div className="tms-notify-col">
+                        <section className="tms-notify-block">
+                          <h3 className="tms-notify-h">OpCo status</h3>
+                          <ul className="tms-notify-opcos">
+                            {lead && (
+                              <li><span className="tms-dot tms-dot-lead" aria-hidden="true" /><b>{lead.name}</b> — {lead.role}</li>
+                            )}
+                            {participants.map((p) => (
+                              <li key={p.name}><span className="tms-dot tms-dot-pending" aria-hidden="true" /><b>{p.name}</b> — Participation pending</li>
+                            ))}
+                          </ul>
+                        </section>
+                        <section className="tms-notify-block">
+                          <h3 className="tms-notify-h">Lifecycle</h3>
+                          <p>{governance.currentLifecycleStage} → {governance.nextLifecycleStage}</p>
+                          <p className="tms-notify-rights">Rights review — pending</p>
+                        </section>
+                        <section className="tms-notify-block">
+                          <h3 className="tms-notify-h">Decisions needed</h3>
+                          <ol className="tms-notify-decisions">
+                            {context.decisions.shared.map((d) => <li key={d}>{d}</li>)}
+                          </ol>
+                        </section>
+                      </div>
                     </div>
+
                     <div className="tms-notify-banner">{governance.statusBanner}</div>
                     <button className="tms-notify-cta" onClick={() => setView('advisor')}>
                       Open Sony IP360 Advisor →

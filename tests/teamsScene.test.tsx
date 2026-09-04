@@ -31,7 +31,25 @@ test('Teams opens on the IP360 Planning notification with the Advisor identity',
   assert.ok(teams.includes('IP360 Planning'), 'planning channel');
   assert.ok(teams.includes('Sony IP360 Advisor'), 'assistant');
   assert.ok(teams.includes('/logos/advisor.png'), 'Advisor icon');
-  assert.ok(teams.includes('Spider-Man EMEA connected-fan opportunity ready for review'), 'notification title');
+  assert.ok(teams.includes('Spider-Man EMEA opportunity ready for review'), 'notification title');
+});
+
+test('expanded notification: header, source, audience, 5 metric chips, both columns', () => {
+  assert.ok(teams.includes('Cross-Sony Collaboration Request'), 'header tag');
+  assert.ok(teams.includes('Source: Governed Sony IP360 CRM signals'), 'source line');
+  assert.ok(teams.includes('EMEA Spider-Verse Player-Fans'), 'audience');
+  // Five metric chips.
+  for (const m of ['1.85M', '91.58', '82.3', '84', '53.9']) assert.ok(teams.includes(m), `metric ${m}`);
+  // Two-column structure present.
+  assert.ok(teams.includes('tms-notify-grid'), 'responsive two-column grid');
+  // Left column anchors + right column anchors.
+  const flat = teams.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').toLowerCase();
+  for (const anchor of ['why now', 'ip moments', 'connected fan idea', 'opco status', 'lifecycle', 'decisions needed']) {
+    assert.ok(flat.includes(anchor), `missing anchor: ${anchor}`);
+  }
+  // IP moments statuses + shared decisions.
+  assert.ok(teams.includes('Active release moment') && teams.includes('In Development'));
+  for (const d of ctx.decisions.shared) assert.ok(teams.includes(d), `missing decision: ${d}`);
 });
 
 test('Teams notification preserves the governed facts', () => {
@@ -88,9 +106,13 @@ test('decision card: one safe Salesforce action, no execution buttons', () => {
   assert.equal(/>\s*(Approve|Activate|Send|Publish|Participate|Reject)\s*</i.test(card), false);
 });
 
-test('does NOT replay the full Slack collaboration artifact', () => {
-  assert.equal(teams.includes('Cross-Sony Collaboration Request'), false);
-  assert.equal(teams.includes('Sony IP360 — Spider-Man EMEA opportunity ready for review'), false);
+test('does NOT render the Slack collaboration artifact component/chrome', () => {
+  // The Teams notification mirrors the same information anchors (parity), but
+  // must not render the actual Slack Block-Kit artifact component or its exact
+  // Slack-only title/paragraph.
+  assert.equal(teams.includes('slk-block'), false, 'no Slack block-kit markup');
+  assert.equal(teams.includes('Sony IP360 — Spider-Man EMEA opportunity ready for review'), false, 'not the Slack artifact title');
+  assert.equal(teams.includes('A coordinated EMEA Spider-Man fan moment in which'), false, 'not the long Slack paragraph');
 });
 
 test('no fake participants, timestamps, notifications, or unread counts', () => {
