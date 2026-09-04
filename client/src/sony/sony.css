@@ -36,6 +36,13 @@
   flex: 1;
   min-height: 0;
   display: flex;
+  overflow: hidden;
+}
+.sony-scene-inner {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
 }
 .sony-nav {
   height: var(--sony-nav-h);
@@ -131,6 +138,7 @@
 
 .sony-slack-main {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -157,6 +165,7 @@
 
 .sony-slack-messages {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   display: flex;
   justify-content: center;
@@ -397,7 +406,7 @@
 .sony-teams-rail-active {
   background: linear-gradient(135deg, #5b5fc7, var(--sony-teams-accent)); color: #fff;
 }
-.sony-teams-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.sony-teams-main { flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; }
 .sony-teams-header {
   height: 52px; flex-shrink: 0; border-bottom: 1px solid var(--sony-border);
   display: flex; align-items: center; justify-content: space-between;
@@ -410,7 +419,7 @@
   font-size: 12px; font-weight: 800; letter-spacing: 0.08em; color: var(--sony-text-dim);
 }
 .sony-teams-messages {
-  flex: 1; overflow-y: auto; display: flex; flex-direction: column;
+  flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column;
   gap: 12px; padding: 20px 24px; align-items: stretch;
 }
 .sony-teams-turn { max-width: 980px; width: 100%; margin: 0 auto; }
@@ -513,7 +522,7 @@
   font-size: 9px; font-weight: 800; letter-spacing: 0.06em;
   text-align: center; color: var(--sony-text-dim); line-height: 1.2;
 }
-.sony-claude-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.sony-claude-main { flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; }
 .sony-claude-header {
   height: 52px; flex-shrink: 0; border-bottom: 1px solid var(--sony-border);
   display: flex; align-items: center; justify-content: space-between;
@@ -524,7 +533,7 @@
   font-size: 13px; font-weight: 700; letter-spacing: 0.02em; color: #d97757;
 }
 .sony-claude-messages {
-  flex: 1; overflow-y: auto; display: flex; flex-direction: column;
+  flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column;
   gap: 10px; padding: 20px 24px;
 }
 .sony-claude-turn { max-width: 1000px; width: 100%; margin: 0 auto; }
@@ -633,3 +642,49 @@
   padding: 10px 14px; font-size: 13px; font-weight: 600; color: var(--sony-warn); text-align: center;
 }
 .sony-brief-actions { margin-top: 12px; display: flex; }
+
+/* ---- Swipe drag transition (HX-5) ------------------------------------- */
+.sony-scene-viewport { transition: transform 0.22s ease; }
+@media (prefers-reduced-motion: reduce) {
+  .sony-scene-viewport { transition: none; }
+}
+
+/* ---- Hidden presenter panel (HX-5) ------------------------------------ */
+.sony-presenter-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(6, 6, 12, 0.55);
+  display: flex; align-items: flex-start; justify-content: flex-end;
+  padding: 24px;
+}
+.sony-presenter-panel {
+  width: 320px; max-width: 90vw;
+  background: var(--sony-surface); border: 1px solid var(--sony-border);
+  border-radius: 12px; padding: 16px; color: var(--sony-text);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  font-family: var(--sony-font);
+}
+.sony-presenter-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.sony-presenter-title { font-size: 14px; font-weight: 700; }
+.sony-presenter-close {
+  background: transparent; border: none; color: var(--sony-text-dim);
+  font-size: 16px; cursor: pointer; padding: 2px 6px; border-radius: 6px;
+}
+.sony-presenter-close:hover { color: var(--sony-text); }
+.sony-presenter-group { margin-bottom: 14px; }
+.sony-presenter-group-label {
+  display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--sony-text-dim); margin-bottom: 6px;
+}
+.sony-presenter-jumps { display: flex; gap: 6px; }
+.sony-presenter-btn {
+  font-family: var(--sony-font); font-size: 13px; font-weight: 600;
+  background: var(--sony-surface-2); color: var(--sony-text);
+  border: 1px solid var(--sony-border); border-radius: 8px;
+  padding: 8px 14px; cursor: pointer;
+}
+.sony-presenter-btn:hover:not(:disabled) { border-color: var(--sony-accent); }
+.sony-presenter-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.sony-presenter-reset { width: 100%; }
+.sony-presenter-live { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.sony-presenter-live-status { font-size: 12px; color: var(--sony-text-dim); }
+.sony-presenter-note { font-size: 11px; color: var(--sony-text-dim); margin-top: 8px; line-height: 1.4; }

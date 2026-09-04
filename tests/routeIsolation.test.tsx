@@ -63,10 +63,31 @@ test('scene navigator and Teams/Claude scenes live only in the Sony module', () 
     assert.equal(src.includes('SceneNavigator'), false, 'navigator must not leak into legacy bootstrap');
     assert.equal(src.includes('TeamsScene'), false, 'Teams scene must not leak into legacy bootstrap');
     assert.equal(src.includes('ClaudeScene'), false, 'Claude scene must not leak into legacy bootstrap');
+    // HX-5 additions must also stay out of the legacy bootstrap.
+    assert.equal(src.includes('PresenterPanel'), false, 'presenter panel must not leak');
+    assert.equal(src.includes('useSwipeNavigation'), false, 'swipe must not leak');
   }
-  // All scenes are wired inside the Sony experience.
+  // All scenes + HX-5 interaction layers are wired inside the Sony experience.
   const sony = read('client/src/sony/SonyExperience.tsx');
   assert.ok(sony.includes('SceneNavigator'));
   assert.ok(sony.includes('TeamsScene'));
   assert.ok(sony.includes('ClaudeScene'));
+  assert.ok(sony.includes('PresenterPanel'));
+  assert.ok(sony.includes('useSwipeNavigation'));
+});
+
+test('no visible presenter/reset/settings control appears in any scene shell', () => {
+  // The scenes themselves must not render a presenter, reset, or settings
+  // button — those live only in the hidden panel (Alt+Shift+P).
+  for (const f of [
+    'client/src/sony/SlackScene.tsx',
+    'client/src/sony/TeamsScene.tsx',
+    'client/src/sony/ClaudeScene.tsx',
+    'client/src/sony/CollaborationRequest.tsx',
+    'client/src/sony/PlayStationDecisionCard.tsx',
+    'client/src/sony/ExecutiveBrief.tsx',
+  ]) {
+    const src = read(f);
+    assert.equal(/presenter|reset presentation|settings/i.test(src), false, `${f} exposes a presenter/reset/settings control`);
+  }
 });

@@ -28,6 +28,16 @@ app.get('/api/health', async (_req, res) => {
 app.use('/api', chatRouter);
 app.use('/api', activationRouter);
 
+// Optional live executive-brief route — mounted ONLY when explicitly enabled.
+// When LIVE_EXEC_BRIEF is not 'true' (the default), the router is never created
+// or registered, so POST /api/executive-brief does not exist and is not
+// callable. No Anthropic request is made in this build.
+if (config.sony.liveExecBriefEnabled) {
+  const { createLiveBriefRouter } = await import('./routes/liveBrief.js');
+  app.use('/api', createLiveBriefRouter());
+  console.log('[server] Live executive-brief route ENABLED (LIVE_EXEC_BRIEF=true)');
+}
+
 app.use(express.static(clientDistPath));
 
 app.get('*', (_req, res) => {

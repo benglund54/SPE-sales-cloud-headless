@@ -9,19 +9,24 @@ import { type SceneId, sceneFromHash, hashForScene } from './scenes';
  *   presentation does not accumulate browser-history entries. No reload.
  * - Listens for hashchange (e.g. manual edits / deep links) and stays in sync.
  */
-export function useScene(): { scene: SceneId; setScene: (id: SceneId) => void } {
+type SceneUpdater = SceneId | ((current: SceneId) => SceneId);
+
+export function useScene(): { scene: SceneId; setScene: (next: SceneUpdater) => void } {
   const [scene, setSceneState] = useState<SceneId>(() =>
     sceneFromHash(typeof window !== 'undefined' ? window.location.hash : '')
   );
 
-  const setScene = useCallback((id: SceneId) => {
-    setSceneState(id);
-    const nextHash = hashForScene(id);
-    if (typeof window !== 'undefined' && window.location.hash !== nextHash) {
-      // replaceState (not pushState) — no extra history entries during the demo.
-      const url = window.location.pathname + window.location.search + nextHash;
-      window.history.replaceState(null, '', url);
-    }
+  const setScene = useCallback((next: SceneUpdater) => {
+    setSceneState((current) => {
+      const id = typeof next === 'function' ? next(current) : next;
+      const nextHash = hashForScene(id);
+      if (typeof window !== 'undefined' && window.location.hash !== nextHash) {
+        // replaceState (not pushState) — no extra history entries during the demo.
+        const url = window.location.pathname + window.location.search + nextHash;
+        window.history.replaceState(null, '', url);
+      }
+      return id;
+    });
   }, []);
 
   // On mount, normalize the URL to the resolved scene (e.g. unknown hash →
