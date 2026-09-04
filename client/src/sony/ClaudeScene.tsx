@@ -2,7 +2,7 @@ import type { SonyActivationContext } from 'shared/src/sonyActivation';
 import { ExecutiveBrief } from './ExecutiveBrief';
 import { useBriefReveal } from './useBriefReveal';
 import {
-  ClaudeMark, CoworkIcon, CodeIcon, PlusIcon, FolderIcon, ArtifactIcon, ClockIcon,
+  ClaudeLogo, CoworkIcon, CodeIcon, PlusIcon, FolderIcon, ArtifactIcon, ClockIcon, GearIcon,
 } from './icons';
 
 interface Props {
@@ -43,6 +43,7 @@ export function ClaudeScene({ context, activationUrl }: Props) {
           <div className="cla-nav-item"><FolderIcon size={16} /> Projects</div>
           <div className="cla-nav-item"><ArtifactIcon size={16} /> Artifacts</div>
           <div className="cla-nav-item"><ClockIcon size={16} /> Scheduled</div>
+          <div className="cla-nav-item"><GearIcon size={16} /> Customize</div>
         </nav>
         <div className="cla-tasks">
           <span className="cla-tasks-label">Tasks</span>
@@ -54,7 +55,7 @@ export function ClaudeScene({ context, activationUrl }: Props) {
           </div>
         </div>
         <div className="cla-account" aria-hidden="true">
-          <ClaudeMark size={16} /><span>Sony IP360 · Gateway</span>
+          <ClaudeLogo size={16} /><span>Sony IP360 · Gateway</span>
         </div>
       </aside>
 
@@ -73,13 +74,13 @@ export function ClaudeScene({ context, activationUrl }: Props) {
           <div className="cla-turn cla-turn-assistant">
             {phase === 'preparing' ? (
               <div className="cla-preparing" role="status">
-                <ClaudeMark size={22} className="cla-preparing-mark" />
+                <ClaudeLogo size={24} className="cla-preparing-mark" />
                 <span className="cla-preparing-text">{PREPARING_TEXT}</span>
               </div>
             ) : (
               <>
                 <div className="cla-assistant-row">
-                  <ClaudeMark size={20} />
+                  <ClaudeLogo size={22} />
                   <p className="cla-lead-in">{CLAUDE_LEAD_IN}</p>
                 </div>
                 <ExecutiveBrief context={context} activationUrl={activationUrl} />

@@ -20,12 +20,18 @@ type LiveStatus = 'checking' | 'unavailable';
 export function PresenterPanel({ open, onClose, onJump, onReset }: Props) {
   const panelRef = useRef<HTMLDivElement>(null);
   const firstBtnRef = useRef<HTMLButtonElement>(null);
+  const restoreFocusRef = useRef<HTMLElement | null>(null);
   const [liveStatus, setLiveStatus] = useState<LiveStatus>('checking');
 
-  // Move focus into the panel when it opens.
+  // On open: remember the previously-focused element and move focus into the
+  // panel. On close: restore focus to where it was.
   useEffect(() => {
     if (open) {
+      restoreFocusRef.current = (document.activeElement as HTMLElement) ?? null;
       firstBtnRef.current?.focus();
+    } else if (restoreFocusRef.current) {
+      restoreFocusRef.current.focus?.();
+      restoreFocusRef.current = null;
     }
   }, [open]);
 

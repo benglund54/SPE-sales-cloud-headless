@@ -537,7 +537,7 @@
 
 /* ---- Hidden presenter panel (HX-5) ------------------------------------ */
 .sony-presenter-overlay {
-  position: fixed; inset: 0; z-index: 1000; background: rgba(6,6,12,0.55);
+  position: fixed; inset: 0; z-index: 2147483000; background: rgba(6,6,12,0.55);
   display: flex; align-items: flex-start; justify-content: flex-end; padding: 24px;
 }
 .sony-presenter-panel {
@@ -562,3 +562,142 @@
 .sony-presenter-live { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .sony-presenter-live-status { font-size: 12px; color: #a3a3b5; }
 .sony-presenter-note { font-size: 11px; color: #a3a3b5; margin-top: 8px; line-height: 1.4; }
+
+/* ======================================================================= */
+/* HX-6V-B fidelity corrections                                            */
+/* ======================================================================= */
+
+/* ---- Slack: tighter rail, denser sidebar, block-kit message ------------ */
+.slk-topbar { grid-template-columns: 160px 1fr 160px; height: 44px; }
+.slk-rail { width: 68px; padding: 10px 0; gap: 10px; }
+.slk-rail-ws { background: transparent; border: none; padding: 0; }
+.slk-rail-ws-tile {
+  width: 40px; height: 40px; border-radius: 10px; background: #fff; color: #3f0e40;
+  display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px;
+}
+.slk-rail-items { gap: 2px; }
+.slk-rail-item { width: 56px; padding: 5px 4px; }
+.slk-rail-item svg { opacity: 0.92; }
+.slk-rail-bottom { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.slk-rail-avatar { width: 28px; height: 28px; border-radius: 7px; background: linear-gradient(135deg,#8b6cf0,#5b8def); }
+
+.slk-sidebar { width: 275px; }
+.slk-sidebar-head { position: relative; gap: 6px; }
+.slk-sidebar-head-actions { position: absolute; right: 14px; display: flex; gap: 10px; color: #cfc3cf; }
+.slk-quick { list-style: none; padding: 4px 8px 2px; }
+.slk-quick-item {
+  display: flex; align-items: center; gap: 10px; padding: 5px 10px; border-radius: 6px;
+  font-size: 14px; color: #cfc3cf;
+}
+.slk-quick-item svg { opacity: 0.85; }
+.slk-sidebar-label { display: flex; align-items: center; gap: 6px; }
+.slk-channel-add, .slk-channel-app { color: #b9a6b9; }
+.slk-channel-appdot { width: 14px; height: 14px; border-radius: 4px; background: linear-gradient(135deg,#5b8def,#8b6cf0); }
+.slk-channel-app .slk-channel-name { color: #cfc3cf; }
+
+.slk-channel-header { padding: 0 16px 0 20px; }
+.slk-channel-header-right { display: flex; align-items: center; gap: 18px; }
+.slk-channel-actions { display: flex; gap: 12px; color: #616061; }
+.slk-composer-box { border-color: #ddd; }
+.slk-composer-divider { width: 1px; height: 16px; background: #e2e2e2; margin: 0 4px; }
+.slk-composer-actions { display: flex; gap: 4px; padding: 6px 10px; border-top: 1px solid #ededed; color: #616061; font-size: 13px; align-items: center; }
+
+/* Block-Kit-style Advisor message (replaces the dashboard-tile artifact) */
+.slk-block {
+  --card-text: #1d1c1d; --card-dim: #616061; --card-accent: #1264a3; --card-border: #e2e2e2;
+  max-width: 760px; margin-top: 2px; color: var(--card-text);
+  border-left: 3px solid #611f69; padding-left: 14px;
+}
+.slk-block-tag {
+  display: inline-block; font-size: 11px; font-weight: 700; color: #611f69;
+  background: #f4ecf7; border-radius: 4px; padding: 2px 8px; margin-bottom: 6px;
+}
+.slk-block-title { font-size: 17px; font-weight: 800; line-height: 1.3; margin-bottom: 2px; }
+.slk-block-source { font-size: 12px; color: var(--card-dim); margin-bottom: 10px; }
+.slk-block-metrics { display: flex; flex-wrap: wrap; gap: 6px 8px; margin-bottom: 10px; }
+.slk-metric {
+  font-size: 12px; color: #1d1c1d; background: #f8f8f8; border: 1px solid #e8e8e8;
+  border-radius: 6px; padding: 4px 9px;
+}
+.slk-metric b { font-weight: 800; }
+.slk-block-audience { font-size: 12px; color: #616061; margin: -4px 0 10px; }
+.slk-block-divider { border: none; border-top: 1px solid #e8e8e8; margin: 10px 0; }
+.slk-block-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.slk-block-col { min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.slk-block-field p { font-size: 13.5px; line-height: 1.5; color: #1d1c1d; }
+.slk-block-h {
+  display: block; font-size: 12px; font-weight: 800; color: #1d1c1d; margin-bottom: 4px;
+}
+.slk-block-releases { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.slk-block-release { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; }
+.slk-chip { font-size: 11px; font-weight: 600; border-radius: 10px; padding: 1px 8px; }
+.slk-chip-active { background: #e8f5ee; color: #157245; }
+.slk-chip-dev { background: #eee; color: #616061; }
+.slk-block-signals { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.slk-block-signals li { font-size: 12.5px; line-height: 1.45; color: #454545; }
+.slk-block-signals b { color: #1d1c1d; }
+.slk-block-opcos { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.slk-block-opcos li { display: flex; align-items: center; justify-content: space-between; }
+.slk-opco-name { font-size: 13px; font-weight: 600; }
+.slk-opco-tag { font-size: 11px; font-weight: 600; border-radius: 10px; padding: 2px 8px; }
+.slk-opco-lead { background: #e8f5ee; color: #157245; }
+.slk-opco-pending { background: #fbf1de; color: #8a6d1a; }
+.slk-block-lifecycle .slk-lc { display: flex; align-items: center; gap: 10px; font-size: 12.5px; }
+.slk-block-lifecycle .slk-lc em { color: #8d8d8d; font-style: normal; font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; display: block; }
+.slk-lc-rights { font-size: 12px; color: #8a6d1a; margin-top: 6px; }
+.slk-block-decisions { padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+.slk-block-decisions li { font-size: 13px; line-height: 1.45; }
+.slk-block-banner {
+  margin: 12px 0 0; background: #fbf1de; border: 1px solid #f0dca8; border-radius: 6px;
+  padding: 9px 14px; font-size: 12.5px; font-weight: 700; color: #8a6d1a; text-align: center;
+}
+.slk-block-actions { margin-top: 12px; }
+.slk-block .sony-activation-link {
+  background: #007a5a; border-radius: 6px; padding: 9px 16px; font-size: 13px; font-weight: 700;
+}
+.slk-block .sony-activation-link-disabled { background: #f0f0f0; color: #8d8d8d; }
+
+/* ---- Teams: brand at rail top + tighter proportions -------------------- */
+.tms-rail { width: 64px; }
+.tms-rail-brand { margin-bottom: 8px; }
+.tms-topbar { height: 44px; }
+.tms-search { height: 30px; }
+.tms-sidebar { width: 304px; }
+.tms-conv-header { height: 52px; }
+.tms-main { border-radius: 8px; }
+.tms-bubble-user { background: #5b5fc7; }
+
+/* Teams adaptive card should read as an embedded card, less like a website */
+.tms .sony-ps { box-shadow: 0 1px 3px rgba(0,0,0,0.08); border-color: #e6e6ef; max-width: 700px; }
+
+/* ---- Claude: document-style brief (soften dashboard framing) ----------- */
+.cla-thread { padding: 28px 0; }
+.cla-turn { max-width: 720px; }
+/* Brief becomes a light document, not a bordered dashboard */
+.cla .sony-brief {
+  border: none; background: transparent; padding: 0; max-width: 720px;
+}
+.cla .sony-brief-head { margin-bottom: 14px; }
+.cla .sony-brief-title { font-family: Georgia, 'Times New Roman', serif; font-size: 22px; }
+.cla .sony-brief-section {
+  border: none !important; background: transparent !important; padding: 0; margin-bottom: 16px;
+}
+.cla .sony-brief-reco {
+  border-left: 3px solid #d97757 !important; padding-left: 14px !important; background: transparent !important;
+}
+.cla .sony-brief-reco .sony-brief-h2 { color: #b5522f; }
+.cla .sony-brief-reco-conclusion { color: #b5522f; }
+.cla .sony-brief-grid { gap: 24px; }
+.cla .sony-brief-facts, .cla .sony-brief-value, .cla .sony-brief-decisions, .cla .sony-brief-guardrails {
+  background: #faf9f5 !important; border: 1px solid #ece9df !important; border-radius: 10px; padding: 14px !important;
+}
+.cla .sony-brief-facts .sony-brief-h2 { color: #6b6a63; }
+.cla .sony-brief-decisions .sony-brief-h2,
+.cla .sony-brief-decisions-note { color: #b5792f; }
+.cla .sony-brief-guardrails .sony-brief-h2 { color: #4a7a52; }
+.cla .sony-brief-risk-chip { background: #fff; border-color: #ece9df; }
+.cla .sony-brief-banner {
+  background: #faf3e6 !important; border: 1px solid #ecd9b0 !important; color: #96701f;
+}
+.cla .sony-brief section p, .cla .sony-brief li { font-size: 13.5px; }
+.cla .sony-brief .sony-activation-link { background: #d97757; }

@@ -1,7 +1,7 @@
 import type { SonyActivationContext } from 'shared/src/sonyActivation';
 import { PlayStationDecisionCard } from './PlayStationDecisionCard';
 import {
-  TeamsMark, TeamsChatIcon, VideoIcon, PeopleIcon, BellIcon, ClaudeMark,
+  TeamsLogo, SonyAdvisorMark, TeamsChatIcon, VideoIcon, PeopleIcon, BellIcon,
   SearchIcon, ChevronLeft, ChevronRight, DotsIcon, SendIcon, PlusIcon,
 } from './icons';
 
@@ -44,12 +44,13 @@ export function TeamsScene({ context, activationUrl }: Props) {
       </div>
 
       <div className="tms-body">
-        {/* App rail */}
+        {/* App rail — Teams brand at top, then navigation */}
         <nav className="tms-rail" aria-label="Teams">
+          <div className="tms-rail-brand" aria-hidden="true"><TeamsLogo size={28} /></div>
           <div className="tms-rail-item tms-rail-item-active"><TeamsChatIcon size={22} /><span>Chat</span></div>
           <div className="tms-rail-item"><VideoIcon size={22} /><span>Meet</span></div>
           <div className="tms-rail-item"><PeopleIcon size={22} /><span>Teams</span></div>
-          <div className="tms-rail-item"><ClaudeMark size={20} /><span>Copilot</span></div>
+          <div className="tms-rail-item"><SonyAdvisorMark size={20} /><span>Copilot</span></div>
           <div className="tms-rail-item"><BellIcon size={22} /><span>Activity</span></div>
         </nav>
 
@@ -69,7 +70,7 @@ export function TeamsScene({ context, activationUrl }: Props) {
             <span className="tms-sidebar-label">Favorites</span>
             <ul className="tms-chats">
               <li className="tms-chat tms-chat-active" aria-current="true">
-                <span className="tms-chat-avatar" aria-hidden="true"><ClaudeMark size={16} /></span>
+                <span className="tms-chat-avatar" aria-hidden="true"><SonyAdvisorMark size={16} /></span>
                 <span className="tms-chat-meta">
                   <span className="tms-chat-name">{ASSISTANT}</span>
                   <span className="tms-chat-preview">{CONVERSATION}</span>
@@ -89,7 +90,7 @@ export function TeamsScene({ context, activationUrl }: Props) {
         {/* Conversation panel */}
         <section className="tms-main" aria-label="Conversation">
           <header className="tms-conv-header">
-            <span className="tms-conv-avatar" aria-hidden="true"><TeamsMark size={20} /></span>
+            <span className="tms-conv-avatar" aria-hidden="true"><SonyAdvisorMark size={20} /></span>
             <div className="tms-conv-titles">
               <span className="tms-conv-title">{ASSISTANT}</span>
               <span className="tms-conv-sub">{TEAM} · {CONVERSATION}</span>
@@ -105,7 +106,7 @@ export function TeamsScene({ context, activationUrl }: Props) {
             </div>
 
             <div className="tms-turn tms-turn-assistant">
-              <span className="tms-turn-avatar" aria-hidden="true"><ClaudeMark size={18} /></span>
+              <span className="tms-turn-avatar" aria-hidden="true"><SonyAdvisorMark size={18} /></span>
               <div className="tms-turn-content">
                 <div className="tms-turn-meta">
                   <span className="tms-turn-name">{ASSISTANT}</span>

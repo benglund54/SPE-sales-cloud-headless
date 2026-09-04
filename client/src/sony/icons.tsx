@@ -14,6 +14,32 @@ interface IconProps {
 
 const base = (size: number): CSSProperties => ({ width: size, height: size, display: 'block' });
 
+/* ---- Supplied brand logos (real PNGs in /logos, transparency preserved) --- */
+/* Served from client/public/logos by Vite at the site root. Not redrawn,
+   stretched, or distorted — object-fit: contain, square box. */
+function LogoImg({ src, alt, size, className, style }: IconProps & { src: string; alt: string }) {
+  const s = size ?? 20;
+  return (
+    <img
+      src={src}
+      alt={alt}
+      width={s}
+      height={s}
+      className={className}
+      style={{ width: s, height: s, objectFit: 'contain', display: 'block', ...style }}
+    />
+  );
+}
+export function SlackLogo(p: IconProps) {
+  return <LogoImg src="/logos/slack.png" alt="Slack" {...p} />;
+}
+export function TeamsLogo(p: IconProps) {
+  return <LogoImg src="/logos/teams.png" alt="Microsoft Teams" {...p} />;
+}
+export function ClaudeLogo(p: IconProps) {
+  return <LogoImg src="/logos/claude.png" alt="Claude" {...p} />;
+}
+
 /* ---- Generic UI glyphs (stroke, currentColor) ------------------------- */
 export function SearchIcon({ size = 16, className, style }: IconProps) {
   return (
@@ -71,6 +97,25 @@ export function SendIcon({ size = 18, className, style }: IconProps) {
   );
 }
 
+/* ---- Sony IP360 Advisor app identity (distinct from Slack/Teams logos) --- */
+/** Connected-nodes mark for the Sony IP360 Advisor app avatar. */
+export function SonyAdvisorMark({ size = 22, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <defs>
+        <linearGradient id="ip360grad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#5b8def" />
+          <stop offset="100%" stopColor="#8b6cf0" />
+        </linearGradient>
+      </defs>
+      <circle cx="6" cy="7" r="2.4" fill="url(#ip360grad)" />
+      <circle cx="17.5" cy="6" r="2.1" fill="url(#ip360grad)" opacity="0.85" />
+      <circle cx="12" cy="17" r="2.6" fill="url(#ip360grad)" />
+      <path d="M6 7 12 17 17.5 6" stroke="url(#ip360grad)" strokeWidth="1.4" fill="none" opacity="0.7" />
+    </svg>
+  );
+}
+
 /* ---- Slack rail / sidebar glyphs -------------------------------------- */
 /** Slack four-color hash mark (geometric approximation). */
 export function SlackMark({ size = 20, className, style }: IconProps) {
@@ -110,6 +155,56 @@ export function DotsIcon({ size = 16, className, style }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
       <circle cx="5" cy="12" r="2" /><circle cx="12" cy="12" r="2" /><circle cx="19" cy="12" r="2" />
+    </svg>
+  );
+}
+export function ThreadsIcon({ size = 16, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <path d="M22 12a10 10 0 1 1-4.5-8.4" /><path d="M22 4v5h-5" />
+    </svg>
+  );
+}
+export function HeadphonesIcon({ size = 16, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <path d="M4 14v-2a8 8 0 0 1 16 0v2" /><rect x="2.5" y="13" width="4" height="6" rx="1.5" /><rect x="17.5" y="13" width="4" height="6" rx="1.5" />
+    </svg>
+  );
+}
+export function RecapIcon({ size = 16, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <path d="M4 5h16M4 12h10M4 19h16" /><circle cx="18" cy="12" r="2.5" />
+    </svg>
+  );
+}
+export function DirectoryIcon({ size = 16, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <rect x="4" y="4" width="16" height="16" rx="2" /><line x1="9" y1="4" x2="9" y2="20" />
+    </svg>
+  );
+}
+export function StarIcon({ size = 16, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <path d="M12 3l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 18.8 6.2 21l1.1-6.5L2.6 9.8l6.5-.9z" />
+    </svg>
+  );
+}
+export function ComposeIcon({ size = 16, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" />
+    </svg>
+  );
+}
+export function GearIcon({ size = 16, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1" />
     </svg>
   );
 }
