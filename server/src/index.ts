@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { config } from './config.js';
 import { chatRouter } from './routes/chat.js';
+import { activationRouter } from './routes/activation.js';
 import { getSalesforceConnection } from './services/salesforce.js';
 
 const app = express();
@@ -25,6 +26,7 @@ app.get('/api/health', async (_req, res) => {
 });
 
 app.use('/api', chatRouter);
+app.use('/api', activationRouter);
 
 app.use(express.static(clientDistPath));
 
