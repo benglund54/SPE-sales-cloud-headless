@@ -63,6 +63,21 @@ test('ChatGPT and Google Chat source files are unchanged from baseline', () => {
   }
 });
 
+// The legacy root experience shell must not change as scenes are added.
+// Fingerprints captured at the start of HX-2 (App unchanged since baseline).
+const LEGACY_ROOT_FINGERPRINTS: Record<string, string> = {
+  'client/src/App.tsx':
+    '9b97d54cf81e0873c811d032e5e2602e3037c45129e7fc47a58b940567f66cca',
+  'client/src/App.css':
+    '47265f6a226db855db3454401a5278928400d4f660b5a238166360318923b18b',
+};
+
+test('legacy root App shell is unchanged', () => {
+  for (const [rel, expected] of Object.entries(LEGACY_ROOT_FINGERPRINTS)) {
+    assert.equal(sha256(read(rel)), expected, `${rel} changed — legacy root must stay intact`);
+  }
+});
+
 test('two deterministic reads produce identical business values', async () => {
   const a = (await import('../shared/src/sonyActivation.ts')).SONY_ACTIVATION_CONTEXT;
   const b = (await import(`../shared/src/sonyActivation.ts?x=${Date.now()}`)).SONY_ACTIVATION_CONTEXT;

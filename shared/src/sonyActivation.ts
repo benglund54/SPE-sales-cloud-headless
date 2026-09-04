@@ -51,6 +51,30 @@ export interface Audience {
   whitespaceScore: number;
 }
 
+/**
+ * One line of supporting evidence, e.g. game-play activity, film/streaming
+ * affinity, or soundtrack-listening affinity. `score` reuses an existing
+ * qualified signal from the audience model (no new invented metric).
+ */
+export interface EvidenceSignal {
+  /** Human-readable evidence category. */
+  label: string;
+  /** Qualified signal value (0–100 scale, from the governed model). */
+  score: number;
+  /** Short qualitative descriptor for executive readability. */
+  detail: string;
+}
+
+/**
+ * Release posture for a Spider-Man property referenced by the opportunity.
+ * `status` deliberately avoids invented dates; "In Development" is the only
+ * permitted forward-looking descriptor.
+ */
+export interface ReleaseMoment {
+  title: string;
+  status: 'Active release moment' | 'In Development';
+}
+
 export interface Approvals {
   sonyPictures: 'Pending';
   playStation: 'Pending';
@@ -106,6 +130,14 @@ export interface Provenance {
   sourcedFactKeys: string[];
   recommendationKeys: string[];
   pendingDecisionKeys: string[];
+  /**
+   * Truthful internal provenance value, preserved for accuracy. The UI shows
+   * `displayLabel` (polished, executive-safe); `internalValue` is retained for
+   * internal record-keeping and MUST NOT be rendered to the audience.
+   */
+  internalValue: string;
+  /** Polished, audience-facing provenance label. */
+  displayLabel: string;
 }
 
 export interface SonyActivationContext {
@@ -118,6 +150,12 @@ export interface SonyActivationContext {
 
   // Audience & signals
   audience: Audience;
+
+  // Supporting evidence lines (game activity, film/streaming, soundtrack)
+  evidenceSignals: EvidenceSignal[];
+
+  // Release posture for referenced Spider-Man properties
+  releaseMoments: ReleaseMoment[];
 
   // Approved narrative wording
   whitespaceRationale: string;
@@ -175,6 +213,29 @@ const rawContext: SonyActivationContext = {
     crossAffinity: 84.0,
     whitespaceScore: 53.9,
   },
+
+  evidenceSignals: [
+    {
+      label: 'Spider-Man game activity',
+      score: 82.3,
+      detail: 'Sustained EMEA player engagement across the Spider-Man game portfolio.',
+    },
+    {
+      label: 'Film & streaming affinity',
+      score: 84.0,
+      detail: 'Strong cross-affinity between EMEA players and Spider-Man film and streaming viewing.',
+    },
+    {
+      label: 'Soundtrack-listening affinity',
+      score: 53.9,
+      detail: 'Meaningful whitespace in Spider-Man soundtrack and artist listening among the cohort.',
+    },
+  ],
+
+  releaseMoments: [
+    { title: 'Spider-Man: Brand New Day', status: 'Active release moment' },
+    { title: 'Beyond the Spider-Verse', status: 'In Development' },
+  ],
 
   whitespaceRationale:
     'EMEA is only the number-three region in modeled Spider-Man revenue, but it ranks first among qualified opportunities because eligible audience size, engagement, cross-affinity, whitespace, and timing are currently aligned.',
@@ -307,6 +368,8 @@ const rawContext: SonyActivationContext = {
     ],
     recommendationKeys: ['executiveRecommendation', 'proposedFanExperience', 'businessHypothesis'],
     pendingDecisionKeys: ['decisions.shared', 'decisions.playstation', 'decisions.ipCouncil'],
+    internalValue: 'Governed CRM signals (deterministic Sony Day baseline)',
+    displayLabel: 'Governed CRM signals',
   },
 };
 
@@ -381,6 +444,28 @@ export function validateSonyActivationContext(input: unknown): ValidationResult 
     if (a.whitespaceScore !== 53.9) push('audience.whitespaceScore must be 53.9');
   }
 
+  // Evidence signals — exactly three labeled lines with numeric scores
+  if (!Array.isArray(c.evidenceSignals) || c.evidenceSignals.length !== 3) {
+    push('evidenceSignals must have exactly 3 entries');
+  } else if (!c.evidenceSignals.every((s: any) => isNonEmptyString(s?.label) && typeof s?.score === 'number' && isNonEmptyString(s?.detail))) {
+    push('each evidenceSignal needs label, numeric score, and detail');
+  }
+
+  // Release moments — Brand New Day active; only "In Development" is a valid
+  // forward-looking status (no invented dates).
+  if (!Array.isArray(c.releaseMoments) || c.releaseMoments.length === 0) {
+    push('releaseMoments missing');
+  } else {
+    const bnd = c.releaseMoments.find((r: any) => r?.title === 'Spider-Man: Brand New Day');
+    if (!bnd || bnd.status !== 'Active release moment') {
+      push('Brand New Day must be an "Active release moment"');
+    }
+    const allowed = new Set(['Active release moment', 'In Development']);
+    if (!c.releaseMoments.every((r: any) => allowed.has(r?.status))) {
+      push('releaseMoments status must be "Active release moment" or "In Development"');
+    }
+  }
+
   // Approved wording present
   if (!isNonEmptyString(c.whitespaceRationale)) push('whitespaceRationale missing');
   if (!isNonEmptyString(c.proposedFanExperience)) push('proposedFanExperience missing');
@@ -452,6 +537,15 @@ export function validateSonyActivationContext(input: unknown): ValidationResult 
     if (!s.claude || !Array.isArray(s.claude.sectionOrder) || s.claude.sectionOrder.length !== 13) {
       push('scenes.claude.sectionOrder must have exactly 13 sections');
     }
+  }
+
+  // Provenance — polished display label present; internal value preserved
+  const p = c.provenance;
+  if (!p || typeof p !== 'object') {
+    push('provenance missing');
+  } else {
+    if (!isNonEmptyString(p.displayLabel)) push('provenance.displayLabel missing');
+    if (!isNonEmptyString(p.internalValue)) push('provenance.internalValue missing');
   }
 
   return { valid: errors.length === 0, errors };

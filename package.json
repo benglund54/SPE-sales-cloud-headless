@@ -10,7 +10,7 @@
     "build": "npm run build -w client && npm run build -w server",
     "heroku-postbuild": "npm run build",
     "start": "npm run start -w server",
-    "test": "node --import tsx --test tests/*.test.ts"
+    "test": "node --import tsx --test tests/*.test.ts tests/*.test.tsx"
   },
   "devDependencies": {
     "concurrently": "^9.1.0"

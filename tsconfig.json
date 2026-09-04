@@ -1,0 +1,12 @@
+{
+  "//": "Root tsconfig used by the tsx test runner only (node --import tsx). It sets the automatic JSX runtime for test files and the client/shared sources they import. The production build ignores this file: client/server/shared are each built with an explicit `tsc -p <package>/tsconfig.json`.",
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "paths": { "shared/*": ["./shared/*"] }
+  },
+  "include": ["tests/**/*", "client/src/**/*", "shared/src/**/*"]
+}

@@ -1,0 +1,318 @@
+/* Sony Headless 360 — Slack scene (HX-2).
+   Scoped under .sony-slack / .sony-state so it never affects the legacy app. */
+
+.sony-slack,
+.sony-state {
+  --sony-bg: #10101a;
+  --sony-surface: #1a1a24;
+  --sony-surface-2: #21212e;
+  --sony-border: #2f2f3d;
+  --sony-text: #e9e9f0;
+  --sony-text-dim: #a3a3b5;
+  --sony-accent: #6b8afd;
+  --sony-accent-2: #8a6bfd;
+  --sony-active: #2eb67d;
+  --sony-warn: #e0a52e;
+  --sony-danger: #e05a5a;
+  --sony-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--sony-font);
+  color: var(--sony-text);
+}
+
+/* ---- Loading / error states ------------------------------------------- */
+.sony-state {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--sony-bg);
+}
+.sony-state-title { font-size: 20px; font-weight: 600; }
+.sony-state-detail { font-size: 14px; color: var(--sony-text-dim); }
+.sony-state-error .sony-state-title { color: var(--sony-danger); }
+
+/* ---- Slack shell ------------------------------------------------------- */
+.sony-slack {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  background: var(--sony-bg);
+  overflow: hidden;
+}
+.sony-slack-rail {
+  width: 74px;
+  flex-shrink: 0;
+  background: #0b0b12;
+  border-right: 1px solid var(--sony-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 0;
+  gap: 14px;
+}
+.sony-slack-rail-wordmark {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-align: center;
+  color: var(--sony-text-dim);
+  line-height: 1.2;
+}
+.sony-slack-rail-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--sony-surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--sony-text-dim);
+}
+.sony-slack-rail-active {
+  background: linear-gradient(135deg, var(--sony-accent), var(--sony-accent-2));
+  color: #fff;
+}
+
+.sony-slack-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.sony-slack-header {
+  height: 56px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--sony-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: var(--sony-surface);
+}
+.sony-slack-header-left { display: flex; align-items: baseline; gap: 12px; }
+.sony-slack-workspace { font-weight: 700; font-size: 15px; }
+.sony-slack-channel { font-size: 15px; color: var(--sony-text-dim); }
+.sony-slack-wordmark {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--sony-text-dim);
+}
+
+.sony-slack-messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  padding: 28px 24px;
+}
+
+.sony-slack-composer { flex-shrink: 0; padding: 0 24px 20px; }
+.sony-slack-composer-box {
+  border: 1px solid var(--sony-border);
+  border-radius: 10px;
+  background: var(--sony-surface);
+  padding: 14px 16px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.sony-slack-composer-placeholder { color: var(--sony-text-dim); font-size: 14px; }
+
+/* ---- Collaboration artifact ------------------------------------------- */
+.sony-collab {
+  width: 100%;
+  max-width: 900px;
+  background: var(--sony-surface);
+  border: 1px solid var(--sony-border);
+  border-left: 4px solid var(--sony-accent);
+  border-radius: 14px;
+  padding: 28px 32px 24px;
+}
+.sony-collab-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.sony-collab-agent { display: flex; align-items: center; gap: 10px; }
+.sony-collab-agent-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--sony-accent), var(--sony-accent-2));
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sony-collab-agent-meta { display: flex; align-items: center; gap: 8px; }
+.sony-collab-agent-name { font-weight: 700; font-size: 15px; }
+.sony-collab-agent-app {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--sony-text-dim);
+  border: 1px solid var(--sony-border);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+.sony-collab-artifact-tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--sony-accent);
+  background: rgba(107, 138, 253, 0.12);
+  border: 1px solid rgba(107, 138, 253, 0.35);
+  border-radius: 999px;
+  padding: 4px 12px;
+}
+
+.sony-collab-title {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-bottom: 8px;
+}
+.sony-collab-source {
+  font-size: 12px;
+  color: var(--sony-text-dim);
+  margin-bottom: 18px;
+}
+
+.sony-collab-section { margin-bottom: 18px; }
+.sony-collab-h2 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--sony-text-dim);
+  margin-bottom: 8px;
+}
+.sony-collab-section p { font-size: 15px; line-height: 1.55; color: var(--sony-text); }
+.sony-collab-summary { font-weight: 600; margin-bottom: 6px; }
+
+.sony-collab-release-list { list-style: none; display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+.sony-collab-release { display: flex; align-items: center; gap: 8px; }
+.sony-collab-release-title { font-size: 14px; font-weight: 600; }
+.sony-collab-chip {
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+.sony-chip-active { background: rgba(46, 182, 125, 0.15); color: #4bd69b; border: 1px solid rgba(46, 182, 125, 0.4); }
+.sony-chip-dev { background: rgba(163, 163, 181, 0.12); color: var(--sony-text-dim); border: 1px solid var(--sony-border); }
+
+.sony-collab-metrics { display: flex; gap: 16px; }
+.sony-metric {
+  flex: 1;
+  background: var(--sony-surface-2);
+  border: 1px solid var(--sony-border);
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.sony-metric-value { font-size: 28px; font-weight: 800; color: #fff; }
+.sony-metric-label { font-size: 13px; font-weight: 600; }
+.sony-metric-sub { font-size: 12px; color: var(--sony-text-dim); }
+
+.sony-collab-evidence { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.sony-evidence-head { display: flex; justify-content: space-between; align-items: baseline; }
+.sony-evidence-label { font-size: 14px; font-weight: 600; }
+.sony-evidence-score { font-size: 14px; font-weight: 700; color: var(--sony-accent); }
+.sony-evidence-bar {
+  height: 6px;
+  background: var(--sony-surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 6px 0 4px;
+}
+.sony-evidence-bar-fill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--sony-accent), var(--sony-accent-2));
+}
+.sony-evidence-detail { font-size: 13px; color: var(--sony-text-dim); }
+
+.sony-collab-opcos { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.sony-opco {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--sony-surface-2);
+  border: 1px solid var(--sony-border);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+.sony-opco-name { font-size: 15px; font-weight: 600; }
+.sony-opco-role { font-size: 12px; font-weight: 600; border-radius: 999px; padding: 3px 10px; }
+.sony-opco-lead { background: rgba(46, 182, 125, 0.15); color: #4bd69b; }
+.sony-opco-pending { background: rgba(224, 165, 46, 0.15); color: var(--sony-warn); }
+
+.sony-collab-lifecycle {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  background: var(--sony-surface-2);
+  border: 1px solid var(--sony-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.sony-lifecycle-row { display: flex; flex-direction: column; gap: 2px; }
+.sony-lifecycle-key { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--sony-text-dim); }
+.sony-lifecycle-val { font-size: 14px; font-weight: 600; }
+.sony-lifecycle-warn { color: var(--sony-warn); }
+.sony-lifecycle-arrow { color: var(--sony-text-dim); font-size: 18px; }
+
+.sony-collab-decisions { padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.sony-collab-decisions li { font-size: 15px; line-height: 1.5; }
+
+.sony-collab-banner {
+  margin-top: 4px;
+  background: rgba(224, 165, 46, 0.1);
+  border: 1px solid rgba(224, 165, 46, 0.4);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--sony-warn);
+  text-align: center;
+}
+
+.sony-collab-actions { margin-top: 18px; display: flex; }
+.sony-activation-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 8px;
+  padding: 11px 18px;
+  background: linear-gradient(135deg, var(--sony-accent), var(--sony-accent-2));
+  color: #fff;
+  border: 1px solid transparent;
+}
+.sony-activation-link-icon { font-size: 15px; }
+.sony-activation-link-disabled {
+  background: var(--sony-surface-2);
+  color: var(--sony-text-dim);
+  border: 1px solid var(--sony-border);
+  cursor: not-allowed;
+}
+.sony-activation-link-note {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+}

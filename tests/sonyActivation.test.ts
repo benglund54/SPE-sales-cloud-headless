@@ -102,6 +102,37 @@ test('Claude scene has the 13-section deterministic briefing order', () => {
   assert.equal(SONY_ACTIVATION_CONTEXT.scenes.claude.sectionOrder.length, 13);
 });
 
+test('three evidence signals (game activity, film/streaming, soundtrack)', () => {
+  const sigs = SONY_ACTIVATION_CONTEXT.evidenceSignals;
+  assert.equal(sigs.length, 3);
+  const labels = sigs.map((s) => s.label.toLowerCase());
+  assert.ok(labels.some((l) => l.includes('game')));
+  assert.ok(labels.some((l) => l.includes('film') || l.includes('streaming')));
+  assert.ok(labels.some((l) => l.includes('soundtrack')));
+  assert.ok(sigs.every((s) => typeof s.score === 'number'));
+});
+
+test('release moments: Brand New Day active; Beyond the Spider-Verse in development, no dates', () => {
+  const moments = SONY_ACTIVATION_CONTEXT.releaseMoments;
+  const bnd = moments.find((m) => m.title === 'Spider-Man: Brand New Day');
+  const bsv = moments.find((m) => m.title === 'Beyond the Spider-Verse');
+  assert.equal(bnd?.status, 'Active release moment');
+  assert.equal(bsv?.status, 'In Development');
+  // No invented dates in any release-moment status.
+  for (const m of moments) {
+    assert.equal(/\b(19|20)\d{2}\b/.test(m.status), false, `date leaked in ${m.title}`);
+    assert.equal(/upcoming|coming soon|releases? on|premier/i.test(m.status), false);
+  }
+});
+
+test('provenance display label is polished; internal value preserved separately', () => {
+  const p = SONY_ACTIVATION_CONTEXT.provenance;
+  assert.equal(p.displayLabel, 'Governed CRM signals');
+  assert.ok(p.internalValue.length > 0);
+  // The audience-facing display label must not contain forbidden language.
+  assert.equal(/fallback|synthetic|illustrative|mock|demo data/i.test(p.displayLabel), false);
+});
+
 test('no credential/token/password/session/email/PII-shaped keys exist', () => {
   const offenders = findForbiddenKeys(SONY_ACTIVATION_CONTEXT);
   assert.deepEqual(offenders, [], `forbidden keys found: ${offenders.join(', ')}`);
