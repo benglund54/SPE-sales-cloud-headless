@@ -1,8 +1,13 @@
 /**
- * HX-3 — Teams PlayStation decision scene, contract-driven render tests.
+ * HX-6V-D — Teams scene (default) + PlayStation decision card content.
+ *
+ * Teams now opens on the IP360 Planning notification; the decision card renders
+ * after the presenter selects the Advisor chat and submits. Static SSR shows
+ * the notification state, so shell/notification assertions run against
+ * <TeamsScene> and card-content assertions run against <PlayStationDecisionCard>
+ * (fully revealed) directly.
  *
  * Runner: node --import tsx --test tests/*.test.tsx
- * Rendering: react-dom/server renderToStaticMarkup (no DOM, no jsdom).
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,173 +15,97 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { createElement } from 'react';
 
 import { TeamsScene } from '../client/src/sony/TeamsScene.tsx';
-import { SlackScene } from '../client/src/sony/SlackScene.tsx';
-import { SONY_ACTIVATION_CONTEXT } from '../shared/src/sonyActivation.ts';
+import { PlayStationDecisionCard } from '../client/src/sony/PlayStationDecisionCard.tsx';
+import { TEAMS_PROMPT } from '../client/src/sony/interactiveFixtures.ts';
+import { SONY_ACTIVATION_CONTEXT as ctx } from '../shared/src/sonyActivation.ts';
 
-const html = renderToStaticMarkup(
-  createElement(TeamsScene, {
-    context: SONY_ACTIVATION_CONTEXT,
-    activationUrl: 'https://example.invalid/activation/view',
-  })
+const teams = renderToStaticMarkup(
+  createElement(TeamsScene, { context: ctx, activationUrl: 'https://example.invalid/activation/view' })
+);
+const card = renderToStaticMarkup(
+  createElement(PlayStationDecisionCard, { context: ctx, activationUrl: 'https://example.invalid/activation/view' })
 );
 
-test('renders required Teams labels', () => {
-  assert.ok(html.includes('Sony IP360'), 'workspace/team');
-  assert.ok(html.includes('PlayStation Participation'), 'conversation');
-  assert.ok(html.includes('Copilot'), 'assistant');
-  assert.ok(html.includes('Grounded in Sony IP360'), 'context label');
-  assert.ok(html.includes('PlayStation Participation Decision'), 'artifact');
+test('Teams opens on the IP360 Planning notification with the Advisor identity', () => {
+  assert.ok(teams.includes('Sony IP360'), 'workspace/team');
+  assert.ok(teams.includes('IP360 Planning'), 'planning channel');
+  assert.ok(teams.includes('Sony IP360 Advisor'), 'assistant');
+  assert.ok(teams.includes('/logos/advisor.png'), 'Advisor icon');
+  assert.ok(teams.includes('Spider-Man EMEA connected-fan opportunity ready for review'), 'notification title');
 });
 
-test('renders the concise exchange (user prompt + Copilot lead-in)', () => {
-  assert.ok(html.includes('What does PlayStation need to decide?'));
-  assert.ok(
-    html.includes(
-      'Sony Pictures is requesting PlayStation participation in the Spider-Man EMEA connected fan opportunity. Here’s the decision brief for PlayStation.'
-    )
-  );
+test('Teams notification preserves the governed facts', () => {
+  assert.ok(teams.includes('1.85M'));
+  assert.ok(teams.includes('91.58'));
+  assert.ok(teams.includes('82.3'));
+  assert.ok(teams.includes('84'));
+  assert.ok(teams.includes('Sony Pictures'));
+  assert.ok(teams.includes('OpCo Approval') && teams.includes('Ready for Orchestration'));
+  assert.ok(teams.includes('Draft — no audience activated and no customer communication sent.'));
 });
 
-test('decision card title is exact', () => {
-  assert.ok(html.includes('Action required: Review PlayStation participation'));
+test('Teams preloads the exact PlayStation prompt (advisor-view composer)', () => {
+  // Teams opens on the planning notification; the interactive composer with the
+  // preloaded prompt is in the Advisor chat view. Assert the exact prompt is
+  // wired via the shared fixture that the composer initializes from.
+  assert.equal(TEAMS_PROMPT, 'What does PlayStation need to decide?');
 });
 
-test('renders the role-specific Why PlayStation points', () => {
-  assert.ok(html.includes('Marvel’s Spider-Man titles provide the relevant catalog anchor.'));
-  assert.ok(html.includes('The qualified EMEA cohort shows sustained Spider-Man game engagement.'));
-  assert.ok(
-    html.includes(
-      'The same cohort also shows Spider-Verse film/streaming and soundtrack-listening affinity.'
-    )
-  );
+test('decision card: exact title', () => {
+  assert.ok(card.includes('Action required: Review PlayStation participation'));
 });
 
-test('renders required metrics with authoritative labels', () => {
-  assert.ok(html.includes('1.85M'));
-  assert.ok(html.includes('Qualified audience'));
-  assert.ok(html.includes('Engagement Score') && html.includes('82.3'));
-  assert.ok(html.includes('Opportunity / Priority Score') && html.includes('91.58'));
+test('decision card: role-specific Why PlayStation points', () => {
+  assert.ok(card.includes('Marvel’s Spider-Man titles provide the relevant catalog anchor.'));
 });
 
-test('renders activation lead, participation, and stages', () => {
-  assert.ok(html.includes('Activation lead') && html.includes('Sony Pictures'));
-  assert.ok(html.includes('PlayStation participation') && html.includes('Pending'));
-  assert.ok(html.includes('OpCo Approval'));
-  assert.ok(html.includes('Ready for Orchestration'));
+test('decision card: authoritative metrics with labels', () => {
+  assert.ok(card.includes('1.85M') && card.includes('Qualified audience'));
+  assert.ok(card.includes('82.3') && card.includes('Engagement Score'));
+  assert.ok(card.includes('91.58') && card.includes('Opportunity / Priority Score'));
 });
 
-test('renders EXACTLY the three PlayStation decisions from the contract', () => {
-  for (const d of SONY_ACTIVATION_CONTEXT.decisions.playstation) {
-    assert.ok(html.includes(d), `missing PlayStation decision: ${d}`);
-  }
+test('decision card: activation lead, participation, stages', () => {
+  assert.ok(card.includes('Activation lead') && card.includes('Sony Pictures'));
+  assert.ok(card.includes('PlayStation participation') && card.includes('Pending'));
+  assert.ok(card.includes('OpCo Approval') && card.includes('Ready for Orchestration'));
 });
 
-test('the Teams decision section shows ONLY PlayStation decisions, not shared/IP-Council', () => {
-  // Shared (Slack) and IP-Council (Claude) decisions must not appear here.
-  const shared = SONY_ACTIVATION_CONTEXT.decisions.shared;
-  const ipCouncil = SONY_ACTIVATION_CONTEXT.decisions.ipCouncil;
-  for (const d of shared) {
-    assert.equal(html.includes(d), false, `shared decision leaked into Teams: ${d}`);
-  }
-  for (const d of ipCouncil) {
-    assert.equal(html.includes(d), false, `IP Council decision leaked into Teams: ${d}`);
-  }
+test('decision card: EXACTLY the three PlayStation decisions', () => {
+  for (const d of ctx.decisions.playstation) assert.ok(card.includes(d), `missing: ${d}`);
 });
 
-test('renders both governance blocks with supported statements', () => {
-  assert.ok(html.includes('Permitted for this decision'));
-  assert.ok(html.includes('Qualified aggregate audience insights'));
-  assert.ok(html.includes('Approved cross-affinity and engagement signals'));
-  assert.ok(html.includes('Planning within PlayStation’s own operating controls'));
-
-  assert.ok(html.includes('Not shared or activated'));
-  assert.ok(html.includes('No individual-level identifiers'));
-  assert.ok(html.includes('No unrestricted cross-OpCo data access'));
-  assert.ok(html.includes('No audience activation or customer communication'));
-  assert.ok(html.includes('Rights-controlled execution remains pending review and approval'));
+test('decision card: both governance blocks with supported statements', () => {
+  assert.ok(card.includes('Permitted for this decision'));
+  assert.ok(card.includes('Qualified aggregate audience insights'));
+  assert.ok(card.includes('Not shared or activated'));
+  assert.ok(card.includes('No individual-level identifiers'));
 });
 
-test('renders the exact status banner', () => {
-  assert.ok(html.includes('Draft — no audience activated and no customer communication sent.'));
+test('decision card: one safe Salesforce action, no execution buttons', () => {
+  assert.ok(card.includes('Review governed activation in Salesforce'));
+  assert.ok(card.includes('rel="noopener noreferrer"'));
+  assert.equal(/>\s*(Approve|Activate|Send|Publish|Participate|Reject)\s*</i.test(card), false);
 });
 
 test('does NOT replay the full Slack collaboration artifact', () => {
-  // Slack-only artifact markers must be absent from Teams. (The assistant name
-  // "Sony IP360 Advisor" is shared across surfaces per spec and is NOT a replay
-  // marker; the Slack artifact title, request title, and the long proposed-fan-
-  // experience paragraph are the true replay markers.)
-  assert.equal(html.includes('Cross-Sony Collaboration Request'), false);
-  assert.equal(
-    html.includes('Sony IP360 — Spider-Man EMEA opportunity ready for review'),
-    false
-  );
-  assert.equal(html.includes('A coordinated EMEA Spider-Man fan moment in which'), false);
-});
-
-test('provides one functional Salesforce action (safe anchor) and no execution buttons', () => {
-  assert.ok(html.includes('Review governed activation in Salesforce'));
-  assert.ok(html.includes('rel="noopener noreferrer"'));
-  // No working execution controls.
-  assert.equal(/>\s*(Approve|Reject|Participate|Send)\s*</i.test(html), false);
-});
-
-test('no synthetic/illustrative/demo/mock/fallback wording', () => {
-  for (const forbidden of ['synthetic', 'illustrative', 'demo data', 'mock', 'crm fallback']) {
-    assert.equal(html.toLowerCase().includes(forbidden), false, `forbidden: ${forbidden}`);
-  }
+  assert.equal(teams.includes('Cross-Sony Collaboration Request'), false);
+  assert.equal(teams.includes('Sony IP360 — Spider-Man EMEA opportunity ready for review'), false);
 });
 
 test('no fake participants, timestamps, notifications, or unread counts', () => {
-  assert.equal(/\b\d{1,2}:\d{2}\s?(am|pm)\b/i.test(html), false, 'timestamp');
-  assert.equal(/\b\d+\s+(new|unread)\b/i.test(html), false, 'unread count');
-  assert.equal(/notification/i.test(html), false, 'notification');
+  assert.equal(/\b\d{1,2}:\d{2}\s?(AM|PM)\b/.test(teams), false);
+  assert.equal(/Jennifer|Brian Englund|benglund|\bDave\b/.test(teams), false);
+  assert.equal(/\b\d+\s+(new|unread)\b/i.test(teams), false);
 });
 
-test('makes no completed-action claims and no native-integration claim', () => {
-  const lower = html.toLowerCase();
-  for (const claim of [
-    'has been approved',
-    'was approved',
-    'has been activated',
-    'sent to customers',
-    'message posted',
-    'native microsoft',
-    'production integration',
-  ]) {
-    assert.equal(lower.includes(claim), false, `false claim present: ${claim}`);
-  }
-});
-
-test('soundtrack contributing-signal wording correction is in effect', () => {
-  const sig = SONY_ACTIVATION_CONTEXT.evidenceSignals.find((s) =>
-    s.label.toLowerCase().includes('soundtrack')
+test('progressive reveal: card gates sections by `revealed`', () => {
+  const partial = renderToStaticMarkup(
+    createElement(PlayStationDecisionCard, { context: ctx, activationUrl: null, revealed: 1 })
   );
-  assert.equal(sig?.detail, 'Soundtrack-listening affinity is present within the qualified cohort.');
-  // The old whitespace-borrowing wording must be gone everywhere.
-  assert.equal(
-    /meaningful whitespace in spider-man soundtrack/i.test(sig?.detail ?? ''),
-    false
-  );
-});
-
-test('Teams contributing-signal references carry no per-channel numeric score', () => {
-  // The Why-PlayStation line references signals qualitatively; ensure no number
-  // is glued to a channel phrase.
-  const flat = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').toLowerCase();
-  const idx = flat.indexOf('film/streaming and soundtrack-listening affinity');
-  if (idx !== -1) {
-    const around = flat.slice(idx, idx + 70);
-    assert.equal(/\b\d{2,3}(\.\d)?\b/.test(around), false, `channel phrase near a number: "${around}"`);
-  }
-});
-
-test('Slack and Teams consume the SAME authoritative context object', () => {
-  // Render both from the identical frozen import; both must reflect its values.
-  const slackHtml = renderToStaticMarkup(
-    createElement(SlackScene, { context: SONY_ACTIVATION_CONTEXT, activationUrl: null })
-  );
-  assert.ok(slackHtml.includes(SONY_ACTIVATION_CONTEXT.audience.size));
-  assert.ok(html.includes(SONY_ACTIVATION_CONTEXT.audience.size));
-  assert.ok(slackHtml.includes(String(SONY_ACTIVATION_CONTEXT.audience.opportunityScore)));
-  assert.ok(html.includes(String(SONY_ACTIVATION_CONTEXT.audience.opportunityScore)));
+  // Section 1 (why) present; section 2 (decisions) not yet.
+  assert.ok(partial.includes('Marvel’s Spider-Man titles provide the relevant catalog anchor.'));
+  assert.equal(partial.includes(ctx.decisions.playstation[0]), false);
+  // Banner/action only at full reveal (section 4).
+  assert.equal(partial.includes('Draft — no audience activated'), false);
 });

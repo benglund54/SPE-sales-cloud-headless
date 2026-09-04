@@ -725,3 +725,74 @@
 .cla .sony-brief-risk-chip { background: #fbfaf6; border-color: #eae7dc; }
 .cla .sony-brief-banner { background: #faf3e6 !important; border-color: #ecdcb8 !important; }
 .cla .sony-brief-grid { gap: 20px; }
+
+/* ======================================================================= */
+/* HX-6V-D interactive elements                                            */
+/* ======================================================================= */
+
+/* ---- Teams: planning-channel notification + interactive composer ------- */
+.tms-conv-avatar-plain { background: #7b83eb; color: #fff; font-size: 12px; font-weight: 700; }
+.tms-chat-btn { display: flex; align-items: center; gap: 10px; width: 100%; background: transparent; border: none; padding: 0; text-align: left; cursor: pointer; }
+.tms-notify {
+  margin-top: 4px; max-width: 640px; background: #fff; border: 1px solid #e6e8ef;
+  border-radius: 10px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(20,30,60,0.07);
+}
+.tms-notify-tag { font-size: 11px; font-weight: 700; color: #b5791a; background: rgba(181,121,26,0.1); border-radius: 999px; padding: 3px 10px; }
+.tms-notify-title { font-size: 16px; font-weight: 800; margin: 8px 0 4px; color: #242424; }
+.tms-notify-sub { font-size: 13px; color: #5b5b5b; margin-bottom: 10px; }
+.tms-notify-metrics { display: flex; flex-wrap: wrap; gap: 6px 8px; margin-bottom: 10px; }
+.tms-notify-metrics span { font-size: 12px; background: #f4f5fb; border: 1px solid #e6e8ef; border-radius: 6px; padding: 4px 9px; }
+.tms-notify-lifecycle { font-size: 12px; color: #5b5b5b; margin-bottom: 10px; }
+.tms-notify-banner { font-size: 12.5px; font-weight: 600; color: #b5791a; background: rgba(181,121,26,0.08); border: 1px solid rgba(181,121,26,0.35); border-radius: 6px; padding: 8px 12px; text-align: center; margin-bottom: 12px; }
+.tms-notify-cta { font-size: 13px; font-weight: 600; color: #fff; background: #5b5fc7; border: none; border-radius: 6px; padding: 9px 16px; cursor: pointer; }
+.tms-progress { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #5b5b5b; margin: 6px 0; }
+.tms-progress-dot { width: 8px; height: 8px; border-radius: 50%; background: #5b5fc7; animation: sony-pulse 1s ease-in-out infinite; }
+.tms-composer-field {
+  flex: 1; border: none; outline: none; resize: none; font-family: var(--sony-font);
+  font-size: 14px; color: #242424; background: transparent; line-height: 1.4; max-height: 88px;
+}
+.tms-composer-sendbtn { background: transparent; border: none; color: #5b5fc7; cursor: pointer; padding: 4px; display: inline-flex; }
+.tms-composer-sendbtn:disabled { color: #b8bac6; cursor: default; }
+@media (prefers-reduced-motion: reduce) { .tms-progress-dot { animation: none; } }
+
+/* ---- Claude: interactive composer + writing state ---------------------- */
+.cla-writing { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #9a988e; margin-top: 10px; font-style: italic; }
+.cla-writing-dot { width: 7px; height: 7px; border-radius: 50%; background: #d97757; animation: sony-pulse 1s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .cla-writing-dot { animation: none; } }
+.cla-composer-field {
+  width: 100%; border: none; outline: none; resize: none; background: transparent;
+  font-family: var(--sony-font); font-size: 14px; color: #2b2a27; line-height: 1.5; margin-bottom: 10px;
+}
+.cla-composer-send { margin-left: auto; width: 28px; height: 28px; border-radius: 8px; border: none; background: #d97757; color: #fff; cursor: pointer; font-size: 15px; }
+.cla-composer-send:disabled { background: #e6c3b3; cursor: default; }
+
+/* ---- Slack: workarea (channel + bot panel) + interactive bot entry ------ */
+.slk-workarea { flex: 1; min-width: 0; min-height: 0; display: flex; }
+.slk-channel-appbtn { display: flex; align-items: center; gap: 8px; width: 100%; background: transparent; border: none; padding: 0; color: inherit; font: inherit; cursor: pointer; text-align: left; }
+
+/* ---- Slackbot right-side panel ----------------------------------------- */
+.slk-bot {
+  width: 380px; flex-shrink: 0; background: #fff; border-left: 1px solid #e8e8e8;
+  display: flex; flex-direction: column; min-height: 0;
+}
+.slk-bot-head { display: flex; align-items: center; gap: 8px; height: 49px; flex-shrink: 0; padding: 0 14px; border-bottom: 1px solid #e8e8e8; }
+.slk-bot-avatar { width: 24px; height: 24px; display: inline-flex; }
+.slk-bot-avatar img { border-radius: 6px; }
+.slk-bot-title { font-weight: 800; font-size: 15px; color: #1d1c1d; }
+.slk-bot-close { margin-left: auto; background: transparent; border: none; color: #616061; cursor: pointer; font-size: 15px; }
+.slk-bot-thread { flex: 1; min-height: 0; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.slk-bot-turn { display: flex; gap: 8px; }
+.slk-bot-turn-user { justify-content: flex-end; }
+.slk-bot-bubble-user { background: #1264a3; color: #fff; border-radius: 12px 12px 2px 12px; padding: 8px 12px; font-size: 13.5px; max-width: 280px; }
+.slk-bot-turn-avatar { width: 24px; height: 24px; flex-shrink: 0; display: inline-flex; }
+.slk-bot-turn-avatar img { border-radius: 6px; }
+.slk-bot-thinking { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: #616061; }
+.slk-bot-thinking-dot { width: 7px; height: 7px; border-radius: 50%; background: #616061; animation: sony-pulse 1s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .slk-bot-thinking-dot { animation: none; } }
+.slk-bot-answer { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.slk-bot-section-h { font-size: 13px; font-weight: 800; color: #1d1c1d; margin-bottom: 2px; }
+.slk-bot-section-b { font-size: 13px; line-height: 1.5; color: #1d1c1d; }
+.slk-bot-composer { flex-shrink: 0; border-top: 1px solid #e8e8e8; padding: 10px 12px; display: flex; gap: 8px; align-items: flex-end; }
+.slk-bot-field { flex: 1; border: 1px solid #ddd; border-radius: 8px; resize: none; outline: none; font-family: var(--sony-font); font-size: 13.5px; padding: 8px 10px; line-height: 1.4; max-height: 90px; }
+.slk-bot-send { background: #007a5a; color: #fff; border: none; border-radius: 8px; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.slk-bot-send:disabled { background: #cfe6dd; cursor: default; }

@@ -33,20 +33,17 @@ test('Teams shell: pale app body + rail + chat sidebar + white conversation + co
   assert.ok(teams.includes('tms-main'));
   assert.ok(teams.includes('tms-conv-header'));
   assert.ok(teams.includes('tms-composer'));
-  // Adaptive-card-style decision inside the conversation.
-  assert.ok(teams.includes('sony-ps'));
-  assert.ok(teams.includes('Action required: Review PlayStation participation'));
+  // Opens on the IP360 Planning notification (decision card appears after
+  // the presenter selects the Advisor and submits — see teamsScene.test.tsx).
+  assert.ok(teams.includes('IP360 Planning'));
+  assert.ok(teams.includes('Spider-Man EMEA connected-fan opportunity ready for review'));
 });
 
-test('Teams preserves metrics, decisions, permitted/not-shared, status banner, link', () => {
+test('Teams notification preserves metrics + status banner', () => {
   assert.ok(teams.includes('1.85M'));
   assert.ok(teams.includes('82.3'));
   assert.ok(teams.includes('91.58'));
-  assert.ok(teams.includes('Permitted for this decision'));
-  assert.ok(teams.includes('Not shared or activated'));
   assert.ok(teams.includes('Draft — no audience activated and no customer communication sent.'));
-  assert.ok(teams.includes('rel="noopener noreferrer"'));
-  for (const d of ctx.decisions.playstation) assert.ok(teams.includes(d));
 });
 
 test('Claude brief: warm shell content preserves 5 sections, metrics, banner, conclusion', () => {

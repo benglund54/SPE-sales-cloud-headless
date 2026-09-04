@@ -69,13 +69,19 @@ test('Claude scene uses the real Claude logo beside responses/preparing/account'
   assert.ok(claude.includes('/logos/claude.png'), 'claude logo image used');
 });
 
-test('Sony IP360 Advisor identity is NOT the Slack logo (distinct Sony app mark)', () => {
-  // The Advisor avatar in Slack must not be the slack.png logo; it uses the
-  // Sony connected-nodes mark (inline SVG with the ip360grad gradient).
+test('Sony IP360 Advisor identity uses the supplied Advisor icon, NOT the Slack logo', () => {
+  // The Advisor avatar in Slack uses the supplied high-res advisor.png (the
+  // connected-node icon) — its distinct Sony identity, never the Slack logo.
   const src = readFileSync(resolve(repoRoot, 'client/src/sony/SlackScene.tsx'), 'utf8');
-  assert.ok(src.includes('SonyAdvisorMark'), 'Advisor uses the Sony mark');
-  // The message avatar block must not render the Slack logo as the sender identity.
+  assert.ok(src.includes('AdvisorIcon'), 'Advisor uses the supplied Advisor icon');
+  assert.ok(slack.includes('/logos/advisor.png'), 'advisor.png rendered');
   assert.equal(/slk-msg-avatar[^>]*>\s*<[^>]*logos\/slack\.png/.test(slack), false);
+});
+
+test('supplied Advisor icon exists in the asset dir', () => {
+  const p = resolve(repoRoot, 'client/public/logos/advisor.png');
+  assert.ok(existsSync(p), 'advisor.png missing');
+  assert.ok(readFileSync(p).length > 1000, 'advisor.png too small');
 });
 
 test('geometric placeholder marks are removed where the real logo now belongs', () => {

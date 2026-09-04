@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { type SceneId, SCENE_ORDER } from './scenes';
+import { type SceneId, PRESENTER_ORDER } from './scenes';
 
 interface Props {
   open: boolean;
@@ -105,7 +105,7 @@ export function PresenterPanel({ open, onClose, onJump, onReset }: Props) {
         <div className="sony-presenter-group" role="group" aria-label="Jump to scene">
           <span className="sony-presenter-group-label">Jump to scene</span>
           <div className="sony-presenter-jumps">
-            {SCENE_ORDER.map((s, i) => (
+            {PRESENTER_ORDER.map((s, i) => (
               <button
                 key={s.id}
                 ref={i === 0 ? firstBtnRef : undefined}
@@ -120,7 +120,7 @@ export function PresenterPanel({ open, onClose, onJump, onReset }: Props) {
 
         <div className="sony-presenter-group">
           <button className="sony-presenter-btn sony-presenter-reset" onClick={onReset}>
-            Reset presentation to Slack
+            Reset presentation
           </button>
         </div>
 

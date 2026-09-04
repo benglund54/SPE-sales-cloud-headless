@@ -48,9 +48,12 @@ function SonyExperienceInner() {
 
   const { dragX, dragging, handlers } = useSwipeNavigation({ onSwipe, reducedMotion: reduced });
 
-  const resetToSlack = useCallback(() => {
+  // Reset returns to the initial Teams state: default scene + a scene-subtree
+  // remount that reinitializes every scene's prompts, progress, rendered
+  // answers, and scroll position (and clears any conversation timers).
+  const resetToDefault = useCallback(() => {
     setScene(DEFAULT_SCENE);
-    setResetKey((k) => k + 1); // remount → Claude reveal + gesture state reset
+    setResetKey((k) => k + 1);
     presenter.close();
     if (viewportRef.current) viewportRef.current.scrollTop = 0;
   }, [setScene, presenter]);
@@ -93,16 +96,16 @@ function SonyExperienceInner() {
         {...handlers}
       >
         <div key={resetKey} className="sony-scene-inner">
-          {scene === 'slack' && <SlackScene context={context} activationUrl={activationUrl} />}
-          {scene === 'teams' && <TeamsScene context={context} activationUrl={activationUrl} />}
-          {scene === 'claude' && <ClaudeScene context={context} activationUrl={activationUrl} />}
+          {scene === 'slack' && <SlackScene context={context} activationUrl={activationUrl} reducedMotion={reduced} />}
+          {scene === 'teams' && <TeamsScene context={context} activationUrl={activationUrl} reducedMotion={reduced} />}
+          {scene === 'claude' && <ClaudeScene context={context} activationUrl={activationUrl} reducedMotion={reduced} />}
         </div>
       </div>
       <PresenterPanel
         open={presenter.open}
         onClose={presenter.close}
         onJump={setScene}
-        onReset={resetToSlack}
+        onReset={resetToDefault}
       />
     </div>
   );

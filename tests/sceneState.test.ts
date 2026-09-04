@@ -24,11 +24,11 @@ test('scene order is the final three segments: Slack → Teams → Claude', () =
   assert.equal(SCENE_ORDER.length, 3);
 });
 
-test('default scene is Slack', () => {
-  assert.equal(DEFAULT_SCENE, 'slack');
+test('default scene is Teams (HX-6V-D)', () => {
+  assert.equal(DEFAULT_SCENE, 'teams');
 });
 
-test('valid hashes resolve to their scenes (incl. #claude)', () => {
+test('valid hashes resolve to their scenes (all three preserved)', () => {
   assert.equal(sceneFromHash('#slack'), 'slack');
   assert.equal(sceneFromHash('#teams'), 'teams');
   assert.equal(sceneFromHash('#claude'), 'claude');
@@ -36,11 +36,11 @@ test('valid hashes resolve to their scenes (incl. #claude)', () => {
   assert.equal(sceneFromHash('#CLAUDE'), 'claude'); // case-insensitive
 });
 
-test('unknown or missing hash falls back to Slack', () => {
-  assert.equal(sceneFromHash(''), 'slack');
-  assert.equal(sceneFromHash('#'), 'slack');
-  assert.equal(sceneFromHash('#gemini'), 'slack');
-  assert.equal(sceneFromHash('#nonsense'), 'slack');
+test('unknown or missing hash falls back to the default (Teams)', () => {
+  assert.equal(sceneFromHash(''), 'teams');
+  assert.equal(sceneFromHash('#'), 'teams');
+  assert.equal(sceneFromHash('#gemini'), 'teams');
+  assert.equal(sceneFromHash('#nonsense'), 'teams');
 });
 
 test('hashForScene returns the # form for all three scenes', () => {

@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import type { SonyActivationContext } from 'shared/src/sonyActivation';
 import { CollaborationRequest } from './CollaborationRequest';
+import { SlackbotPanel } from './SlackbotPanel';
 import {
-  SonyLogo, SlackbotLogo, SonyAdvisorMark, SearchIcon, ChevronLeft, ChevronRight, ClockIcon, HelpIcon,
+  SonyLogo, SlackbotLogo, AdvisorIcon, SearchIcon, ChevronLeft, ChevronRight, ClockIcon, HelpIcon,
   HomeIcon, ChatBubbleIcon, BellIcon, PlusIcon, DotsIcon,
   ThreadsIcon, HeadphonesIcon, RecapIcon, DirectoryIcon, StarIcon, ComposeIcon, GearIcon,
 } from './icons';
@@ -9,6 +11,7 @@ import {
 interface Props {
   context: SonyActivationContext;
   activationUrl: string | null;
+  reducedMotion?: boolean;
 }
 
 const WORKSPACE = 'Sony';
@@ -25,7 +28,8 @@ const CHANNELS = ['sony-ip360-fy27', 'general', 'ip-strategy', 'emea-planning'];
  * identity (NOT the Slack logo). No fake people/dates/timestamps/counts/
  * reactions and no synthetic-demo disclaimer.
  */
-export function SlackScene({ context, activationUrl }: Props) {
+export function SlackScene({ context, activationUrl, reducedMotion = false }: Props) {
+  const [botOpen, setBotOpen] = useState(false);
   return (
     <div className="slk" data-theme="slack">
       {/* Top bar — charcoal, back/forward/history, centered search, Slackbot */}
@@ -111,19 +115,22 @@ export function SlackScene({ context, activationUrl }: Props) {
           <div className="slk-sidebar-section">
             <span className="slk-sidebar-label">Agents &amp; apps</span>
             <ul className="slk-channels">
-              <li className="slk-channel slk-channel-app">
-                <span className="slk-channel-appicon" aria-hidden="true"><SlackbotLogo size={16} alt="" /></span>
-                <span className="slk-channel-name">Slackbot</span>
+              <li className={`slk-channel slk-channel-app ${botOpen ? 'slk-channel-active' : ''}`}>
+                <button className="slk-channel-appbtn" onClick={() => setBotOpen(true)}>
+                  <span className="slk-channel-appicon" aria-hidden="true"><SlackbotLogo size={16} alt="" /></span>
+                  <span className="slk-channel-name">Slackbot</span>
+                </button>
               </li>
               <li className="slk-channel slk-channel-app">
-                <span className="slk-channel-appicon" aria-hidden="true"><SonyAdvisorMark size={16} /></span>
+                <span className="slk-channel-appicon" aria-hidden="true"><AdvisorIcon size={16} /></span>
                 <span className="slk-channel-name">Sony IP360 Advisor</span>
               </li>
             </ul>
           </div>
         </aside>
 
-        {/* Channel content */}
+        {/* Channel content + optional Slackbot side panel */}
+        <div className="slk-workarea">
         <section className="slk-main" aria-label="Channel">
           <header className="slk-channel-header">
             <div className="slk-channel-title">
@@ -154,7 +161,7 @@ export function SlackScene({ context, activationUrl }: Props) {
 
             <div className="slk-msg">
               <div className="slk-msg-avatar" aria-hidden="true">
-                <SonyAdvisorMark size={24} />
+                <AdvisorIcon size={28} />
               </div>
               <div className="slk-msg-body">
                 <div className="slk-msg-meta">
@@ -188,6 +195,8 @@ export function SlackScene({ context, activationUrl }: Props) {
             </div>
           </div>
         </section>
+        <SlackbotPanel open={botOpen} onClose={() => setBotOpen(false)} reducedMotion={reducedMotion} />
+        </div>
       </div>
     </div>
   );

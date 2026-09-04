@@ -4,6 +4,12 @@ import { ActivationLink } from './ActivationLink';
 interface Props {
   context: SonyActivationContext;
   activationUrl: string | null;
+  /**
+   * Progressive reveal count (1..5). When omitted, all sections render (static
+   * default — preserves existing render tests). 1 reco · 2 facts · 3 value ·
+   * 4 decisions · 5 guardrails (+ banner/action).
+   */
+  revealed?: number;
 }
 
 const ARTIFACT_LABEL = 'Executive Decision Brief';
@@ -18,7 +24,7 @@ const ACTIVATION_ACTION_LABEL = 'Review governed activation in Salesforce';
  * decisions (amber), guardrails (green). No live Claude call; renders entirely
  * from the shared Activation context.
  */
-export function ExecutiveBrief({ context, activationUrl }: Props) {
+export function ExecutiveBrief({ context, activationUrl, revealed }: Props) {
   const { audience, governance, modelScores, releaseMoments, opCoRoles } = context;
   const engagement = modelScores.find((m) => m.label === 'Engagement Score');
   const crossAffinity = modelScores.find((m) => m.label === 'Cross-Affinity Score');
@@ -26,6 +32,8 @@ export function ExecutiveBrief({ context, activationUrl }: Props) {
   const bsv = releaseMoments.find((r) => r.title === 'Beyond the Spider-Verse');
   const lead = opCoRoles.find((r) => r.participationStatus === 'Accountable');
   const participants = opCoRoles.filter((r) => r.participationStatus === 'Pending');
+  // Undefined → show all (static default). Otherwise gate sections 1..5.
+  const show = (n: number) => revealed === undefined || revealed >= n;
 
   return (
     <article className="sony-brief" aria-label={ARTIFACT_LABEL}>
@@ -38,6 +46,7 @@ export function ExecutiveBrief({ context, activationUrl }: Props) {
       </header>
 
       {/* 1 — Executive recommendation (PURPLE = Claude recommendation) */}
+      {show(1) && (
       <section className="sony-brief-section sony-brief-reco" aria-label="Executive recommendation">
         <h2 className="sony-brief-h2">Executive recommendation</h2>
         <p className="sony-brief-reco-text">{context.executiveRecommendation}</p>
@@ -45,9 +54,11 @@ export function ExecutiveBrief({ context, activationUrl }: Props) {
           Advance to governed cross-OpCo review — not audience activation or customer communication.
         </p>
       </section>
+      )}
 
       <div className="sony-brief-grid">
         {/* 2 — Grounded facts (BLUE = authoritative data) */}
+        {show(2) && (
         <section className="sony-brief-section sony-brief-facts" aria-label="Grounded facts">
           <h2 className="sony-brief-h2">Grounded facts</h2>
           <ul className="sony-brief-facts-list">
@@ -61,8 +72,10 @@ export function ExecutiveBrief({ context, activationUrl }: Props) {
           </ul>
           <div className="sony-brief-source">Source: {context.provenance.displayLabel}</div>
         </section>
+        )}
 
         {/* 3 — Connected Sony value (NEUTRAL) */}
+        {show(3) && (
         <section className="sony-brief-section sony-brief-value" aria-label="Connected Sony value">
           <h2 className="sony-brief-h2">Connected Sony value</h2>
           <p className="sony-brief-chain">{context.scenes.slack.experienceSummary}</p>
@@ -82,8 +95,10 @@ export function ExecutiveBrief({ context, activationUrl }: Props) {
           </ul>
           <p className="sony-brief-value-note">{context.fanValue}</p>
         </section>
+        )}
 
         {/* 4 — Decisions still pending (AMBER = human decisions) */}
+        {show(4) && (
         <section className="sony-brief-section sony-brief-decisions" aria-label="Decisions still pending">
           <h2 className="sony-brief-h2">Decisions still pending</h2>
           <p className="sony-brief-decisions-note">Awaiting the Sony IP Council — not accepted, not executed here.</p>
@@ -98,8 +113,10 @@ export function ExecutiveBrief({ context, activationUrl }: Props) {
             <span className="sony-brief-rights">Rights review: {governance.rightsReview}</span>
           </div>
         </section>
+        )}
 
         {/* 5 — Risks and guardrails (GREEN/NEUTRAL = governance) */}
+        {show(5) && (
         <section className="sony-brief-section sony-brief-guardrails" aria-label="Risks and guardrails">
           <h2 className="sony-brief-h2">Risks &amp; guardrails</h2>
           <ul className="sony-brief-risks">
@@ -113,16 +130,20 @@ export function ExecutiveBrief({ context, activationUrl }: Props) {
             <li>An internal Slack collaboration request has been posted for review</li>
           </ul>
         </section>
+        )}
       </div>
 
-      {/* Exact status banner */}
-      <div className="sony-brief-banner" role="status">
-        {governance.statusBanner}
-      </div>
-
-      <div className="sony-brief-actions">
-        <ActivationLink url={activationUrl} label={ACTIVATION_ACTION_LABEL} />
-      </div>
+      {show(5) && (
+        <>
+          {/* Exact status banner */}
+          <div className="sony-brief-banner" role="status">
+            {governance.statusBanner}
+          </div>
+          <div className="sony-brief-actions">
+            <ActivationLink url={activationUrl} label={ACTIVATION_ACTION_LABEL} />
+          </div>
+        </>
+      )}
     </article>
   );
 }

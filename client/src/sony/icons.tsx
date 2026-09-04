@@ -46,6 +46,11 @@ export function SlackbotLogo(p: IconProps & { alt?: string }) {
   const { alt, ...rest } = p;
   return <LogoImg src="/logos/slackbot.webp" alt={alt ?? 'Slackbot'} {...rest} />;
 }
+/** Supplied high-resolution Sony IP360 Advisor connected-node icon. */
+export function AdvisorIcon(p: IconProps & { alt?: string }) {
+  const { alt, ...rest } = p;
+  return <LogoImg src="/logos/advisor.png" alt={alt ?? 'Sony IP360 Advisor'} {...rest} />;
+}
 
 /* ---- Generic UI glyphs (stroke, currentColor) ------------------------- */
 export function SearchIcon({ size = 16, className, style }: IconProps) {

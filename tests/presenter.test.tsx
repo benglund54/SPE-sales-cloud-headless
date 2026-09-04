@@ -69,10 +69,11 @@ test('open panel is a labeled modal dialog with jump + reset + live-status contr
   assert.ok(html.includes('role="dialog"'));
   assert.ok(html.includes('aria-modal="true"'));
   assert.ok(html.includes('aria-label="Presenter controls"'));
-  assert.ok(html.includes('>Slack<'));
+  // HX-6V-D presenter order: Teams, Claude, Slack (Backup).
   assert.ok(html.includes('>Teams<'));
   assert.ok(html.includes('>Claude<'));
-  assert.ok(html.includes('Reset presentation to Slack'));
+  assert.ok(html.includes('Slack (Backup)'));
+  assert.ok(html.includes('Reset presentation'));
   assert.ok(/live executive brief/i.test(html));
   assert.ok(html.includes('data-no-swipe'), 'panel opts out of swipe');
 });

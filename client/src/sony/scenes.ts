@@ -18,8 +18,10 @@ export interface SceneDef {
 }
 
 /**
- * Ordered scenes: Slack coordinates → Teams decides → Claude briefs.
- * Everything downstream (navigator, hash sync, fallback) reads from this list.
+ * Swipe/narrative order (left→right): Slack · Teams · Claude. Swipe stepping
+ * reads this list so horizontal navigation stays continuous. Note the DEFAULT
+ * scene is Teams (HX-6V-D) — the presentation opens on Teams; Slack is a
+ * fallback reached by hash or the presenter panel.
  */
 export const SCENE_ORDER: SceneDef[] = [
   { id: 'slack', label: 'Slack', hash: 'slack' },
@@ -27,9 +29,21 @@ export const SCENE_ORDER: SceneDef[] = [
   { id: 'claude', label: 'Claude', hash: 'claude' },
 ];
 
-export const DEFAULT_SCENE: SceneId = 'slack';
+/**
+ * Presenter-panel jump order (HX-6V-D): Teams first (primary), then Claude,
+ * then Slack labeled as the fallback. Presenter terminology stays out of the
+ * audience-facing UI.
+ */
+export const PRESENTER_ORDER: { id: SceneId; label: string }[] = [
+  { id: 'teams', label: 'Teams' },
+  { id: 'claude', label: 'Claude' },
+  { id: 'slack', label: 'Slack (Backup)' },
+];
 
-/** Parse a location hash into a known SceneId, falling back to Slack. */
+/** Default scene when no (or an unknown) hash is present: Teams. */
+export const DEFAULT_SCENE: SceneId = 'teams';
+
+/** Parse a location hash into a known SceneId, falling back to the default. */
 export function sceneFromHash(hash: string): SceneId {
   const normalized = hash.replace(/^#/, '').toLowerCase();
   const match = SCENE_ORDER.find((s) => s.hash === normalized);

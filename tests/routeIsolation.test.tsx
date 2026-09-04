@@ -94,7 +94,11 @@ test('no visible presenter/reset/settings control appears in any scene shell', (
     'client/src/sony/PlayStationDecisionCard.tsx',
     'client/src/sony/ExecutiveBrief.tsx',
   ]) {
-    const src = read(f);
+    // Strip comments — we care about rendered controls, not doc comments that
+    // may mention "presenter" while describing the flow.
+    const src = read(f)
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/(^|[^:])\/\/.*$/gm, '$1');
     assert.equal(/presenter|reset presentation|settings/i.test(src), false, `${f} exposes a presenter/reset/settings control`);
   }
 });
