@@ -19,34 +19,34 @@ import {
   type SceneId,
 } from '../client/src/sony/scenes.ts';
 
-test('scene order is architected for a future third segment (Claude)', () => {
-  // HX-3 has exactly Slack + Teams, in order.
-  assert.deepEqual(SCENE_ORDER.map((s) => s.id), ['slack', 'teams']);
-  // Adding a scene is append-only: the model is a flat ordered list.
-  assert.ok(Array.isArray(SCENE_ORDER));
+test('scene order is the final three segments: Slack → Teams → Claude', () => {
+  assert.deepEqual(SCENE_ORDER.map((s) => s.id), ['slack', 'teams', 'claude']);
+  assert.equal(SCENE_ORDER.length, 3);
 });
 
 test('default scene is Slack', () => {
   assert.equal(DEFAULT_SCENE, 'slack');
 });
 
-test('valid hashes resolve to their scenes', () => {
+test('valid hashes resolve to their scenes (incl. #claude)', () => {
   assert.equal(sceneFromHash('#slack'), 'slack');
   assert.equal(sceneFromHash('#teams'), 'teams');
-  assert.equal(sceneFromHash('slack'), 'slack'); // tolerate missing '#'
-  assert.equal(sceneFromHash('#TEAMS'), 'teams'); // case-insensitive
+  assert.equal(sceneFromHash('#claude'), 'claude');
+  assert.equal(sceneFromHash('claude'), 'claude'); // tolerate missing '#'
+  assert.equal(sceneFromHash('#CLAUDE'), 'claude'); // case-insensitive
 });
 
 test('unknown or missing hash falls back to Slack', () => {
   assert.equal(sceneFromHash(''), 'slack');
   assert.equal(sceneFromHash('#'), 'slack');
-  assert.equal(sceneFromHash('#claude'), 'slack'); // not present yet → fallback
+  assert.equal(sceneFromHash('#gemini'), 'slack');
   assert.equal(sceneFromHash('#nonsense'), 'slack');
 });
 
-test('hashForScene returns the # form', () => {
+test('hashForScene returns the # form for all three scenes', () => {
   assert.equal(hashForScene('slack'), '#slack');
   assert.equal(hashForScene('teams'), '#teams');
+  assert.equal(hashForScene('claude'), '#claude');
 });
 
 // --- History behavior: replaceState only, no pushState, no reload ----------
@@ -112,4 +112,18 @@ test('navigating to the already-active scene is a no-op on history', () => {
   navigate(win, 'teams');
   assert.equal(win.calls.replaceState, 0);
   assert.equal(win.calls.pushState, 0);
+});
+
+test('full Slack → Teams → Claude walk uses replaceState only, lands on #claude', () => {
+  const win = makeFakeWindow('#slack');
+  navigate(win, 'teams');
+  navigate(win, 'claude');
+  assert.equal(win.location.hash, '#claude');
+  assert.equal(win.calls.replaceState, 2);
+  assert.equal(win.calls.pushState, 0);
+  assert.equal(win.calls.reload, 0);
+});
+
+test('direct deep-link to #claude resolves to Claude', () => {
+  assert.equal(sceneFromHash('#claude'), 'claude');
 });

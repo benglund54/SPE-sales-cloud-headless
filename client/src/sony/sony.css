@@ -495,3 +495,141 @@
   padding: 10px 14px; font-size: 13px; font-weight: 600; color: var(--sony-warn); text-align: center;
 }
 .sony-ps-actions { margin-top: 14px; display: flex; }
+
+/* ---- Claude scene (HX-4) ---------------------------------------------- */
+.sony-claude {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  background: var(--sony-bg);
+  overflow: hidden;
+}
+.sony-claude-rail {
+  width: 74px; flex-shrink: 0; background: #0b0b12;
+  border-right: 1px solid var(--sony-border);
+  display: flex; flex-direction: column; align-items: center; padding: 14px 0;
+}
+.sony-claude-rail-wordmark {
+  font-size: 9px; font-weight: 800; letter-spacing: 0.06em;
+  text-align: center; color: var(--sony-text-dim); line-height: 1.2;
+}
+.sony-claude-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.sony-claude-header {
+  height: 52px; flex-shrink: 0; border-bottom: 1px solid var(--sony-border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; background: var(--sony-surface);
+}
+.sony-claude-workspace { font-weight: 700; font-size: 15px; }
+.sony-claude-wordmark {
+  font-size: 13px; font-weight: 700; letter-spacing: 0.02em; color: #d97757;
+}
+.sony-claude-messages {
+  flex: 1; overflow-y: auto; display: flex; flex-direction: column;
+  gap: 10px; padding: 20px 24px;
+}
+.sony-claude-turn { max-width: 1000px; width: 100%; margin: 0 auto; }
+.sony-claude-turn-role { font-size: 12px; font-weight: 700; color: var(--sony-text-dim); }
+.sony-claude-turn-user { align-self: flex-end; text-align: right; }
+.sony-claude-turn-user .sony-claude-turn-text {
+  display: inline-block; background: var(--sony-surface-2);
+  border: 1px solid var(--sony-border); border-radius: 12px 12px 2px 12px;
+  padding: 8px 14px; font-size: 14px; margin-top: 2px; max-width: 640px;
+}
+.sony-claude-turn-assistant .sony-claude-turn-text { font-size: 14px; margin: 4px 0 10px; line-height: 1.5; }
+.sony-claude-preparing {
+  display: flex; align-items: center; gap: 8px; font-size: 14px;
+  color: var(--sony-text-dim); margin-top: 6px;
+}
+.sony-claude-preparing-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--sony-accent), var(--sony-accent-2));
+  animation: sony-pulse 1s ease-in-out infinite;
+}
+@keyframes sony-pulse { 0%,100% { opacity: 0.35; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .sony-claude-preparing-dot { animation: none; } }
+.sony-claude-composer { flex-shrink: 0; padding: 0 24px 16px; }
+.sony-claude-composer-box {
+  border: 1px solid var(--sony-border); border-radius: 10px;
+  background: var(--sony-surface); padding: 12px 16px; max-width: 1000px; margin: 0 auto;
+}
+.sony-claude-composer-placeholder { color: var(--sony-text-dim); font-size: 14px; }
+
+/* ---- Executive Decision Brief ----------------------------------------- */
+.sony-brief {
+  background: var(--sony-surface); border: 1px solid var(--sony-border);
+  border-radius: 14px; padding: 18px 22px 16px; max-width: 1000px; margin: 0 auto; width: 100%;
+}
+.sony-brief-head { margin-bottom: 12px; }
+.sony-brief-artifact-tag {
+  font-size: 11px; font-weight: 600; color: var(--sony-accent-2);
+  background: rgba(138, 107, 253, 0.12); border: 1px solid rgba(138, 107, 253, 0.35);
+  border-radius: 999px; padding: 3px 10px;
+}
+.sony-brief-title { font-size: 20px; font-weight: 700; line-height: 1.2; margin: 8px 0 2px; }
+.sony-brief-supporting { font-size: 12px; color: var(--sony-text-dim); }
+.sony-brief-section { margin-bottom: 12px; border-radius: 10px; padding: 12px 14px; }
+.sony-brief-h2 {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: 6px; color: var(--sony-text-dim);
+}
+.sony-brief-section p, .sony-brief-section li { font-size: 13px; line-height: 1.45; }
+
+/* Recommendation — PURPLE */
+.sony-brief-reco {
+  background: rgba(138, 107, 253, 0.1); border: 1px solid rgba(138, 107, 253, 0.4);
+}
+.sony-brief-reco .sony-brief-h2 { color: #b9a3ff; }
+.sony-brief-reco-text { color: var(--sony-text); }
+.sony-brief-reco-conclusion { font-weight: 700; color: #b9a3ff; margin-top: 6px; }
+
+.sony-brief-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* Grounded facts — BLUE */
+.sony-brief-facts {
+  background: rgba(107, 138, 253, 0.08); border: 1px solid rgba(107, 138, 253, 0.35);
+}
+.sony-brief-facts .sony-brief-h2 { color: #9db4ff; }
+.sony-brief-facts-list { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+.sony-brief-source { font-size: 11px; color: var(--sony-text-dim); margin-top: 6px; }
+
+/* Connected value — NEUTRAL */
+.sony-brief-value { background: var(--sony-surface-2); border: 1px solid var(--sony-border); }
+.sony-brief-chain { font-weight: 700; margin-bottom: 6px; }
+.sony-brief-roles { list-style: none; display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
+.sony-brief-roles li { display: flex; align-items: center; justify-content: space-between; }
+.sony-role-name { font-weight: 600; font-size: 13px; }
+.sony-role-tag { font-size: 11px; font-weight: 600; border-radius: 999px; padding: 2px 8px; }
+.sony-role-lead { background: rgba(46, 182, 125, 0.15); color: #4bd69b; }
+.sony-role-pending { background: rgba(224, 165, 46, 0.15); color: var(--sony-warn); }
+.sony-brief-value-note { color: var(--sony-text-dim); }
+
+/* Decisions pending — AMBER */
+.sony-brief-decisions {
+  background: rgba(224, 165, 46, 0.08); border: 1px solid rgba(224, 165, 46, 0.4);
+}
+.sony-brief-decisions .sony-brief-h2 { color: var(--sony-warn); }
+.sony-brief-decisions-note { color: var(--sony-warn); font-weight: 600; margin-bottom: 4px; }
+.sony-brief-decisions-list { padding-left: 18px; display: flex; flex-direction: column; gap: 3px; }
+.sony-brief-stages { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; font-size: 12px; color: var(--sony-text-dim); }
+.sony-brief-rights { color: var(--sony-warn); }
+
+/* Guardrails — GREEN */
+.sony-brief-guardrails {
+  background: rgba(46, 182, 125, 0.07); border: 1px solid rgba(46, 182, 125, 0.35);
+}
+.sony-brief-guardrails .sony-brief-h2 { color: #4bd69b; }
+.sony-brief-risks { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.sony-brief-risk-chip {
+  font-size: 11px; line-height: 1.35; background: var(--sony-surface-2);
+  border: 1px solid var(--sony-border); border-radius: 8px; padding: 5px 8px; max-width: 48%;
+}
+.sony-brief-guards { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+.sony-brief-guards li { font-size: 12px; color: var(--sony-text-dim); padding-left: 14px; position: relative; }
+.sony-brief-guards li::before { content: '✓'; position: absolute; left: 0; color: #4bd69b; }
+
+.sony-brief-banner {
+  margin-top: 10px; background: rgba(224, 165, 46, 0.1);
+  border: 1px solid rgba(224, 165, 46, 0.4); border-radius: 8px;
+  padding: 10px 14px; font-size: 13px; font-weight: 600; color: var(--sony-warn); text-align: center;
+}
+.sony-brief-actions { margin-top: 12px; display: flex; }

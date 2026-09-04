@@ -1,6 +1,7 @@
 import { ActivationProvider, useActivation } from '../context/ActivationContext';
 import { SlackScene } from './SlackScene';
 import { TeamsScene } from './TeamsScene';
+import { ClaudeScene } from './ClaudeScene';
 import { SceneNavigator } from './SceneNavigator';
 import { useScene } from './useScene';
 import './sony.css';
@@ -10,9 +11,9 @@ import './sony.css';
  * /sony-headless-360). This is the ONLY place ActivationProvider is mounted —
  * the legacy `/` experience never sees it.
  *
- * HX-3: Slack + Teams scenes with a hash-driven segmented navigator. Both
- * scenes consume the same authoritative Activation context. No Claude, swipe,
- * presenter/reset/Live-Mock controls, or external calls.
+ * HX-4: Slack → Teams → Claude scenes with a hash-driven three-segment
+ * navigator. All scenes consume the same authoritative Activation context. No
+ * swipe, presenter/reset/Live-Mock controls, live Claude, or external calls.
  */
 function SonyExperienceInner() {
   const { status, context, activationUrl, error } = useActivation();
@@ -42,11 +43,9 @@ function SonyExperienceInner() {
         id={`sony-scene-${scene}`}
         role="tabpanel"
       >
-        {scene === 'slack' ? (
-          <SlackScene context={context} activationUrl={activationUrl} />
-        ) : (
-          <TeamsScene context={context} activationUrl={activationUrl} />
-        )}
+        {scene === 'slack' && <SlackScene context={context} activationUrl={activationUrl} />}
+        {scene === 'teams' && <TeamsScene context={context} activationUrl={activationUrl} />}
+        {scene === 'claude' && <ClaudeScene context={context} activationUrl={activationUrl} />}
       </div>
       <SceneNavigator scene={scene} onSelect={setScene} />
     </div>

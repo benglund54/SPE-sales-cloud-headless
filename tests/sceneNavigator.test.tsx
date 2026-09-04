@@ -10,36 +10,39 @@ import { createElement } from 'react';
 
 import { SceneNavigator } from '../client/src/sony/SceneNavigator.tsx';
 
-function render(scene: 'slack' | 'teams'): string {
+function render(scene: 'slack' | 'teams' | 'claude'): string {
   return renderToStaticMarkup(
     createElement(SceneNavigator, { scene, onSelect: () => {} })
   );
 }
 
-test('renders both segments with tab semantics', () => {
+test('renders three segments with tab semantics', () => {
   const html = render('slack');
   assert.ok(html.includes('role="tablist"'));
   const tabs = html.match(/role="tab"/g) || [];
-  assert.equal(tabs.length, 2, 'exactly two segments in HX-3');
+  assert.equal(tabs.length, 3, 'exactly three segments in HX-4');
   assert.ok(html.includes('>Slack<'));
   assert.ok(html.includes('>Teams<'));
+  assert.ok(html.includes('>Claude<'));
 });
 
-test('marks the active segment via aria-selected', () => {
-  const slack = render('slack');
-  // Slack active → its button aria-selected="true"; Teams false.
-  assert.ok(/aria-selected="true"[^>]*>Slack|>Slack<\/button>/.test(slack) || slack.includes('aria-selected="true"'));
-  const teams = render('teams');
-  assert.ok(teams.includes('aria-selected="true"'));
-  // Sanity: active class is applied to exactly one segment.
-  assert.equal((render('slack').match(/sony-nav-segment-active/g) || []).length, 1);
-  assert.equal((render('teams').match(/sony-nav-segment-active/g) || []).length, 1);
+test('marks exactly the active segment via aria-selected / active class', () => {
+  for (const s of ['slack', 'teams', 'claude'] as const) {
+    const html = render(s);
+    assert.ok(html.includes('aria-selected="true"'));
+    assert.equal(
+      (html.match(/sony-nav-segment-active/g) || []).length,
+      1,
+      `exactly one active segment for ${s}`
+    );
+  }
 });
 
 test('segments reference their scene panels via aria-controls', () => {
   const html = render('slack');
   assert.ok(html.includes('aria-controls="sony-scene-slack"'));
   assert.ok(html.includes('aria-controls="sony-scene-teams"'));
+  assert.ok(html.includes('aria-controls="sony-scene-claude"'));
 });
 
 test('has an accessible navigation label', () => {

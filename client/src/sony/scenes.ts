@@ -7,7 +7,7 @@
  * hash logic.
  */
 
-export type SceneId = 'slack' | 'teams';
+export type SceneId = 'slack' | 'teams' | 'claude';
 
 export interface SceneDef {
   id: SceneId;
@@ -18,12 +18,13 @@ export interface SceneDef {
 }
 
 /**
- * Ordered scenes for this phase. HX-4 will append { id: 'claude', ... } here;
- * everything downstream (navigator, hash sync, fallback) reads from this list.
+ * Ordered scenes: Slack coordinates → Teams decides → Claude briefs.
+ * Everything downstream (navigator, hash sync, fallback) reads from this list.
  */
 export const SCENE_ORDER: SceneDef[] = [
   { id: 'slack', label: 'Slack', hash: 'slack' },
   { id: 'teams', label: 'Teams', hash: 'teams' },
+  { id: 'claude', label: 'Claude', hash: 'claude' },
 ];
 
 export const DEFAULT_SCENE: SceneId = 'slack';
