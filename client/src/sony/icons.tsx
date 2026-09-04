@@ -39,6 +39,13 @@ export function TeamsLogo(p: IconProps) {
 export function ClaudeLogo(p: IconProps) {
   return <LogoImg src="/logos/claude.png" alt="Claude" {...p} />;
 }
+export function SonyLogo(p: IconProps) {
+  return <LogoImg src="/logos/sony.png" alt="Sony" {...p} />;
+}
+export function SlackbotLogo(p: IconProps & { alt?: string }) {
+  const { alt, ...rest } = p;
+  return <LogoImg src="/logos/slackbot.webp" alt={alt ?? 'Slackbot'} {...rest} />;
+}
 
 /* ---- Generic UI glyphs (stroke, currentColor) ------------------------- */
 export function SearchIcon({ size = 16, className, style }: IconProps) {

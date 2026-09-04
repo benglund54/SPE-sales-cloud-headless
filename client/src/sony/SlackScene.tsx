@@ -1,7 +1,7 @@
 import type { SonyActivationContext } from 'shared/src/sonyActivation';
 import { CollaborationRequest } from './CollaborationRequest';
 import {
-  SlackLogo, SonyAdvisorMark, SearchIcon, ChevronLeft, ChevronRight, ClockIcon, HelpIcon,
+  SonyLogo, SlackbotLogo, SonyAdvisorMark, SearchIcon, ChevronLeft, ChevronRight, ClockIcon, HelpIcon,
   HomeIcon, ChatBubbleIcon, BellIcon, PlusIcon, DotsIcon,
   ThreadsIcon, HeadphonesIcon, RecapIcon, DirectoryIcon, StarIcon, ComposeIcon, GearIcon,
 } from './icons';
@@ -16,38 +16,41 @@ const CHANNEL = 'sony-ip360-fy27';
 const CHANNELS = ['sony-ip360-fy27', 'general', 'ip-strategy', 'emea-planning'];
 
 /**
- * Reference-exact Slack desktop shell (semantic React + CSS). Narrow dark global
- * app rail (workspace tile + Today/Home/DMs/Activity/Files/Agents/add/account),
- * dark-gray workspace sidebar (title row, Find-a-conversation, Threads/Huddles/
- * Recap/Directories, Starred, Channels with #sony-ip360-fy27 selected, DMs,
- * Apps), and a light channel surface with native header, tabs, and composer.
+ * Reference-exact Slack desktop shell (semantic React + CSS). Dark-charcoal top
+ * bar + app rail; medium-charcoal workspace sidebar; white channel surface;
+ * Slack blue reserved for the selected channel. Sony workspace tile uses the
+ * supplied sony.png; Slackbot appears right of search and above Home.
  *
- * The Sony IP360 Advisor posts a Block-Kit-style app message (its own Sony
- * identity — NOT the Slack logo). No fake human sender, timestamp, unread/member
- * counts, reactions, or the reference's synthetic-demo disclaimer.
+ * The Sony IP360 Advisor posts a Block-Kit-style app message with its own Sony
+ * identity (NOT the Slack logo). No fake people/dates/timestamps/counts/
+ * reactions and no synthetic-demo disclaimer.
  */
 export function SlackScene({ context, activationUrl }: Props) {
   return (
     <div className="slk" data-theme="slack">
-      {/* Top window/search bar */}
+      {/* Top bar — charcoal, back/forward/history, centered search, Slackbot */}
       <div className="slk-topbar">
         <div className="slk-topbar-nav">
           <button className="slk-icon-btn" aria-label="Back"><ChevronLeft size={15} /></button>
           <button className="slk-icon-btn" aria-label="Forward"><ChevronRight size={15} /></button>
           <button className="slk-icon-btn" aria-label="History"><ClockIcon size={15} /></button>
         </div>
-        <div className="slk-search"><SearchIcon size={14} /><span>Search {WORKSPACE}</span></div>
+        <div className="slk-topbar-center">
+          <div className="slk-search"><SearchIcon size={14} /><span>Search {WORKSPACE}</span></div>
+          <SlackbotLogo size={22} className="slk-topbar-slackbot" alt="Slackbot" />
+        </div>
         <div className="slk-topbar-right">
           <button className="slk-icon-btn" aria-label="Help"><HelpIcon size={15} /></button>
         </div>
       </div>
 
       <div className="slk-body">
-        {/* Far-left global app rail */}
+        {/* Far-left app rail: Sony tile · Slackbot · Home · DMs · Activity · Files · More · add · avatar */}
         <nav className="slk-rail" aria-label="Slack">
-          <button className="slk-rail-ws" aria-label="Sony workspace">
-            <span className="slk-rail-ws-tile">S</span>
-          </button>
+          <div className="slk-rail-ws" aria-label="Sony workspace">
+            <SonyLogo size={38} className="slk-rail-sony" />
+          </div>
+          <div className="slk-rail-slackbot"><SlackbotLogo size={30} alt="Slackbot" /></div>
           <div className="slk-rail-items">
             <div className="slk-rail-item slk-rail-item-active"><HomeIcon size={19} /><span>Home</span></div>
             <div className="slk-rail-item"><ChatBubbleIcon size={19} /><span>DMs</span></div>
@@ -61,7 +64,7 @@ export function SlackScene({ context, activationUrl }: Props) {
           </div>
         </nav>
 
-        {/* Workspace / channel sidebar */}
+        {/* Workspace / channel sidebar — medium charcoal */}
         <aside className="slk-sidebar" aria-label="Workspace">
           <div className="slk-sidebar-head">
             <span className="slk-ws-title">{WORKSPACE}</span>
@@ -78,6 +81,8 @@ export function SlackScene({ context, activationUrl }: Props) {
             <li className="slk-quick-item"><RecapIcon size={16} /><span>Recap</span></li>
             <li className="slk-quick-item"><DirectoryIcon size={16} /><span>Directories</span></li>
           </ul>
+
+          <div className="slk-divider" />
 
           <div className="slk-sidebar-section">
             <span className="slk-sidebar-label"><StarIcon size={12} /> Starred</span>
@@ -104,10 +109,14 @@ export function SlackScene({ context, activationUrl }: Props) {
             <span className="slk-sidebar-label">Direct messages</span>
           </div>
           <div className="slk-sidebar-section">
-            <span className="slk-sidebar-label">Apps</span>
+            <span className="slk-sidebar-label">Agents &amp; apps</span>
             <ul className="slk-channels">
               <li className="slk-channel slk-channel-app">
-                <span className="slk-channel-appdot" aria-hidden="true" />
+                <span className="slk-channel-appicon" aria-hidden="true"><SlackbotLogo size={16} alt="" /></span>
+                <span className="slk-channel-name">Slackbot</span>
+              </li>
+              <li className="slk-channel slk-channel-app">
+                <span className="slk-channel-appicon" aria-hidden="true"><SonyAdvisorMark size={16} /></span>
                 <span className="slk-channel-name">Sony IP360 Advisor</span>
               </li>
             </ul>
@@ -118,21 +127,31 @@ export function SlackScene({ context, activationUrl }: Props) {
         <section className="slk-main" aria-label="Channel">
           <header className="slk-channel-header">
             <div className="slk-channel-title">
-              <SlackLogo size={16} />
+              <button className="slk-channel-star" aria-label="Star channel"><StarIcon size={16} /></button>
               <span className="slk-channel-h"># {CHANNEL}</span>
             </div>
-            <div className="slk-channel-header-right">
-              <div className="slk-channel-tabs">
-                <span className="slk-tab slk-tab-active">Messages</span>
-                <span className="slk-tab">Add canvas</span>
-              </div>
-              <div className="slk-channel-actions" aria-hidden="true">
-                <SearchIcon size={15} /><DotsIcon size={15} />
-              </div>
+            <div className="slk-channel-actions" aria-hidden="true">
+              <span className="slk-channel-action"><HeadphonesIcon size={16} /></span>
+              <span className="slk-channel-action"><BellIcon size={16} /></span>
+              <span className="slk-channel-action"><SearchIcon size={15} /></span>
+              <span className="slk-channel-action"><DotsIcon size={15} /></span>
             </div>
           </header>
+          <div className="slk-channel-tabs">
+            <span className="slk-tab slk-tab-active">Messages</span>
+            <span className="slk-tab">Add canvas</span>
+            <span className="slk-tab slk-tab-plus"><PlusIcon size={13} /></span>
+          </div>
 
           <div className="slk-messages">
+            {/* Neutral channel-introduction block (no people/dates) */}
+            <div className="slk-intro">
+              <div className="slk-intro-title"># {CHANNEL}</div>
+              <p className="slk-intro-text">
+                This is the start of the <b>#{CHANNEL}</b> channel for cross-Sony IP360 coordination.
+              </p>
+            </div>
+
             <div className="slk-msg">
               <div className="slk-msg-avatar" aria-hidden="true">
                 <SonyAdvisorMark size={24} />
@@ -147,7 +166,7 @@ export function SlackScene({ context, activationUrl }: Props) {
             </div>
           </div>
 
-          {/* Native composer with formatting + action rows */}
+          {/* Two-row native composer */}
           <div className="slk-composer" aria-hidden="true">
             <div className="slk-composer-box">
               <div className="slk-composer-toolbar">

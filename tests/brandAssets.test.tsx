@@ -25,15 +25,39 @@ const teams = renderToStaticMarkup(createElement(TeamsScene, { context: ctx, act
 const claude = renderToStaticMarkup(createElement(ClaudeScene, { context: ctx, activationUrl: 'https://x.example/a' }));
 
 test('the three supplied logo PNGs exist in the repo asset dir', () => {
-  for (const f of ['client/public/logos/slack.png', 'client/public/logos/teams.png', 'client/public/logos/claude.png']) {
+  for (const f of [
+    'client/public/logos/teams.png',
+    'client/public/logos/claude.png',
+    'client/public/logos/sony.png',
+    'client/public/logos/slackbot.webp',
+  ]) {
     assert.ok(existsSync(resolve(repoRoot, f)), `${f} missing`);
-    // Non-trivial file (a real PNG, not an empty stub).
+    // Non-trivial file (a real asset, not an empty stub).
     assert.ok(readFileSync(resolve(repoRoot, f)).length > 1000, `${f} too small`);
   }
 });
 
-test('Slack scene uses the real Slack logo', () => {
-  assert.ok(slack.includes('/logos/slack.png'), 'slack logo image used');
+test('supplied Sony + Slackbot assets are emitted into the production build', () => {
+  // The production build copies public/ into client/dist. If dist is present,
+  // the two new assets must be there; otherwise the source assets suffice.
+  const dist = resolve(repoRoot, 'client/dist/logos');
+  if (existsSync(dist)) {
+    assert.ok(existsSync(resolve(dist, 'sony.png')), 'sony.png emitted');
+    assert.ok(existsSync(resolve(dist, 'slackbot.webp')), 'slackbot.webp emitted');
+  }
+});
+
+test('Slack scene uses the supplied Sony workspace logo (not an "S" tile)', () => {
+  assert.ok(slack.includes('/logos/sony.png'), 'Sony logo used as the workspace tile');
+  assert.equal(slack.includes('slk-rail-ws-tile'), false, 'old "S" tile removed');
+});
+
+test('Slack scene places Slackbot right of search AND above Home in the rail', () => {
+  assert.ok(slack.includes('/logos/slackbot.webp'), 'slackbot asset used');
+  assert.ok(slack.includes('slk-topbar-slackbot'), 'slackbot right of search');
+  assert.ok(slack.includes('slk-rail-slackbot'), 'slackbot in the rail above Home');
+  // Real image asset (object-fit contain via LogoImg), not redrawn.
+  assert.ok(slack.includes('img'), 'slackbot rendered as an image');
 });
 
 test('Teams scene uses the real Teams logo in the rail identity', () => {
