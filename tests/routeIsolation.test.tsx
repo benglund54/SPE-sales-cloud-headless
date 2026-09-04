@@ -56,24 +56,31 @@ test('ActivationProvider is mounted only within the Sony experience', () => {
   assert.equal(mainTsx.includes('ActivationProvider'), false);
 });
 
-test('scene navigator and Teams/Claude scenes live only in the Sony module', () => {
+test('scenes + interaction layers live only in the Sony module', () => {
   const app = read('client/src/App.tsx');
   const mainTsx = read('client/src/main.tsx');
   for (const src of [app, mainTsx]) {
-    assert.equal(src.includes('SceneNavigator'), false, 'navigator must not leak into legacy bootstrap');
     assert.equal(src.includes('TeamsScene'), false, 'Teams scene must not leak into legacy bootstrap');
     assert.equal(src.includes('ClaudeScene'), false, 'Claude scene must not leak into legacy bootstrap');
-    // HX-5 additions must also stay out of the legacy bootstrap.
     assert.equal(src.includes('PresenterPanel'), false, 'presenter panel must not leak');
     assert.equal(src.includes('useSwipeNavigation'), false, 'swipe must not leak');
   }
-  // All scenes + HX-5 interaction layers are wired inside the Sony experience.
   const sony = read('client/src/sony/SonyExperience.tsx');
-  assert.ok(sony.includes('SceneNavigator'));
   assert.ok(sony.includes('TeamsScene'));
   assert.ok(sony.includes('ClaudeScene'));
   assert.ok(sony.includes('PresenterPanel'));
   assert.ok(sony.includes('useSwipeNavigation'));
+});
+
+test('HX-6: the visible bottom scene navigator is NOT rendered in the experience', () => {
+  // Scene-jump now lives only in the hidden presenter panel, so the shells look
+  // authentic. SonyExperience must not render <SceneNavigator>.
+  const sony = read('client/src/sony/SonyExperience.tsx');
+  assert.equal(sony.includes('<SceneNavigator'), false, 'no visible cross-scene navigator');
+  assert.equal(sony.includes("from './SceneNavigator'"), false, 'navigator not imported');
+  // Scene jumps ARE available from the presenter panel.
+  const panel = read('client/src/sony/PresenterPanel.tsx');
+  assert.ok(panel.includes('onJump'), 'presenter panel offers scene jumps');
 });
 
 test('no visible presenter/reset/settings control appears in any scene shell', () => {

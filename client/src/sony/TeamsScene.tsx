@@ -1,5 +1,9 @@
 import type { SonyActivationContext } from 'shared/src/sonyActivation';
 import { PlayStationDecisionCard } from './PlayStationDecisionCard';
+import {
+  TeamsMark, TeamsChatIcon, VideoIcon, PeopleIcon, BellIcon, ClaudeMark,
+  SearchIcon, ChevronLeft, ChevronRight, DotsIcon, SendIcon, PlusIcon,
+} from './icons';
 
 interface Props {
   context: SonyActivationContext;
@@ -8,7 +12,7 @@ interface Props {
 
 const TEAM = 'Sony IP360';
 const CONVERSATION = 'PlayStation Participation';
-const ASSISTANT = 'Copilot';
+const ASSISTANT = 'Sony IP360 Advisor';
 const CONTEXT_LABEL = 'Grounded in Sony IP360';
 
 const USER_PROMPT = 'What does PlayStation need to decide?';
@@ -16,52 +20,111 @@ const COPILOT_LEAD_IN =
   'Sony Pictures is requesting PlayStation participation in the Spider-Man EMEA connected fan opportunity. Here’s the decision brief for PlayStation.';
 
 /**
- * Teams-styled surface. Deterministic — no Microsoft/Copilot/Salesforce call.
- * The chrome is cosmetic; it contains NO fake participants, names, timestamps,
- * notifications, or unread counts, and does not claim to be a native
- * production Microsoft integration. Advances the story with a role-specific
- * PlayStation decision brief rather than replaying the Slack artifact.
+ * Reference-exact Microsoft Teams desktop shell (semantic React + CSS). Pale
+ * blue app background, narrow app rail, chat navigation sidebar, centered top
+ * search field, large white conversation panel. The PlayStation decision is an
+ * adaptive-card-style message inside a Sony IP360 Advisor conversation.
+ *
+ * Deterministic; no Microsoft/Copilot/Salesforce call. No fake participants,
+ * profile images, test messages, dates, or unread counts from the reference.
  */
 export function TeamsScene({ context, activationUrl }: Props) {
   return (
-    <div className="sony-teams" data-theme="teams">
-      <aside className="sony-teams-rail" aria-hidden="true">
-        <div className="sony-teams-rail-wordmark">SONY IP360</div>
-        <div className="sony-teams-rail-icon sony-teams-rail-active">PS</div>
-      </aside>
-
-      <div className="sony-teams-main">
-        <header className="sony-teams-header">
-          <div className="sony-teams-header-left">
-            <span className="sony-teams-team">{TEAM}</span>
-            <span className="sony-teams-conversation">{CONVERSATION}</span>
-          </div>
-          <span className="sony-teams-wordmark">SONY IP360</span>
-        </header>
-
-        <main className="sony-teams-messages">
-          {/* Concise deterministic exchange */}
-          <div className="sony-teams-turn sony-teams-turn-user">
-            <span className="sony-teams-turn-role">You</span>
-            <p className="sony-teams-turn-text">{USER_PROMPT}</p>
-          </div>
-
-          <div className="sony-teams-turn sony-teams-turn-assistant">
-            <div className="sony-teams-assistant-meta">
-              <span className="sony-teams-turn-role">{ASSISTANT}</span>
-              <span className="sony-teams-context-label">{CONTEXT_LABEL}</span>
-            </div>
-            <p className="sony-teams-turn-text">{COPILOT_LEAD_IN}</p>
-            <PlayStationDecisionCard context={context} activationUrl={activationUrl} />
-          </div>
-        </main>
-
-        {/* Inert composer — realism only, not interactive */}
-        <div className="sony-teams-composer" aria-hidden="true">
-          <div className="sony-teams-composer-box">
-            <span className="sony-teams-composer-placeholder">Message {ASSISTANT}</span>
-          </div>
+    <div className="tms" data-theme="teams">
+      {/* Top search/window bar */}
+      <div className="tms-topbar">
+        <div className="tms-topbar-left">
+          <button className="tms-icon-btn" aria-label="Back"><ChevronLeft size={15} /></button>
+          <button className="tms-icon-btn" aria-label="Forward"><ChevronRight size={15} /></button>
         </div>
+        <div className="tms-search"><SearchIcon size={14} /><span>Search</span></div>
+        <div className="tms-topbar-right">
+          <span className="tms-account">Sony IP360</span>
+        </div>
+      </div>
+
+      <div className="tms-body">
+        {/* App rail */}
+        <nav className="tms-rail" aria-label="Teams">
+          <div className="tms-rail-item tms-rail-item-active"><TeamsChatIcon size={22} /><span>Chat</span></div>
+          <div className="tms-rail-item"><VideoIcon size={22} /><span>Meet</span></div>
+          <div className="tms-rail-item"><PeopleIcon size={22} /><span>Teams</span></div>
+          <div className="tms-rail-item"><ClaudeMark size={20} /><span>Copilot</span></div>
+          <div className="tms-rail-item"><BellIcon size={22} /><span>Activity</span></div>
+        </nav>
+
+        {/* Chat navigation sidebar */}
+        <aside className="tms-sidebar" aria-label="Chat">
+          <div className="tms-sidebar-head">
+            <span className="tms-sidebar-title">Chat</span>
+            <div className="tms-sidebar-head-actions" aria-hidden="true">
+              <SearchIcon size={15} /><VideoIcon size={16} /><PlusIcon size={15} />
+            </div>
+          </div>
+          <div className="tms-sidebar-filters" aria-hidden="true">
+            <span className="tms-filter tms-filter-active">Recent</span>
+            <span className="tms-filter">Unread</span>
+          </div>
+          <div className="tms-sidebar-section">
+            <span className="tms-sidebar-label">Favorites</span>
+            <ul className="tms-chats">
+              <li className="tms-chat tms-chat-active" aria-current="true">
+                <span className="tms-chat-avatar" aria-hidden="true"><ClaudeMark size={16} /></span>
+                <span className="tms-chat-meta">
+                  <span className="tms-chat-name">{ASSISTANT}</span>
+                  <span className="tms-chat-preview">{CONVERSATION}</span>
+                </span>
+              </li>
+              <li className="tms-chat">
+                <span className="tms-chat-avatar tms-chat-avatar-plain" aria-hidden="true">IP</span>
+                <span className="tms-chat-meta">
+                  <span className="tms-chat-name">IP360 Planning</span>
+                  <span className="tms-chat-preview">Group</span>
+                </span>
+              </li>
+            </ul>
+          </div>
+        </aside>
+
+        {/* Conversation panel */}
+        <section className="tms-main" aria-label="Conversation">
+          <header className="tms-conv-header">
+            <span className="tms-conv-avatar" aria-hidden="true"><TeamsMark size={20} /></span>
+            <div className="tms-conv-titles">
+              <span className="tms-conv-title">{ASSISTANT}</span>
+              <span className="tms-conv-sub">{TEAM} · {CONVERSATION}</span>
+            </div>
+            <div className="tms-conv-actions" aria-hidden="true">
+              <VideoIcon size={18} /><DotsIcon size={16} />
+            </div>
+          </header>
+
+          <div className="tms-messages">
+            <div className="tms-turn tms-turn-user">
+              <div className="tms-bubble tms-bubble-user">{USER_PROMPT}</div>
+            </div>
+
+            <div className="tms-turn tms-turn-assistant">
+              <span className="tms-turn-avatar" aria-hidden="true"><ClaudeMark size={18} /></span>
+              <div className="tms-turn-content">
+                <div className="tms-turn-meta">
+                  <span className="tms-turn-name">{ASSISTANT}</span>
+                  <span className="tms-context-label">{CONTEXT_LABEL}</span>
+                </div>
+                <div className="tms-bubble tms-bubble-assistant">{COPILOT_LEAD_IN}</div>
+                <PlayStationDecisionCard context={context} activationUrl={activationUrl} />
+              </div>
+            </div>
+          </div>
+
+          {/* Native composer */}
+          <div className="tms-composer" aria-hidden="true">
+            <div className="tms-composer-box">
+              <span className="tms-composer-input">Type a message</span>
+              <span className="tms-composer-send"><SendIcon size={18} /></span>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );

@@ -101,14 +101,15 @@ test('renders the exact status banner', () => {
 });
 
 test('does NOT replay the full Slack collaboration artifact', () => {
-  // Slack-only artifact markers must be absent from Teams.
+  // Slack-only artifact markers must be absent from Teams. (The assistant name
+  // "Sony IP360 Advisor" is shared across surfaces per spec and is NOT a replay
+  // marker; the Slack artifact title, request title, and the long proposed-fan-
+  // experience paragraph are the true replay markers.)
   assert.equal(html.includes('Cross-Sony Collaboration Request'), false);
-  assert.equal(html.includes('Sony IP360 Advisor'), false);
   assert.equal(
     html.includes('Sony IP360 — Spider-Man EMEA opportunity ready for review'),
     false
   );
-  // And structurally: the long Slack "proposed fan experience" paragraph is not here.
   assert.equal(html.includes('A coordinated EMEA Spider-Man fan moment in which'), false);
 });
 

@@ -28,12 +28,22 @@ test('renders the required primary message title', () => {
   assert.ok(html.includes('Sony IP360 — Spider-Man EMEA opportunity ready for review'));
 });
 
-test('renders workspace, channel, agent, artifact labels and wordmark', () => {
-  assert.ok(html.includes('Sony IP360'), 'workspace');
+test('renders workspace, channel, agent, and artifact labels', () => {
+  assert.ok(html.includes('Sony'), 'workspace');
   assert.ok(html.includes('sony-ip360-fy27'), 'channel');
   assert.ok(html.includes('Sony IP360 Advisor'), 'agent');
   assert.ok(html.includes('Cross-Sony Collaboration Request'), 'artifact');
-  assert.ok(html.includes('SONY IP360'), 'wordmark');
+});
+
+test('slack shell reads as authentic Slack chrome (rail, sidebar, channel header)', () => {
+  // App rail + workspace sidebar + light channel content + channel selected.
+  assert.ok(html.includes('slk-rail'), 'app rail present');
+  assert.ok(html.includes('slk-sidebar'), 'workspace sidebar present');
+  assert.ok(html.includes('slk-channel-active'), 'a channel is visibly selected');
+  assert.ok(html.includes('Find a conversation'), 'sidebar search');
+  assert.ok(html.includes('Search Sony'), 'top search bar');
+  // The Advisor posts as an APP message (not a floating dashboard).
+  assert.ok(html.includes('slk-msg-appbadge'), 'app badge on the message');
 });
 
 test('renders qualified audience size and name', () => {

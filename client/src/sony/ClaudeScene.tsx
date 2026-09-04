@@ -1,70 +1,105 @@
 import type { SonyActivationContext } from 'shared/src/sonyActivation';
 import { ExecutiveBrief } from './ExecutiveBrief';
 import { useBriefReveal } from './useBriefReveal';
+import {
+  ClaudeMark, CoworkIcon, CodeIcon, PlusIcon, FolderIcon, ArtifactIcon, ClockIcon,
+} from './icons';
 
 interface Props {
   context: SonyActivationContext;
   activationUrl: string | null;
 }
 
-const WORKSPACE = 'Sony IP360';
 const USER_PROMPT =
   'Prepare a one-minute executive brief for the Sony IP Council. Separate grounded facts, your recommendation, and the decisions still pending.';
 const CLAUDE_LEAD_IN =
   'Here’s the decision brief. The opportunity is strong enough to advance to cross-OpCo review, but not to activation.';
 const PREPARING_TEXT = 'Preparing executive brief from governed context…';
+const TASK_TITLE = 'Sony IP360 IP Council brief';
 
 /**
- * Claude-styled surface for the executive decision brief. Deterministic — no
- * live Claude API call, no token streaming. On entry it shows a brief
- * "preparing" state, then reveals the complete brief at once (see
- * useBriefReveal; respects prefers-reduced-motion). Not labeled "Executive
- * Coworker" to avoid confusion with the Agentforce Coworker product.
+ * Reference-exact Claude Cowork desktop shell (semantic React + CSS). Warm
+ * white app shell, narrow left sidebar with a Cowork/Code toggle and a
+ * Projects/Tasks structure, spacious conversation, right-aligned user request,
+ * orange "preparing" treatment, and a bottom composer with a model/status line.
+ *
+ * Deterministic — no live Claude call, no token streaming. "Preparing…" →
+ * full brief reveal in under 2s (useBriefReveal; respects reduced motion). Not
+ * labeled "Executive Coworker". No Live/Mock or implementation control.
  */
 export function ClaudeScene({ context, activationUrl }: Props) {
   const phase = useBriefReveal();
 
   return (
-    <div className="sony-claude" data-theme="claude">
-      <aside className="sony-claude-rail" aria-hidden="true">
-        <div className="sony-claude-rail-wordmark">SONY IP360</div>
+    <div className="cla" data-theme="claude">
+      {/* Left sidebar */}
+      <aside className="cla-sidebar" aria-label="Claude">
+        <div className="cla-mode" role="group" aria-label="Mode">
+          <span className="cla-mode-seg cla-mode-seg-active"><CoworkIcon size={15} /> Cowork</span>
+          <span className="cla-mode-seg"><CodeIcon size={15} /> Code</span>
+        </div>
+        <nav className="cla-nav">
+          <div className="cla-nav-item"><PlusIcon size={16} /> New</div>
+          <div className="cla-nav-item"><FolderIcon size={16} /> Projects</div>
+          <div className="cla-nav-item"><ArtifactIcon size={16} /> Artifacts</div>
+          <div className="cla-nav-item"><ClockIcon size={16} /> Scheduled</div>
+        </nav>
+        <div className="cla-tasks">
+          <span className="cla-tasks-label">Tasks</span>
+          <div className="cla-task cla-task-active" aria-current="true">
+            <span className="cla-task-dot" aria-hidden="true" />{TASK_TITLE}
+          </div>
+          <div className="cla-task">
+            <span className="cla-task-dot cla-task-dot-idle" aria-hidden="true" />EMEA audience notes
+          </div>
+        </div>
+        <div className="cla-account" aria-hidden="true">
+          <ClaudeMark size={16} /><span>Sony IP360 · Gateway</span>
+        </div>
       </aside>
 
-      <div className="sony-claude-main">
-        <header className="sony-claude-header">
-          <span className="sony-claude-workspace">{WORKSPACE}</span>
-          <span className="sony-claude-wordmark">Claude</span>
+      {/* Conversation */}
+      <section className="cla-main" aria-label="Conversation">
+        <header className="cla-header" aria-hidden="true">
+          <span className="cla-header-title">{TASK_TITLE}</span>
+          <span className="cla-header-caret">▾</span>
         </header>
 
-        <main className="sony-claude-messages">
-          <div className="sony-claude-turn sony-claude-turn-user">
-            <span className="sony-claude-turn-role">You</span>
-            <p className="sony-claude-turn-text">{USER_PROMPT}</p>
+        <div className="cla-thread">
+          <div className="cla-turn cla-turn-user">
+            <div className="cla-user-bubble">{USER_PROMPT}</div>
           </div>
 
-          <div className="sony-claude-turn sony-claude-turn-assistant">
-            <span className="sony-claude-turn-role">Claude</span>
+          <div className="cla-turn cla-turn-assistant">
             {phase === 'preparing' ? (
-              <p className="sony-claude-preparing" role="status">
-                <span className="sony-claude-preparing-dot" aria-hidden="true" />
-                {PREPARING_TEXT}
-              </p>
+              <div className="cla-preparing" role="status">
+                <ClaudeMark size={22} className="cla-preparing-mark" />
+                <span className="cla-preparing-text">{PREPARING_TEXT}</span>
+              </div>
             ) : (
               <>
-                <p className="sony-claude-turn-text">{CLAUDE_LEAD_IN}</p>
+                <div className="cla-assistant-row">
+                  <ClaudeMark size={20} />
+                  <p className="cla-lead-in">{CLAUDE_LEAD_IN}</p>
+                </div>
                 <ExecutiveBrief context={context} activationUrl={activationUrl} />
               </>
             )}
           </div>
-        </main>
-
-        {/* Inert composer — realism only, not interactive */}
-        <div className="sony-claude-composer" aria-hidden="true">
-          <div className="sony-claude-composer-box">
-            <span className="sony-claude-composer-placeholder">Reply to Claude…</span>
-          </div>
         </div>
-      </div>
+
+        {/* Composer with model/status treatment */}
+        <div className="cla-composer" aria-hidden="true">
+          <div className="cla-composer-box">
+            <span className="cla-composer-input">Write a message…</span>
+            <div className="cla-composer-footer">
+              <PlusIcon size={16} />
+              <span className="cla-composer-model">Claude Sonnet 4.6 · Low</span>
+            </div>
+          </div>
+          <p className="cla-disclaimer">Claude is AI and can make mistakes. Please double-check responses.</p>
+        </div>
+      </section>
     </div>
   );
 }

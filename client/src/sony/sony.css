@@ -1,42 +1,30 @@
-/* Sony Headless 360 — Slack (HX-2) + Teams (HX-3) scenes and navigator.
-   Scoped under .sony-* so it never affects the legacy app. */
+/* Sony Headless 360 — reference-exact Slack / Teams / Claude shells (HX-6).
+   Semantic CSS only (no screenshot backgrounds). Scoped under .sony-*, .slk,
+   .tms, .cla so the legacy `/` app is never affected. */
 
 .sony-shell,
-.sony-slack,
-.sony-teams,
+.slk, .tms, .cla,
 .sony-state {
-  --sony-bg: #10101a;
-  --sony-surface: #1a1a24;
-  --sony-surface-2: #21212e;
-  --sony-border: #2f2f3d;
-  --sony-text: #e9e9f0;
-  --sony-text-dim: #a3a3b5;
-  --sony-accent: #6b8afd;
-  --sony-accent-2: #8a6bfd;
-  --sony-active: #2eb67d;
-  --sony-warn: #e0a52e;
-  --sony-danger: #e05a5a;
-  --sony-teams-accent: #7b83eb;
-  --sony-nav-h: 52px;
   --sony-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --sony-nav-h: 0px;
   font-family: var(--sony-font);
-  color: var(--sony-text);
 }
 
-/* ---- Shell + scene viewport + navigator ------------------------------- */
+/* ---- Shell + scene viewport ------------------------------------------- */
 .sony-shell {
   height: 100vh;
   width: 100vw;
   display: flex;
   flex-direction: column;
-  background: var(--sony-bg);
   overflow: hidden;
+  background: #f4f4f6;
 }
 .sony-scene-viewport {
   flex: 1;
   min-height: 0;
   display: flex;
   overflow: hidden;
+  transition: transform 0.22s ease;
 }
 .sony-scene-inner {
   flex: 1;
@@ -44,647 +32,533 @@
   min-height: 0;
   display: flex;
 }
-.sony-nav {
-  height: var(--sony-nav-h);
-  flex-shrink: 0;
-  border-top: 1px solid var(--sony-border);
-  background: #0b0b12;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+@media (prefers-reduced-motion: reduce) {
+  .sony-scene-viewport { transition: none; }
 }
-.sony-nav-segments {
-  display: inline-flex;
-  gap: 4px;
-  background: var(--sony-surface-2);
-  border: 1px solid var(--sony-border);
-  border-radius: 999px;
-  padding: 4px;
-}
-.sony-nav-segment {
-  border: none;
-  background: transparent;
-  color: var(--sony-text-dim);
-  font-family: var(--sony-font);
-  font-size: 13px;
-  font-weight: 600;
-  padding: 6px 22px;
-  border-radius: 999px;
-  cursor: pointer;
-}
-.sony-nav-segment-active {
-  background: linear-gradient(135deg, var(--sony-accent), var(--sony-accent-2));
-  color: #fff;
+
+.sony-visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
 }
 
 /* ---- Loading / error states ------------------------------------------- */
 .sony-state {
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background: var(--sony-bg);
+  height: 100vh; width: 100vw;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; background: #10101a; color: #e9e9f0;
 }
 .sony-state-title { font-size: 20px; font-weight: 600; }
-.sony-state-detail { font-size: 14px; color: var(--sony-text-dim); }
-.sony-state-error .sony-state-title { color: var(--sony-danger); }
+.sony-state-detail { font-size: 14px; color: #a3a3b5; }
+.sony-state-error .sony-state-title { color: #e05a5a; }
 
-/* ---- Slack scene ------------------------------------------------------- */
-.sony-slack {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  background: var(--sony-bg);
-  overflow: hidden;
+/* ======================================================================= */
+/* SLACK                                                                    */
+/* ======================================================================= */
+.slk {
+  flex: 1; min-width: 0; min-height: 0;
+  display: flex; flex-direction: column;
+  background: #3f0e40; /* aubergine window frame */
+  color: #1d1c1d;
 }
-.sony-slack-rail {
-  width: 74px;
-  flex-shrink: 0;
-  background: #0b0b12;
-  border-right: 1px solid var(--sony-border);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 14px 0;
-  gap: 14px;
+.slk-topbar {
+  height: 40px; flex-shrink: 0;
+  background: #3f0e40; color: #e8d8e8;
+  display: grid; grid-template-columns: 140px 1fr 140px; align-items: center;
+  padding: 0 12px; gap: 8px;
 }
-.sony-slack-rail-wordmark {
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-align: center;
-  color: var(--sony-text-dim);
-  line-height: 1.2;
+.slk-topbar-nav { display: flex; gap: 6px; }
+.slk-topbar-right { display: flex; justify-content: flex-end; }
+.slk-icon-btn {
+  background: transparent; border: none; color: #cbb8cb; cursor: default;
+  padding: 4px; border-radius: 6px; display: inline-flex;
 }
-.sony-slack-rail-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  background: var(--sony-surface-2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--sony-text-dim);
+.slk-search {
+  height: 26px; background: rgba(255,255,255,0.12); border-radius: 8px;
+  display: flex; align-items: center; gap: 8px; padding: 0 10px;
+  color: #e8d8e8; font-size: 13px; max-width: 720px; margin: 0 auto; width: 100%;
 }
-.sony-slack-rail-active {
-  background: linear-gradient(135deg, var(--sony-accent), var(--sony-accent-2));
-  color: #fff;
-}
+.slk-body { flex: 1; min-height: 0; display: flex; }
 
-.sony-slack-main {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
+.slk-rail {
+  width: 70px; flex-shrink: 0; background: #3f0e40;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 8px 0; gap: 6px; color: #cbb8cb;
 }
-.sony-slack-header {
-  height: 56px;
-  flex-shrink: 0;
-  border-bottom: 1px solid var(--sony-border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  background: var(--sony-surface);
+.slk-rail-ws {
+  width: 40px; height: 40px; border-radius: 10px; background: #fff; color: #3f0e40;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-weight: 800; margin-bottom: 6px;
 }
-.sony-slack-header-left { display: flex; align-items: baseline; gap: 12px; }
-.sony-slack-workspace { font-weight: 700; font-size: 15px; }
-.sony-slack-channel { font-size: 15px; color: var(--sony-text-dim); }
-.sony-slack-wordmark {
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  color: var(--sony-text-dim);
+.slk-rail-ws-badge { font-size: 15px; line-height: 1; }
+.slk-rail-ws-name { font-size: 7px; letter-spacing: 0.08em; }
+.slk-rail-items { display: flex; flex-direction: column; gap: 4px; align-items: center; }
+.slk-rail-item {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  font-size: 10px; padding: 6px 4px; border-radius: 8px; width: 54px;
+}
+.slk-rail-item-active { background: rgba(255,255,255,0.16); color: #fff; }
+.slk-rail-add {
+  margin-top: 6px; width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center;
 }
 
-.sony-slack-messages {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  display: flex;
-  justify-content: center;
-  padding: 28px 24px;
+.slk-sidebar {
+  width: 260px; flex-shrink: 0; background: #3f0e40; color: #cfc3cf;
+  display: flex; flex-direction: column; padding: 6px 0;
+}
+.slk-sidebar-head {
+  display: flex; align-items: center; gap: 6px; padding: 6px 16px 10px;
+  color: #fff; font-weight: 800; font-size: 17px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+.slk-ws-caret { font-size: 12px; }
+.slk-find {
+  margin: 10px 12px; padding: 6px 10px; border-radius: 8px;
+  background: rgba(255,255,255,0.08); color: #cfc3cf; font-size: 13px;
+  display: flex; align-items: center; gap: 8px;
+}
+.slk-sidebar-section { padding: 4px 8px; }
+.slk-sidebar-label {
+  display: block; font-size: 13px; color: #b9a6b9; padding: 6px 8px; font-weight: 600;
+}
+.slk-channels { list-style: none; }
+.slk-channel {
+  display: flex; align-items: center; gap: 8px; padding: 5px 10px; border-radius: 6px;
+  font-size: 15px; color: #cfc3cf;
+}
+.slk-channel-hash { opacity: 0.8; }
+.slk-channel-active { background: #1164a3; color: #fff; font-weight: 600; }
+
+.slk-main {
+  flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column;
+  background: #fff; border-top-left-radius: 8px; margin: 0;
+}
+.slk-channel-header {
+  height: 49px; flex-shrink: 0; border-bottom: 1px solid #e2e2e2;
+  display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
+}
+.slk-channel-title { display: flex; align-items: center; gap: 8px; }
+.slk-channel-h { font-weight: 800; font-size: 18px; color: #1d1c1d; }
+.slk-channel-tabs { display: flex; gap: 16px; }
+.slk-tab { font-size: 13px; color: #616061; padding: 4px 2px; }
+.slk-tab-active { color: #1d1c1d; border-bottom: 2px solid #1d1c1d; font-weight: 600; }
+
+.slk-messages {
+  flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px 8px;
+}
+.slk-msg { display: flex; gap: 10px; }
+.slk-msg-avatar {
+  width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; background: #f3eefb;
+}
+.slk-msg-body { flex: 1; min-width: 0; }
+.slk-msg-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.slk-msg-sender { font-weight: 800; font-size: 15px; color: #1d1c1d; }
+.slk-msg-appbadge {
+  font-size: 10px; font-weight: 700; color: #616061; background: #e8e8e8;
+  border-radius: 3px; padding: 1px 5px; letter-spacing: 0.04em;
+}
+.slk-composer { flex-shrink: 0; padding: 8px 20px 16px; }
+.slk-composer-box { border: 1px solid #d1d1d1; border-radius: 10px; overflow: hidden; }
+.slk-composer-toolbar {
+  display: flex; gap: 4px; padding: 6px 10px; border-bottom: 1px solid #ededed;
+  color: #616061; font-size: 13px;
+}
+.slk-composer-tool { padding: 2px 6px; border-radius: 4px; }
+.slk-composer-input { padding: 10px 12px; color: #8d8d8d; font-size: 14px; }
+
+/* ======================================================================= */
+/* TEAMS                                                                    */
+/* ======================================================================= */
+.tms {
+  flex: 1; min-width: 0; min-height: 0;
+  display: flex; flex-direction: column;
+  background: #e8ebfa; color: #242424;
+}
+.tms-topbar {
+  height: 48px; flex-shrink: 0; background: #e8ebfa;
+  display: grid; grid-template-columns: 120px 1fr 160px; align-items: center;
+  padding: 0 16px; gap: 12px;
+}
+.tms-topbar-left { display: flex; gap: 8px; }
+.tms-icon-btn { background: transparent; border: none; color: #5b5b5b; padding: 4px; display: inline-flex; }
+.tms-search {
+  height: 32px; background: #fff; border-radius: 6px; border: 1px solid #d6d9ec;
+  display: flex; align-items: center; gap: 8px; padding: 0 12px;
+  color: #616161; font-size: 13px; max-width: 700px; margin: 0 auto; width: 100%;
+}
+.tms-topbar-right { display: flex; justify-content: flex-end; }
+.tms-account { font-size: 13px; font-weight: 600; color: #444; }
+.tms-body { flex: 1; min-height: 0; display: flex; padding: 0 8px 8px; gap: 8px; }
+
+.tms-rail {
+  width: 68px; flex-shrink: 0; display: flex; flex-direction: column;
+  align-items: center; padding: 6px 0; gap: 2px; color: #5b5b5b;
+}
+.tms-rail-item {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  font-size: 10px; padding: 8px 4px; width: 60px; border-radius: 8px;
+}
+.tms-rail-item-active { color: #5b5fc7; font-weight: 600; }
+.tms-rail-item-active::before {
+  content: ''; position: absolute; margin-left: -30px; width: 3px; height: 22px;
+  background: #5b5fc7; border-radius: 2px;
 }
 
-.sony-slack-composer { flex-shrink: 0; padding: 0 24px 20px; }
-.sony-slack-composer-box {
-  border: 1px solid var(--sony-border);
-  border-radius: 10px;
-  background: var(--sony-surface);
-  padding: 14px 16px;
-  max-width: 900px;
-  margin: 0 auto;
+.tms-sidebar {
+  width: 300px; flex-shrink: 0; background: #f5f5f5; border-radius: 8px;
+  display: flex; flex-direction: column; padding: 8px 0;
 }
-.sony-slack-composer-placeholder { color: var(--sony-text-dim); font-size: 14px; }
+.tms-sidebar-head {
+  display: flex; align-items: center; justify-content: space-between; padding: 6px 16px;
+}
+.tms-sidebar-title { font-size: 20px; font-weight: 700; }
+.tms-sidebar-head-actions { display: flex; gap: 10px; color: #5b5b5b; }
+.tms-sidebar-filters { display: flex; gap: 8px; padding: 4px 16px 10px; }
+.tms-filter { font-size: 13px; color: #616161; padding: 4px 10px; border-radius: 14px; }
+.tms-filter-active { background: #e2e2f6; color: #444; font-weight: 600; }
+.tms-sidebar-section { padding: 0 8px; }
+.tms-sidebar-label { display: block; font-size: 12px; color: #616161; font-weight: 600; padding: 6px 8px; }
+.tms-chats { list-style: none; }
+.tms-chat { display: flex; align-items: center; gap: 10px; padding: 8px 8px; border-radius: 8px; }
+.tms-chat-active { background: #e2e2f6; }
+.tms-chat-avatar {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; background: #fff;
+  display: flex; align-items: center; justify-content: center; border: 1px solid #e0e0e0;
+}
+.tms-chat-avatar-plain { background: #7b83eb; color: #fff; font-size: 12px; font-weight: 700; border: none; }
+.tms-chat-meta { display: flex; flex-direction: column; min-width: 0; }
+.tms-chat-name { font-size: 14px; font-weight: 600; color: #242424; }
+.tms-chat-preview { font-size: 12px; color: #616161; }
 
-/* ---- Collaboration artifact ------------------------------------------- */
+.tms-main {
+  flex: 1; min-width: 0; min-height: 0; background: #fff; border-radius: 8px;
+  display: flex; flex-direction: column;
+}
+.tms-conv-header {
+  height: 56px; flex-shrink: 0; border-bottom: 1px solid #ededed;
+  display: flex; align-items: center; gap: 12px; padding: 0 20px;
+}
+.tms-conv-avatar { width: 32px; height: 32px; border-radius: 50%; background: #eef0fb; display: flex; align-items: center; justify-content: center; }
+.tms-conv-titles { flex: 1; display: flex; flex-direction: column; }
+.tms-conv-title { font-size: 15px; font-weight: 700; }
+.tms-conv-sub { font-size: 12px; color: #616161; }
+.tms-conv-actions { display: flex; gap: 12px; color: #5b5b5b; }
+
+.tms-messages { flex: 1; min-height: 0; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+.tms-turn { display: flex; }
+.tms-turn-user { justify-content: flex-end; }
+.tms-turn-assistant { gap: 10px; }
+.tms-turn-avatar { width: 30px; height: 30px; border-radius: 50%; background: #f3eefb; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.tms-turn-content { flex: 1; min-width: 0; }
+.tms-turn-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.tms-turn-name { font-size: 13px; font-weight: 700; }
+.tms-context-label { font-size: 11px; color: #5b5fc7; background: #eef0fb; border-radius: 10px; padding: 1px 8px; }
+.tms-bubble { border-radius: 8px; padding: 10px 14px; font-size: 14px; line-height: 1.45; max-width: 640px; }
+.tms-bubble-user { background: #5b5fc7; color: #fff; border-bottom-right-radius: 2px; }
+.tms-bubble-assistant { background: #f0f0f5; color: #242424; margin-bottom: 8px; }
+
+.tms-composer { flex-shrink: 0; padding: 10px 24px 16px; }
+.tms-composer-box {
+  border: 1px solid #d6d6e0; border-radius: 8px; padding: 10px 12px;
+  display: flex; align-items: center; justify-content: space-between; color: #8a8a8a; font-size: 14px;
+}
+.tms-composer-send { color: #5b5fc7; }
+
+/* ======================================================================= */
+/* CLAUDE COWORK                                                            */
+/* ======================================================================= */
+.cla {
+  flex: 1; min-width: 0; min-height: 0; display: flex;
+  background: #f5f4ef; color: #2b2a27;
+}
+.cla-sidebar {
+  width: 250px; flex-shrink: 0; background: #ecebe4;
+  border-right: 1px solid #e0ded4; display: flex; flex-direction: column; padding: 12px;
+}
+.cla-mode {
+  display: flex; background: #e0ded4; border-radius: 10px; padding: 3px; margin-bottom: 14px;
+}
+.cla-mode-seg {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+  font-size: 13px; font-weight: 600; color: #6b6a63; padding: 6px 8px; border-radius: 8px;
+}
+.cla-mode-seg-active { background: #f5f4ef; color: #2b2a27; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+.cla-nav { display: flex; flex-direction: column; gap: 2px; margin-bottom: 18px; }
+.cla-nav-item { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #4a4943; padding: 7px 8px; border-radius: 8px; }
+.cla-tasks { flex: 1; min-height: 0; }
+.cla-tasks-label { display: block; font-size: 12px; color: #8a887e; padding: 4px 8px; }
+.cla-task { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #4a4943; padding: 7px 8px; border-radius: 8px; }
+.cla-task-active { background: #e0ded4; font-weight: 600; color: #2b2a27; }
+.cla-task-dot { width: 7px; height: 7px; border-radius: 50%; background: #d97757; flex-shrink: 0; }
+.cla-task-dot-idle { background: #b9b7ac; }
+.cla-account { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #6b6a63; padding-top: 10px; border-top: 1px solid #e0ded4; }
+
+.cla-main { flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+.cla-header {
+  height: 48px; flex-shrink: 0; display: flex; align-items: center; gap: 6px;
+  padding: 0 24px; color: #6b6a63; font-size: 14px; border-bottom: 1px solid #e8e6dd;
+}
+.cla-header-title { font-weight: 600; color: #2b2a27; }
+.cla-header-caret { font-size: 11px; }
+
+.cla-thread { flex: 1; min-height: 0; overflow-y: auto; padding: 24px 0; }
+.cla-turn { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+.cla-turn-user { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+.cla-user-bubble {
+  background: #ecebe4; border-radius: 12px; padding: 12px 16px; font-size: 15px;
+  line-height: 1.5; max-width: 560px;
+}
+.cla-turn-assistant { font-size: 16px; }
+.cla-preparing { display: flex; align-items: center; gap: 10px; color: #6b6a63; font-size: 15px; }
+.cla-preparing-mark { animation: cla-spin 1.1s linear infinite; }
+@keyframes cla-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .cla-preparing-mark { animation: none; } }
+.cla-preparing-text { font-style: italic; }
+.cla-assistant-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; }
+.cla-lead-in {
+  font-family: Georgia, 'Times New Roman', serif; font-size: 17px; line-height: 1.5; color: #2b2a27;
+}
+
+.cla-composer { flex-shrink: 0; padding: 8px 24px 12px; }
+.cla-composer-box {
+  max-width: 760px; margin: 0 auto; border: 1px solid #dcdad0; border-radius: 14px;
+  background: #fff; padding: 12px 14px;
+}
+.cla-composer-input { color: #9a988e; font-size: 14px; display: block; margin-bottom: 10px; }
+.cla-composer-footer { display: flex; align-items: center; justify-content: space-between; color: #6b6a63; }
+.cla-composer-model { font-size: 12px; }
+.cla-disclaimer { text-align: center; font-size: 11px; color: #9a988e; margin-top: 8px; }
+
+/* ======================================================================= */
+/* SHARED ARTIFACT CARDS (light-surface, sit inside the app content)        */
+/* ======================================================================= */
+.sony-collab, .sony-ps, .sony-brief {
+  --card-bg: #ffffff;
+  --card-border: #e4e4e8;
+  --card-surface-2: #f6f6f8;
+  --card-text: #1f2024;
+  --card-text-dim: #6b6b76;
+  --card-accent: #4b63d6;
+  --card-accent-2: #7b5fd6;
+  --card-active: #1a8a5a;
+  --card-warn: #b5791a;
+  color: var(--card-text);
+}
+
+/* ---- Collaboration artifact (Slack) ----------------------------------- */
 .sony-collab {
-  width: 100%;
-  max-width: 900px;
-  background: var(--sony-surface);
-  border: 1px solid var(--sony-border);
-  border-left: 4px solid var(--sony-accent);
-  border-radius: 14px;
-  padding: 28px 32px 24px;
+  margin-top: 6px; width: 100%; max-width: 940px;
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-left: 3px solid var(--card-accent); border-radius: 8px;
+  padding: 16px 18px 14px;
 }
-.sony-collab-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 14px;
-}
-.sony-collab-agent { display: flex; align-items: center; gap: 10px; }
-.sony-collab-agent-badge {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--sony-accent), var(--sony-accent-2));
-  color: #fff;
-  font-size: 11px;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.sony-collab-agent-meta { display: flex; align-items: center; gap: 8px; }
-.sony-collab-agent-name { font-weight: 700; font-size: 15px; }
-.sony-collab-agent-app {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  color: var(--sony-text-dim);
-  border: 1px solid var(--sony-border);
-  border-radius: 4px;
-  padding: 1px 5px;
-}
+.sony-collab-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.sony-collab-agent { display: none; } /* sender shown by Slack message meta */
 .sony-collab-artifact-tag {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--sony-accent);
-  background: rgba(107, 138, 253, 0.12);
-  border: 1px solid rgba(107, 138, 253, 0.35);
-  border-radius: 999px;
-  padding: 4px 12px;
+  font-size: 11px; font-weight: 700; color: var(--card-accent);
+  background: rgba(75,99,214,0.1); border: 1px solid rgba(75,99,214,0.28);
+  border-radius: 999px; padding: 3px 10px;
 }
+.sony-collab-title { font-size: 18px; font-weight: 800; line-height: 1.25; margin-bottom: 4px; color: var(--card-text); }
+.sony-collab-source { font-size: 12px; color: var(--card-text-dim); margin-bottom: 12px; }
 
-.sony-collab-title {
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1.25;
-  margin-bottom: 8px;
-}
-.sony-collab-source {
-  font-size: 12px;
-  color: var(--sony-text-dim);
-  margin-bottom: 18px;
-}
-
-.sony-collab-section { margin-bottom: 14px; }
+.sony-collab-section { margin-bottom: 12px; }
 .sony-collab-section:last-child { margin-bottom: 0; }
 .sony-collab-h2 {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--sony-text-dim);
-  margin-bottom: 6px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--card-text-dim); margin-bottom: 5px;
 }
-.sony-collab-section p { font-size: 14px; line-height: 1.5; color: var(--sony-text); }
+.sony-collab-section p { font-size: 13.5px; line-height: 1.5; color: var(--card-text); }
 
-.sony-collab-release-list { list-style: none; display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+.sony-collab-release-list { list-style: none; display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
 .sony-collab-release { display: flex; align-items: center; gap: 6px; }
 .sony-collab-release-title { font-size: 13px; font-weight: 600; }
-.sony-collab-chip {
-  font-size: 11px;
-  font-weight: 600;
-  border-radius: 999px;
-  padding: 3px 10px;
-}
-.sony-chip-active { background: rgba(46, 182, 125, 0.15); color: #4bd69b; border: 1px solid rgba(46, 182, 125, 0.4); }
-.sony-chip-dev { background: rgba(163, 163, 181, 0.12); color: var(--sony-text-dim); border: 1px solid var(--sony-border); }
+.sony-collab-chip { font-size: 11px; font-weight: 600; border-radius: 999px; padding: 2px 9px; }
+.sony-chip-active { background: rgba(26,138,90,0.12); color: #1a8a5a; border: 1px solid rgba(26,138,90,0.35); }
+.sony-chip-dev { background: #eeeef1; color: var(--card-text-dim); border: 1px solid var(--card-border); }
 
-/* Headline metric strip — audience + priority + 3 authoritative model scores */
-.sony-collab-metrics {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
-  margin-bottom: 16px;
-}
+.sony-collab-metrics { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 14px; }
 .sony-metric {
-  background: var(--sony-surface-2);
-  border: 1px solid var(--sony-border);
-  border-radius: 10px;
-  padding: 12px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  background: var(--card-surface-2); border: 1px solid var(--card-border);
+  border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px;
 }
-.sony-metric-primary { border-color: rgba(107, 138, 253, 0.4); }
-.sony-metric-value { font-size: 24px; font-weight: 800; color: #fff; line-height: 1.1; }
-.sony-metric-label { font-size: 12px; font-weight: 600; }
-.sony-metric-sub { font-size: 11px; color: var(--sony-text-dim); }
+.sony-metric-primary { border-color: rgba(75,99,214,0.35); background: rgba(75,99,214,0.06); }
+.sony-metric-value { font-size: 22px; font-weight: 800; color: var(--card-text); line-height: 1.1; }
+.sony-metric-label { font-size: 11px; font-weight: 600; color: var(--card-text-dim); }
+.sony-metric-sub { font-size: 11px; color: var(--card-text-dim); }
 
-/* Contributing signals — qualitative label + detail, NO per-channel number */
-.sony-collab-signals { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.sony-collab-signals { list-style: none; display: flex; flex-direction: column; gap: 7px; }
 .sony-signal-row { display: flex; flex-direction: column; gap: 1px; }
 .sony-signal-label { font-size: 13px; font-weight: 600; }
-.sony-signal-detail { font-size: 12px; color: var(--sony-text-dim); line-height: 1.4; }
+.sony-signal-detail { font-size: 12px; color: var(--card-text-dim); line-height: 1.4; }
 
-/* Two-column body */
-.sony-collab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.sony-collab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
 .sony-collab-col { min-width: 0; }
 
-.sony-collab-opcos { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.sony-collab-opcos { list-style: none; display: flex; flex-direction: column; gap: 6px; }
 .sony-opco {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--sony-surface-2);
-  border: 1px solid var(--sony-border);
-  border-radius: 8px;
-  padding: 10px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--card-surface-2); border: 1px solid var(--card-border);
+  border-radius: 8px; padding: 8px 12px;
 }
-.sony-opco-name { font-size: 15px; font-weight: 600; }
-.sony-opco-role { font-size: 12px; font-weight: 600; border-radius: 999px; padding: 3px 10px; }
-.sony-opco-lead { background: rgba(46, 182, 125, 0.15); color: #4bd69b; }
-.sony-opco-pending { background: rgba(224, 165, 46, 0.15); color: var(--sony-warn); }
+.sony-opco-name { font-size: 14px; font-weight: 600; }
+.sony-opco-role { font-size: 11px; font-weight: 600; border-radius: 999px; padding: 3px 9px; }
+.sony-opco-lead { background: rgba(26,138,90,0.12); color: #1a8a5a; }
+.sony-opco-pending { background: rgba(181,121,26,0.14); color: var(--card-warn); }
 
 .sony-collab-lifecycle {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-  background: var(--sony-surface-2);
-  border: 1px solid var(--sony-border);
-  border-radius: 10px;
-  padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  background: var(--card-surface-2); border: 1px solid var(--card-border);
+  border-radius: 8px; padding: 12px 14px;
 }
 .sony-lifecycle-row { display: flex; flex-direction: column; gap: 2px; }
-.sony-lifecycle-key { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--sony-text-dim); }
-.sony-lifecycle-val { font-size: 14px; font-weight: 600; }
-.sony-lifecycle-warn { color: var(--sony-warn); }
-.sony-lifecycle-arrow { color: var(--sony-text-dim); font-size: 18px; }
+.sony-lifecycle-key { font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--card-text-dim); }
+.sony-lifecycle-val { font-size: 13px; font-weight: 600; }
+.sony-lifecycle-warn { color: var(--card-warn); }
+.sony-lifecycle-arrow { color: var(--card-text-dim); font-size: 16px; }
 
-.sony-collab-decisions { padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
-.sony-collab-decisions li { font-size: 15px; line-height: 1.5; }
+.sony-collab-decisions { padding-left: 18px; display: flex; flex-direction: column; gap: 5px; }
+.sony-collab-decisions li { font-size: 13.5px; line-height: 1.45; }
 
-.sony-collab-banner {
-  margin-top: 4px;
-  background: rgba(224, 165, 46, 0.1);
-  border: 1px solid rgba(224, 165, 46, 0.4);
-  border-radius: 8px;
-  padding: 12px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--sony-warn);
-  text-align: center;
+.sony-collab-banner, .sony-ps-banner, .sony-brief-banner {
+  margin-top: 6px; background: rgba(181,121,26,0.1); border: 1px solid rgba(181,121,26,0.4);
+  border-radius: 8px; padding: 10px 14px; font-size: 13px; font-weight: 600;
+  color: var(--card-warn); text-align: center;
 }
+.sony-collab-actions, .sony-ps-actions, .sony-brief-actions { margin-top: 14px; display: flex; }
 
-.sony-collab-actions { margin-top: 18px; display: flex; }
+/* Activation link (shared) */
 .sony-activation-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  border-radius: 8px;
-  padding: 11px 18px;
-  background: linear-gradient(135deg, var(--sony-accent), var(--sony-accent-2));
-  color: #fff;
+  display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600;
+  text-decoration: none; border-radius: 8px; padding: 10px 16px;
+  background: linear-gradient(135deg, var(--card-accent), var(--card-accent-2)); color: #fff;
   border: 1px solid transparent;
 }
-.sony-activation-link-icon { font-size: 15px; }
 .sony-activation-link-disabled {
-  background: var(--sony-surface-2);
-  color: var(--sony-text-dim);
-  border: 1px solid var(--sony-border);
-  cursor: not-allowed;
+  background: var(--card-surface-2); color: var(--card-text-dim);
+  border: 1px solid var(--card-border); cursor: not-allowed;
 }
-.sony-activation-link-note {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  opacity: 0.8;
-}
+.sony-activation-link-note { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8; }
 
-/* ---- Teams scene (HX-3) ------------------------------------------------ */
-.sony-teams {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  background: var(--sony-bg);
-  overflow: hidden;
-}
-.sony-teams-rail {
-  width: 74px;
-  flex-shrink: 0;
-  background: #0b0b12;
-  border-right: 1px solid var(--sony-border);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 14px 0;
-  gap: 14px;
-}
-.sony-teams-rail-wordmark {
-  font-size: 9px; font-weight: 800; letter-spacing: 0.06em;
-  text-align: center; color: var(--sony-text-dim); line-height: 1.2;
-}
-.sony-teams-rail-icon {
-  width: 42px; height: 42px; border-radius: 12px;
-  background: var(--sony-surface-2); display: flex; align-items: center;
-  justify-content: center; font-size: 14px; font-weight: 800; color: var(--sony-text-dim);
-}
-.sony-teams-rail-active {
-  background: linear-gradient(135deg, #5b5fc7, var(--sony-teams-accent)); color: #fff;
-}
-.sony-teams-main { flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; }
-.sony-teams-header {
-  height: 52px; flex-shrink: 0; border-bottom: 1px solid var(--sony-border);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 24px; background: var(--sony-surface);
-}
-.sony-teams-header-left { display: flex; align-items: baseline; gap: 12px; }
-.sony-teams-team { font-weight: 700; font-size: 15px; }
-.sony-teams-conversation { font-size: 15px; color: var(--sony-text-dim); }
-.sony-teams-wordmark {
-  font-size: 12px; font-weight: 800; letter-spacing: 0.08em; color: var(--sony-text-dim);
-}
-.sony-teams-messages {
-  flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column;
-  gap: 12px; padding: 20px 24px; align-items: stretch;
-}
-.sony-teams-turn { max-width: 980px; width: 100%; margin: 0 auto; }
-.sony-teams-turn-role { font-size: 12px; font-weight: 700; color: var(--sony-text-dim); }
-.sony-teams-turn-user { align-self: flex-end; text-align: right; }
-.sony-teams-turn-user .sony-teams-turn-text {
-  display: inline-block; background: var(--sony-surface-2);
-  border: 1px solid var(--sony-border); border-radius: 12px 12px 2px 12px;
-  padding: 8px 14px; font-size: 14px; margin-top: 2px;
-}
-.sony-teams-assistant-meta { display: flex; align-items: center; gap: 10px; }
-.sony-teams-context-label {
-  font-size: 10px; font-weight: 700; letter-spacing: 0.04em;
-  color: var(--sony-teams-accent); border: 1px solid rgba(123, 131, 235, 0.4);
-  background: rgba(123, 131, 235, 0.12); border-radius: 999px; padding: 2px 8px;
-}
-.sony-teams-turn-assistant .sony-teams-turn-text { font-size: 14px; margin: 4px 0 10px; line-height: 1.5; }
-.sony-teams-composer { flex-shrink: 0; padding: 0 24px 16px; }
-.sony-teams-composer-box {
-  border: 1px solid var(--sony-border); border-radius: 10px;
-  background: var(--sony-surface); padding: 12px 16px; max-width: 980px; margin: 0 auto;
-}
-.sony-teams-composer-placeholder { color: var(--sony-text-dim); font-size: 14px; }
-
-/* ---- PlayStation Participation Decision card -------------------------- */
+/* ---- PlayStation Participation Decision card (Teams adaptive card) ------ */
 .sony-ps {
-  background: var(--sony-surface); border: 1px solid var(--sony-border);
-  border-left: 4px solid var(--sony-teams-accent); border-radius: 14px;
-  padding: 20px 24px 18px;
+  margin-top: 4px; width: 100%; max-width: 720px;
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 8px;
+  padding: 16px 18px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.06);
 }
 .sony-ps-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
 .sony-ps-artifact-tag {
-  font-size: 11px; font-weight: 600; color: var(--sony-teams-accent);
-  background: rgba(123, 131, 235, 0.12); border: 1px solid rgba(123, 131, 235, 0.35);
-  border-radius: 999px; padding: 4px 12px;
+  font-size: 11px; font-weight: 700; color: var(--card-accent);
+  background: rgba(75,99,214,0.1); border: 1px solid rgba(75,99,214,0.28);
+  border-radius: 999px; padding: 3px 10px;
 }
-.sony-ps-required {
-  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
-  color: var(--sony-warn);
-}
-.sony-ps-title { font-size: 20px; font-weight: 700; line-height: 1.25; margin-bottom: 14px; }
-.sony-ps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.sony-ps-required { font-size: 11px; font-weight: 700; color: var(--card-warn); }
+.sony-ps-title { font-size: 18px; font-weight: 800; line-height: 1.25; margin-bottom: 12px; }
+.sony-ps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .sony-ps-col { min-width: 0; }
 .sony-ps-section { margin-bottom: 12px; }
-.sony-ps-h2 {
-  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
-  color: var(--sony-text-dim); margin-bottom: 6px;
-}
+.sony-ps-h2 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--card-text-dim); margin-bottom: 5px; }
 .sony-ps-why { list-style: disc; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
 .sony-ps-why li { font-size: 13px; line-height: 1.45; }
 .sony-ps-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
-.sony-ps-metric {
-  background: var(--sony-surface-2); border: 1px solid var(--sony-border);
-  border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px;
-}
-.sony-ps-metric-value { font-size: 20px; font-weight: 800; color: #fff; line-height: 1.1; }
-.sony-ps-metric-label { font-size: 11px; font-weight: 600; color: var(--sony-text-dim); }
-.sony-ps-status {
-  background: var(--sony-surface-2); border: 1px solid var(--sony-border);
-  border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px;
-}
-.sony-ps-status-row { display: flex; justify-content: space-between; font-size: 13px; }
-.sony-ps-status-key { color: var(--sony-text-dim); }
-.sony-ps-status-val { font-weight: 600; }
-.sony-ps-pending { color: var(--sony-warn); }
-.sony-ps-decisions { padding-left: 20px; display: flex; flex-direction: column; gap: 5px; }
-.sony-ps-decisions li { font-size: 14px; line-height: 1.45; }
+.sony-ps-metric { background: var(--card-surface-2); border: 1px solid var(--card-border); border-radius: 8px; padding: 10px 10px; display: flex; flex-direction: column; gap: 2px; }
+.sony-ps-metric-value { font-size: 18px; font-weight: 800; color: var(--card-text); line-height: 1.1; }
+.sony-ps-metric-label { font-size: 10.5px; font-weight: 600; color: var(--card-text-dim); }
+.sony-ps-status { background: var(--card-surface-2); border: 1px solid var(--card-border); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; }
+.sony-ps-status-row { display: flex; align-items: center; justify-content: space-between; }
+.sony-ps-status-key { font-size: 12px; color: var(--card-text-dim); }
+.sony-ps-status-val { font-size: 13px; font-weight: 600; }
+.sony-ps-pending { color: var(--card-warn); }
+.sony-ps-decisions { padding-left: 18px; display: flex; flex-direction: column; gap: 5px; }
+.sony-ps-decisions li { font-size: 13px; line-height: 1.4; }
 .sony-ps-governance { display: flex; flex-direction: column; gap: 10px; }
-.sony-ps-gov-block { border-radius: 10px; padding: 10px 12px; }
-.sony-ps-gov-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
-.sony-ps-gov-block ul { list-style: none; display: flex; flex-direction: column; gap: 3px; }
-.sony-ps-gov-block li { font-size: 12px; line-height: 1.4; padding-left: 16px; position: relative; }
-.sony-ps-gov-permitted { background: rgba(46, 182, 125, 0.08); border: 1px solid rgba(46, 182, 125, 0.35); }
-.sony-ps-gov-permitted .sony-ps-gov-title { color: #4bd69b; }
-.sony-ps-gov-permitted li::before { content: '✓'; position: absolute; left: 0; color: #4bd69b; }
-.sony-ps-gov-restricted { background: rgba(224, 90, 90, 0.07); border: 1px solid rgba(224, 90, 90, 0.3); }
-.sony-ps-gov-restricted .sony-ps-gov-title { color: #f08a8a; }
-.sony-ps-gov-restricted li::before { content: '—'; position: absolute; left: 0; color: #f08a8a; }
-.sony-ps-banner {
-  margin-top: 12px; background: rgba(224, 165, 46, 0.1);
-  border: 1px solid rgba(224, 165, 46, 0.4); border-radius: 8px;
-  padding: 10px 14px; font-size: 13px; font-weight: 600; color: var(--sony-warn); text-align: center;
-}
-.sony-ps-actions { margin-top: 14px; display: flex; }
+.sony-ps-gov-block { border-radius: 8px; padding: 10px 12px; }
+.sony-ps-gov-permitted { background: rgba(26,138,90,0.08); border: 1px solid rgba(26,138,90,0.32); }
+.sony-ps-gov-restricted { background: rgba(181,121,26,0.08); border: 1px solid rgba(181,121,26,0.32); }
+.sony-ps-gov-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 5px; }
+.sony-ps-gov-permitted .sony-ps-gov-title { color: #1a8a5a; }
+.sony-ps-gov-restricted .sony-ps-gov-title { color: var(--card-warn); }
+.sony-ps-governance ul { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+.sony-ps-governance li { font-size: 12px; line-height: 1.4; padding-left: 14px; position: relative; }
+.sony-ps-gov-permitted li::before { content: '✓'; position: absolute; left: 0; color: #1a8a5a; }
+.sony-ps-gov-restricted li::before { content: '✕'; position: absolute; left: 0; color: var(--card-warn); }
 
-/* ---- Claude scene (HX-4) ---------------------------------------------- */
-.sony-claude {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  background: var(--sony-bg);
-  overflow: hidden;
-}
-.sony-claude-rail {
-  width: 74px; flex-shrink: 0; background: #0b0b12;
-  border-right: 1px solid var(--sony-border);
-  display: flex; flex-direction: column; align-items: center; padding: 14px 0;
-}
-.sony-claude-rail-wordmark {
-  font-size: 9px; font-weight: 800; letter-spacing: 0.06em;
-  text-align: center; color: var(--sony-text-dim); line-height: 1.2;
-}
-.sony-claude-main { flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; }
-.sony-claude-header {
-  height: 52px; flex-shrink: 0; border-bottom: 1px solid var(--sony-border);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 24px; background: var(--sony-surface);
-}
-.sony-claude-workspace { font-weight: 700; font-size: 15px; }
-.sony-claude-wordmark {
-  font-size: 13px; font-weight: 700; letter-spacing: 0.02em; color: #d97757;
-}
-.sony-claude-messages {
-  flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column;
-  gap: 10px; padding: 20px 24px;
-}
-.sony-claude-turn { max-width: 1000px; width: 100%; margin: 0 auto; }
-.sony-claude-turn-role { font-size: 12px; font-weight: 700; color: var(--sony-text-dim); }
-.sony-claude-turn-user { align-self: flex-end; text-align: right; }
-.sony-claude-turn-user .sony-claude-turn-text {
-  display: inline-block; background: var(--sony-surface-2);
-  border: 1px solid var(--sony-border); border-radius: 12px 12px 2px 12px;
-  padding: 8px 14px; font-size: 14px; margin-top: 2px; max-width: 640px;
-}
-.sony-claude-turn-assistant .sony-claude-turn-text { font-size: 14px; margin: 4px 0 10px; line-height: 1.5; }
-.sony-claude-preparing {
-  display: flex; align-items: center; gap: 8px; font-size: 14px;
-  color: var(--sony-text-dim); margin-top: 6px;
-}
-.sony-claude-preparing-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--sony-accent), var(--sony-accent-2));
-  animation: sony-pulse 1s ease-in-out infinite;
-}
-@keyframes sony-pulse { 0%,100% { opacity: 0.35; } 50% { opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { .sony-claude-preparing-dot { animation: none; } }
-.sony-claude-composer { flex-shrink: 0; padding: 0 24px 16px; }
-.sony-claude-composer-box {
-  border: 1px solid var(--sony-border); border-radius: 10px;
-  background: var(--sony-surface); padding: 12px 16px; max-width: 1000px; margin: 0 auto;
-}
-.sony-claude-composer-placeholder { color: var(--sony-text-dim); font-size: 14px; }
-
-/* ---- Executive Decision Brief ----------------------------------------- */
+/* ---- Executive Decision Brief (Claude artifact) ------------------------ */
 .sony-brief {
-  background: var(--sony-surface); border: 1px solid var(--sony-border);
-  border-radius: 14px; padding: 18px 22px 16px; max-width: 1000px; margin: 0 auto; width: 100%;
+  width: 100%; max-width: 760px; margin: 0 auto;
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px;
+  padding: 16px 18px 14px;
 }
 .sony-brief-head { margin-bottom: 12px; }
 .sony-brief-artifact-tag {
-  font-size: 11px; font-weight: 600; color: var(--sony-accent-2);
-  background: rgba(138, 107, 253, 0.12); border: 1px solid rgba(138, 107, 253, 0.35);
+  font-size: 11px; font-weight: 700; color: var(--card-accent-2);
+  background: rgba(123,95,214,0.1); border: 1px solid rgba(123,95,214,0.3);
   border-radius: 999px; padding: 3px 10px;
 }
-.sony-brief-title { font-size: 20px; font-weight: 700; line-height: 1.2; margin: 8px 0 2px; }
-.sony-brief-supporting { font-size: 12px; color: var(--sony-text-dim); }
+.sony-brief-title { font-size: 19px; font-weight: 800; line-height: 1.2; margin: 8px 0 2px; }
+.sony-brief-supporting { font-size: 12px; color: var(--card-text-dim); }
 .sony-brief-section { margin-bottom: 12px; border-radius: 10px; padding: 12px 14px; }
-.sony-brief-h2 {
-  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
-  margin-bottom: 6px; color: var(--sony-text-dim);
-}
+.sony-brief-h2 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; color: var(--card-text-dim); }
 .sony-brief-section p, .sony-brief-section li { font-size: 13px; line-height: 1.45; }
-
-/* Recommendation — PURPLE */
-.sony-brief-reco {
-  background: rgba(138, 107, 253, 0.1); border: 1px solid rgba(138, 107, 253, 0.4);
-}
-.sony-brief-reco .sony-brief-h2 { color: #b9a3ff; }
-.sony-brief-reco-text { color: var(--sony-text); }
-.sony-brief-reco-conclusion { font-weight: 700; color: #b9a3ff; margin-top: 6px; }
-
+.sony-brief-reco { background: rgba(123,95,214,0.08); border: 1px solid rgba(123,95,214,0.36); }
+.sony-brief-reco .sony-brief-h2 { color: #6a4fca; }
+.sony-brief-reco-conclusion { font-weight: 700; color: #6a4fca; margin-top: 6px; }
 .sony-brief-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-/* Grounded facts — BLUE */
-.sony-brief-facts {
-  background: rgba(107, 138, 253, 0.08); border: 1px solid rgba(107, 138, 253, 0.35);
-}
-.sony-brief-facts .sony-brief-h2 { color: #9db4ff; }
+.sony-brief-facts { background: rgba(75,99,214,0.06); border: 1px solid rgba(75,99,214,0.3); }
+.sony-brief-facts .sony-brief-h2 { color: #4b63d6; }
 .sony-brief-facts-list { list-style: none; display: flex; flex-direction: column; gap: 3px; }
-.sony-brief-source { font-size: 11px; color: var(--sony-text-dim); margin-top: 6px; }
-
-/* Connected value — NEUTRAL */
-.sony-brief-value { background: var(--sony-surface-2); border: 1px solid var(--sony-border); }
+.sony-brief-source { font-size: 11px; color: var(--card-text-dim); margin-top: 6px; }
+.sony-brief-value { background: var(--card-surface-2); border: 1px solid var(--card-border); }
 .sony-brief-chain { font-weight: 700; margin-bottom: 6px; }
 .sony-brief-roles { list-style: none; display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
 .sony-brief-roles li { display: flex; align-items: center; justify-content: space-between; }
 .sony-role-name { font-weight: 600; font-size: 13px; }
 .sony-role-tag { font-size: 11px; font-weight: 600; border-radius: 999px; padding: 2px 8px; }
-.sony-role-lead { background: rgba(46, 182, 125, 0.15); color: #4bd69b; }
-.sony-role-pending { background: rgba(224, 165, 46, 0.15); color: var(--sony-warn); }
-.sony-brief-value-note { color: var(--sony-text-dim); }
-
-/* Decisions pending — AMBER */
-.sony-brief-decisions {
-  background: rgba(224, 165, 46, 0.08); border: 1px solid rgba(224, 165, 46, 0.4);
-}
-.sony-brief-decisions .sony-brief-h2 { color: var(--sony-warn); }
-.sony-brief-decisions-note { color: var(--sony-warn); font-weight: 600; margin-bottom: 4px; }
+.sony-role-lead { background: rgba(26,138,90,0.12); color: #1a8a5a; }
+.sony-role-pending { background: rgba(181,121,26,0.14); color: var(--card-warn); }
+.sony-brief-value-note { color: var(--card-text-dim); }
+.sony-brief-decisions { background: rgba(181,121,26,0.08); border: 1px solid rgba(181,121,26,0.4); }
+.sony-brief-decisions .sony-brief-h2 { color: var(--card-warn); }
+.sony-brief-decisions-note { color: var(--card-warn); font-weight: 600; margin-bottom: 4px; }
 .sony-brief-decisions-list { padding-left: 18px; display: flex; flex-direction: column; gap: 3px; }
-.sony-brief-stages { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; font-size: 12px; color: var(--sony-text-dim); }
-.sony-brief-rights { color: var(--sony-warn); }
-
-/* Guardrails — GREEN */
-.sony-brief-guardrails {
-  background: rgba(46, 182, 125, 0.07); border: 1px solid rgba(46, 182, 125, 0.35);
-}
-.sony-brief-guardrails .sony-brief-h2 { color: #4bd69b; }
+.sony-brief-stages { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; font-size: 12px; color: var(--card-text-dim); }
+.sony-brief-rights { color: var(--card-warn); }
+.sony-brief-guardrails { background: rgba(26,138,90,0.07); border: 1px solid rgba(26,138,90,0.32); }
+.sony-brief-guardrails .sony-brief-h2 { color: #1a8a5a; }
 .sony-brief-risks { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
-.sony-brief-risk-chip {
-  font-size: 11px; line-height: 1.35; background: var(--sony-surface-2);
-  border: 1px solid var(--sony-border); border-radius: 8px; padding: 5px 8px; max-width: 48%;
-}
+.sony-brief-risk-chip { font-size: 11px; line-height: 1.35; background: var(--card-surface-2); border: 1px solid var(--card-border); border-radius: 8px; padding: 5px 8px; max-width: 48%; }
 .sony-brief-guards { list-style: none; display: flex; flex-direction: column; gap: 2px; }
-.sony-brief-guards li { font-size: 12px; color: var(--sony-text-dim); padding-left: 14px; position: relative; }
-.sony-brief-guards li::before { content: '✓'; position: absolute; left: 0; color: #4bd69b; }
-
-.sony-brief-banner {
-  margin-top: 10px; background: rgba(224, 165, 46, 0.1);
-  border: 1px solid rgba(224, 165, 46, 0.4); border-radius: 8px;
-  padding: 10px 14px; font-size: 13px; font-weight: 600; color: var(--sony-warn); text-align: center;
-}
-.sony-brief-actions { margin-top: 12px; display: flex; }
-
-/* ---- Swipe drag transition (HX-5) ------------------------------------- */
-.sony-scene-viewport { transition: transform 0.22s ease; }
-@media (prefers-reduced-motion: reduce) {
-  .sony-scene-viewport { transition: none; }
-}
+.sony-brief-guards li { font-size: 12px; color: var(--card-text-dim); padding-left: 14px; position: relative; }
+.sony-brief-guards li::before { content: '✓'; position: absolute; left: 0; color: #1a8a5a; }
 
 /* ---- Hidden presenter panel (HX-5) ------------------------------------ */
 .sony-presenter-overlay {
-  position: fixed; inset: 0; z-index: 1000;
-  background: rgba(6, 6, 12, 0.55);
-  display: flex; align-items: flex-start; justify-content: flex-end;
-  padding: 24px;
+  position: fixed; inset: 0; z-index: 1000; background: rgba(6,6,12,0.55);
+  display: flex; align-items: flex-start; justify-content: flex-end; padding: 24px;
 }
 .sony-presenter-panel {
-  width: 320px; max-width: 90vw;
-  background: var(--sony-surface); border: 1px solid var(--sony-border);
-  border-radius: 12px; padding: 16px; color: var(--sony-text);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-  font-family: var(--sony-font);
+  width: 320px; max-width: 90vw; background: #1a1a24; border: 1px solid #2f2f3d;
+  border-radius: 12px; padding: 16px; color: #e9e9f0;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5); font-family: var(--sony-font);
 }
 .sony-presenter-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .sony-presenter-title { font-size: 14px; font-weight: 700; }
-.sony-presenter-close {
-  background: transparent; border: none; color: var(--sony-text-dim);
-  font-size: 16px; cursor: pointer; padding: 2px 6px; border-radius: 6px;
-}
-.sony-presenter-close:hover { color: var(--sony-text); }
+.sony-presenter-close { background: transparent; border: none; color: #a3a3b5; font-size: 16px; cursor: pointer; padding: 2px 6px; border-radius: 6px; }
+.sony-presenter-close:hover { color: #e9e9f0; }
 .sony-presenter-group { margin-bottom: 14px; }
-.sony-presenter-group-label {
-  display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
-  color: var(--sony-text-dim); margin-bottom: 6px;
-}
+.sony-presenter-group-label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #a3a3b5; margin-bottom: 6px; }
 .sony-presenter-jumps { display: flex; gap: 6px; }
 .sony-presenter-btn {
-  font-family: var(--sony-font); font-size: 13px; font-weight: 600;
-  background: var(--sony-surface-2); color: var(--sony-text);
-  border: 1px solid var(--sony-border); border-radius: 8px;
-  padding: 8px 14px; cursor: pointer;
+  font-family: var(--sony-font); font-size: 13px; font-weight: 600; background: #21212e; color: #e9e9f0;
+  border: 1px solid #2f2f3d; border-radius: 8px; padding: 8px 14px; cursor: pointer;
 }
-.sony-presenter-btn:hover:not(:disabled) { border-color: var(--sony-accent); }
+.sony-presenter-btn:hover:not(:disabled) { border-color: #6b8afd; }
 .sony-presenter-btn:disabled { opacity: 0.55; cursor: not-allowed; }
 .sony-presenter-reset { width: 100%; }
 .sony-presenter-live { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.sony-presenter-live-status { font-size: 12px; color: var(--sony-text-dim); }
-.sony-presenter-note { font-size: 11px; color: var(--sony-text-dim); margin-top: 8px; line-height: 1.4; }
+.sony-presenter-live-status { font-size: 12px; color: #a3a3b5; }
+.sony-presenter-note { font-size: 11px; color: #a3a3b5; margin-top: 8px; line-height: 1.4; }

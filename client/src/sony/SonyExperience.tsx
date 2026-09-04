@@ -3,13 +3,12 @@ import { ActivationProvider, useActivation } from '../context/ActivationContext'
 import { SlackScene } from './SlackScene';
 import { TeamsScene } from './TeamsScene';
 import { ClaudeScene } from './ClaudeScene';
-import { SceneNavigator } from './SceneNavigator';
 import { PresenterPanel } from './PresenterPanel';
 import { useScene } from './useScene';
 import { useSwipeNavigation } from './useSwipeNavigation';
 import { usePresenterPanel } from './usePresenterPanel';
 import { nextScene, type SwipeDirection } from './swipe';
-import { DEFAULT_SCENE } from './scenes';
+import { DEFAULT_SCENE, SCENE_ORDER } from './scenes';
 import './sony.css';
 
 function prefersReducedMotion(): boolean {
@@ -76,12 +75,19 @@ function SonyExperienceInner() {
   const dragStyle =
     dragging && !reduced ? { transform: `translateX(${dragX * 0.15}px)` } : undefined;
 
+  const sceneLabel = SCENE_ORDER.find((s) => s.id === scene)?.label ?? scene;
+
   return (
     <div className="sony-shell">
+      {/* Nonvisual scene-change announcement (no visible cross-scene navigator). */}
+      <div className="sony-visually-hidden" role="status" aria-live="polite">
+        {sceneLabel} scene
+      </div>
       <div
         className="sony-scene-viewport"
         id={`sony-scene-${scene}`}
-        role="tabpanel"
+        role="group"
+        aria-label={`${sceneLabel} scene`}
         ref={viewportRef}
         style={dragStyle}
         {...handlers}
@@ -92,7 +98,6 @@ function SonyExperienceInner() {
           {scene === 'claude' && <ClaudeScene context={context} activationUrl={activationUrl} />}
         </div>
       </div>
-      <SceneNavigator scene={scene} onSelect={setScene} />
       <PresenterPanel
         open={presenter.open}
         onClose={presenter.close}
