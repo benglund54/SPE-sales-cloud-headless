@@ -819,3 +819,94 @@
 .slk-bot-field { flex: 1; border: 1px solid #ddd; border-radius: 8px; resize: none; outline: none; font-family: var(--sony-font); font-size: 13.5px; padding: 8px 10px; line-height: 1.4; max-height: 90px; }
 .slk-bot-send { background: #007a5a; color: #fff; border: none; border-radius: 8px; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
 .slk-bot-send:disabled { background: #cfe6dd; cursor: default; }
+
+/* ======================================================================= */
+/* HX-6V-F Teams native fidelity, composer, motion                          */
+/* ======================================================================= */
+
+/* Icon-only rail (genuine assets), authentic proportions */
+.tms-rail { width: 68px; padding: 8px 0; gap: 4px; align-items: center; }
+.tms-rail-brand { margin-bottom: 6px; }
+.tms-rail-item {
+  width: 52px; height: 46px; border: none; background: transparent; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; border-radius: 8px;
+  position: relative; padding: 0;
+}
+.tms-rail-item:hover { background: rgba(91,95,199,0.08); }
+.tms-rail-item-active { background: rgba(91,95,199,0.12); }
+.tms-rail-item-active::before {
+  content: ''; position: absolute; left: -8px; top: 12px; bottom: 12px; width: 3px;
+  background: #5b5fc7; border-radius: 2px;
+}
+
+/* Top-bar profile treatment (Brian Englund + presence) */
+.tms-profile { background: transparent; border: none; cursor: pointer; padding: 0; }
+.tms-profile-avatar {
+  position: relative; width: 30px; height: 30px; border-radius: 50%;
+  background: linear-gradient(135deg,#6b76d6,#8a6bd6); color: #fff;
+  font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+}
+.tms-presence {
+  position: absolute; right: -1px; bottom: -1px; width: 10px; height: 10px; border-radius: 50%;
+  background: #2eb67d; border: 2px solid #eef1f6;
+}
+
+/* Sidebar + conversation-header action buttons */
+.tms-sb-action, .tms-conv-action {
+  background: transparent; border: none; cursor: pointer; padding: 4px; border-radius: 6px;
+  display: inline-flex; align-items: center; justify-content: center; color: #5b5b5b;
+}
+.tms-sb-action:hover, .tms-conv-action:hover { background: rgba(0,0,0,0.05); }
+.tms-conv-actions { display: flex; gap: 6px; }
+
+/* Day separator / timestamp */
+.tms-daysep { display: flex; align-items: center; justify-content: center; margin: 4px 0 10px; }
+.tms-daysep span {
+  font-size: 12px; color: #616161; background: #eef1f6; border-radius: 12px; padding: 3px 12px;
+}
+
+/* User bubble + delivery indicator */
+.tms-user-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+.tms-delivery { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: #616161; }
+.tms-delivery img { opacity: 0.7; }
+
+/* Reasoning: Advisor mark + soft crossfade/breathing (not a busy spinner) */
+.tms-progress { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #444; margin: 8px 0; min-height: 24px; }
+.tms-progress-mark { display: inline-flex; opacity: 0.9; }
+.tms-progress-text { animation: tms-breathe 1050ms ease-in-out infinite; }
+@keyframes tms-breathe { 0%,100% { opacity: 0.55; } 50% { opacity: 1; } }
+/* crossfade in: each new phrase keys a fresh element, fading up from 0 */
+.tms-progress-text { animation-name: tms-breathe, tms-fadein; animation-duration: 1050ms, 320ms; }
+@keyframes tms-fadein { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .tms-progress-text { animation: none; opacity: 1; }
+}
+
+/* Progressive section reveal (gentle downward build) */
+.sony-ps-reveal, .tms-ps-reveal { animation: tms-reveal 420ms ease-out both; }
+@keyframes tms-reveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .sony-ps-reveal, .tms-ps-reveal { animation: none; }
+}
+
+/* Teams composer with tool row */
+.tms-composer { flex-shrink: 0; padding: 10px 24px 16px; }
+.tms-composer-box {
+  border: 1px solid #d6d9ec; border-radius: 10px; background: #fff; padding: 8px 10px 6px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.tms-composer-box:focus-within { border-color: #5b5fc7; box-shadow: 0 0 0 1px #5b5fc7; }
+.tms-composer-field {
+  width: 100%; border: none; outline: none; resize: none; background: transparent;
+  font-family: var(--sony-font); font-size: 14px; color: #242424; line-height: 1.45;
+  max-height: 96px; padding: 4px 4px 0;
+}
+.tms-composer-tools { display: flex; align-items: center; gap: 2px; padding-top: 2px; }
+.tms-tool { background: transparent; border: none; cursor: default; padding: 5px; border-radius: 6px; color: #616161; display: inline-flex; }
+.tms-tool:hover { background: rgba(0,0,0,0.05); }
+.tms-tool-divider { width: 1px; height: 18px; background: #e2e2e2; margin: 0 4px 0 auto; }
+.tms-composer-sendbtn {
+  background: transparent; border: none; cursor: pointer; color: #5b5fc7; padding: 5px; border-radius: 6px;
+  display: inline-flex;
+}
+.tms-composer-sendbtn:disabled { color: #b8bac6; cursor: default; }

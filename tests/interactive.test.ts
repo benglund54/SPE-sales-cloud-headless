@@ -69,8 +69,8 @@ test('Slackbot answer has the three governed sections with grounded facts', () =
   assert.ok(body.includes('Draft — no audience activated and no customer communication sent.'));
 });
 
-test('section counts match the artifacts (Teams 4, Claude 5)', () => {
-  assert.equal(TEAMS_SECTION_COUNT, 4);
+test('section counts match the artifacts (Teams 7 finer steps, Claude 5)', () => {
+  assert.equal(TEAMS_SECTION_COUNT, 7);
   assert.equal(CLAUDE_SECTION_COUNT, 5);
 });
 

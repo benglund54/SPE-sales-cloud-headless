@@ -56,15 +56,21 @@ test('Claude brief: warm shell content preserves 5 sections, metrics, banner, co
 
 test('no reference-only personal details or fake activity in any shell', () => {
   const all = (slack + teams + brief);
-  // Names/handles from the reference screenshots.
-  for (const name of ['Jennifer', 'Dave', 'Brian Englund', 'benglund']) {
+  // Reference chat participants / handles must never appear as conversation
+  // content. NOTE: "Brian Englund" is the spec-mandated presenter PROFILE in
+  // the Teams top-bar chrome (Scope 1) — allowed there, forbidden as a chat
+  // participant. Assert it is absent from Slack and Claude entirely.
+  for (const name of ['Jennifer', 'Dave', 'benglund']) {
     assert.equal(all.includes(name), false, `reference name leaked: ${name}`);
   }
+  assert.equal(slack.includes('Brian Englund'), false, 'presenter name must not leak into Slack');
+  assert.equal(brief.includes('Brian Englund'), false, 'presenter name must not leak into Claude');
   // Reference test-message text.
   assert.equal(all.includes('Hey this is a test message'), false);
   assert.equal(all.includes('cool here is another one'), false);
-  // Clock-style timestamps / unread-or-member counts / reactions.
-  assert.equal(/\b\d{1,2}:\d{2}\s?(AM|PM)\b/.test(all), false, 'timestamp leaked');
+  // No fabricated clock timestamps in the STATIC (pre-submit) renders; the
+  // Teams submission timestamp only appears after the user sends.
+  assert.equal(/\b\d{1,2}:\d{2}\s?(AM|PM)\b/.test(all), false, 'timestamp leaked pre-submit');
   assert.equal(/\b\d+\s+(new|unread|members?)\b/i.test(all), false, 'count leaked');
   assert.equal(/reaction|👍|❤️/i.test(all), false, 'reaction leaked');
 });

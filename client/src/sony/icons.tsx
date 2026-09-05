@@ -52,6 +52,64 @@ export function AdvisorIcon(p: IconProps & { alt?: string }) {
   return <LogoImg src="/logos/advisor.png" alt={alt ?? 'Sony IP360 Advisor'} {...rest} />;
 }
 
+/* ---- Genuine Microsoft Teams UI assets (from the supplied captures) ------ */
+/* Copied to /icons/teams; used with object-fit contain, never stretched. */
+function TeamsAsset({ file, alt, size, className, style }: IconProps & { file: string; alt: string }) {
+  const s = size ?? 20;
+  return (
+    <img
+      src={`/icons/teams/${file}`}
+      alt={alt}
+      width={s}
+      height={s}
+      className={className}
+      style={{ width: s, height: s, objectFit: 'contain', display: 'block', ...style }}
+    />
+  );
+}
+export const TeamsCopilotAsset = (p: IconProps) => <TeamsAsset file="copilot.png" alt="Copilot" {...p} />;
+export const TeamsChatAsset = (p: IconProps) => <TeamsAsset file="chat.png" alt="Chat" {...p} />;
+export const TeamsVideoAsset = (p: IconProps) => <TeamsAsset file="video.png" alt="Meet" {...p} />;
+export const TeamsTeamsAsset = (p: IconProps) => <TeamsAsset file="teams.png" alt="Teams" {...p} />;
+export const TeamsActivityAsset = (p: IconProps) => <TeamsAsset file="activity.png" alt="Activity" {...p} />;
+export const TeamsCalendarAsset = (p: IconProps) => <TeamsAsset file="calendar.png" alt="Calendar" {...p} />;
+export const TeamsSearchAsset = (p: IconProps) => <TeamsAsset file="search.png" alt="" {...p} />;
+export const TeamsComposeAsset = (p: IconProps) => <TeamsAsset file="compose.png" alt="" {...p} />;
+export const TeamsOverflowAsset = (p: IconProps) => <TeamsAsset file="overflow.png" alt="" {...p} />;
+export const TeamsCaretAsset = (p: IconProps) => <TeamsAsset file="caret.png" alt="" {...p} />;
+export const TeamsCheckAsset = (p: IconProps) => <TeamsAsset file="check-circle.png" alt="Sent" {...p} />;
+export const TeamsImageAsset = (p: IconProps) => <TeamsAsset file="image.png" alt="" {...p} />;
+
+/* Composer glyphs not present in the supplied ZIP — inline SVG (currentColor). */
+export function EmojiIcon({ size = 18, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <circle cx="12" cy="12" r="9" /><circle cx="9" cy="10" r="0.6" fill="currentColor" /><circle cx="15" cy="10" r="0.6" fill="currentColor" /><path d="M8.5 14.5a4 4 0 0 0 7 0" />
+    </svg>
+  );
+}
+export function PaperclipIcon({ size = 18, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <path d="M21 11.5 12.5 20a5 5 0 0 1-7-7l8-8a3.5 3.5 0 0 1 5 5l-8 8a2 2 0 0 1-3-3l7.5-7.5" />
+    </svg>
+  );
+}
+export function LoopIcon({ size = 18, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+export function SendArrowIcon({ size = 18, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <path d="M3 11l17-8-8 17-2.5-6.5z" />
+    </svg>
+  );
+}
+
 /* ---- Generic UI glyphs (stroke, currentColor) ------------------------- */
 export function SearchIcon({ size = 16, className, style }: IconProps) {
   return (

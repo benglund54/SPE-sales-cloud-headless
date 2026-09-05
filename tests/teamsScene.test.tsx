@@ -115,9 +115,12 @@ test('does NOT render the Slack collaboration artifact component/chrome', () => 
   assert.equal(teams.includes('A coordinated EMEA Spider-Man fan moment in which'), false, 'not the long Slack paragraph');
 });
 
-test('no fake participants, timestamps, notifications, or unread counts', () => {
-  assert.equal(/\b\d{1,2}:\d{2}\s?(AM|PM)\b/.test(teams), false);
-  assert.equal(/Jennifer|Brian Englund|benglund|\bDave\b/.test(teams), false);
+test('no fake chat participants, message timestamps, or unread counts (static render)', () => {
+  // Static render is the pre-submit planning view — no submission timestamp yet.
+  assert.equal(/\b\d{1,2}:\d{2}\s?(AM|PM)\b/.test(teams), false, 'no clock timestamp pre-submit');
+  // Reference chat participants are absent. "Brian Englund" is the mandated
+  // presenter profile in the top-bar chrome (Scope 1), not a chat participant.
+  assert.equal(/Jennifer|benglund|\bDave\b/.test(teams), false);
   assert.equal(/\b\d+\s+(new|unread)\b/i.test(teams), false);
 });
 

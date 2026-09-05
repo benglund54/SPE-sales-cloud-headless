@@ -58,5 +58,9 @@ export const SLACKBOT_ANSWER: AnswerSection[] = [
 // Section counts for progressive reveal in the artifact-based scenes. The
 // Teams PlayStation card and the Claude brief reveal their existing sections;
 // these counts drive the reveal cadence, not the content.
-export const TEAMS_SECTION_COUNT = 4; // why / decisions / permitted / restricted
+// Finer progressive reveal for a natural downward build (HX-6V-F):
+// 1 why · 2 metrics · 3 ownership/lifecycle · 4 decisions · 5 permitted ·
+// 6 restricted · 7 banner+Salesforce action.
+export const TEAMS_SECTION_COUNT = 7;
 export const CLAUDE_SECTION_COUNT = 5; // reco / facts / value / decisions / risks
+

@@ -60,8 +60,11 @@ test('Slack scene places Slackbot right of search AND above Home in the rail', (
   assert.ok(slack.includes('img'), 'slackbot rendered as an image');
 });
 
-test('Teams scene uses the real Teams logo in the rail identity', () => {
-  assert.ok(teams.includes('/logos/teams.png'), 'teams logo image used');
+test('Teams scene uses the genuine supplied Teams + Copilot assets in the rail', () => {
+  // HX-6V-F: rail uses the captured Teams UI assets under /icons/teams.
+  assert.ok(teams.includes('/icons/teams/teams.png'), 'genuine Teams mark in rail');
+  assert.ok(teams.includes('/icons/teams/copilot.png'), 'genuine multicolor Copilot mark in rail');
+  assert.ok(teams.includes('/icons/teams/chat.png'), 'genuine Chat asset');
 });
 
 test('Claude scene uses the real Claude logo beside responses/preparing/account', () => {

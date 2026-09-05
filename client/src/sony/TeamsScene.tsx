@@ -4,21 +4,27 @@ import { PlayStationDecisionCard } from './PlayStationDecisionCard';
 import { useConversation } from './useConversation';
 import { useFollowScroll } from './useFollowScroll';
 import { TEAMS_PROMPT, TEAMS_STAGES, TEAMS_SECTION_COUNT } from './interactiveFixtures';
+import { formatTeamsTime } from './teamsTime';
 import {
-  TeamsLogo, AdvisorIcon, TeamsChatIcon, VideoIcon, PeopleIcon, BellIcon,
-  SearchIcon, ChevronLeft, ChevronRight, DotsIcon, SendIcon, PlusIcon,
+  AdvisorIcon, ChevronLeft, ChevronRight, PlusIcon,
+  TeamsCopilotAsset, TeamsChatAsset, TeamsVideoAsset, TeamsTeamsAsset, TeamsActivityAsset,
+  TeamsCalendarAsset, TeamsSearchAsset, TeamsComposeAsset, TeamsOverflowAsset, TeamsCheckAsset,
+  TeamsImageAsset, EmojiIcon, PaperclipIcon, LoopIcon, SendArrowIcon,
 } from './icons';
 
 interface Props {
   context: SonyActivationContext;
   activationUrl: string | null;
   reducedMotion?: boolean;
+  /** Injectable clock for deterministic timestamp tests. Defaults to Date.now. */
+  now?: () => number;
 }
 
 const TEAM = 'Sony IP360';
 const CONVERSATION = 'PlayStation Participation';
 const ASSISTANT = 'Sony IP360 Advisor';
 const CONTEXT_LABEL = 'Grounded in Sony IP360';
+const PLACEHOLDER = 'Type a message';
 const COPILOT_LEAD_IN =
   'Sony Pictures is requesting PlayStation participation in the Spider-Man EMEA connected fan opportunity. Here’s the decision brief for PlayStation.';
 
@@ -33,15 +39,35 @@ type View = 'planning' | 'advisor';
  * Deterministic; no Microsoft/Copilot/Salesforce call. No fake participants,
  * dates, or unread counts.
  */
-export function TeamsScene({ context, activationUrl, reducedMotion = false }: Props) {
+export function TeamsScene({ context, activationUrl, reducedMotion = false, now = Date.now }: Props) {
   const [view, setView] = useState<View>('planning');
   const [prompt, setPrompt] = useState(TEAMS_PROMPT);
+  const [sentAt, setSentAt] = useState<number | null>(null);
   const convo = useConversation({
     progressStages: TEAMS_STAGES,
     sectionCount: TEAMS_SECTION_COUNT,
     reducedMotion,
+    stageMs: reducedMotion ? 150 : 2100,   // ~6.3s reasoning across 3 states
+    revealMs: reducedMotion ? 70 : 820,    // ~6.6s progressive reveal across 8 steps
   });
   const scrollRef = useFollowScroll<HTMLDivElement>(`${view}:${convo.phase}:${convo.currentStage ?? ''}:${convo.revealed}`);
+
+  // Submit wrapper: capture the local time ONCE, clear the composer to the
+  // placeholder, then run the conversation. Guards against duplicate sends.
+  const submit = () => {
+    if (convo.submitted || convo.busy) return;
+    setSentAt(now());
+    setPrompt('');
+    convo.submit();
+  };
+  const onComposerKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      submit();
+    }
+    // Shift+Enter: allow default newline.
+  };
+  const canSend = prompt.trim().length > 0 && !convo.submitted && !convo.busy;
 
   const { audience, governance, modelScores, releaseMoments, opCoRoles, evidenceSignals } = context;
   const engagement = modelScores.find((m) => m.label === 'Engagement Score');
@@ -56,35 +82,45 @@ export function TeamsScene({ context, activationUrl, reducedMotion = false }: Pr
     <div className="tms" data-theme="teams">
       <div className="tms-topbar">
         <div className="tms-topbar-left">
-          <button className="tms-icon-btn" aria-label="Back"><ChevronLeft size={15} /></button>
-          <button className="tms-icon-btn" aria-label="Forward"><ChevronRight size={15} /></button>
+          <button className="tms-icon-btn" aria-label="Back"><ChevronLeft size={16} /></button>
+          <button className="tms-icon-btn" aria-label="Forward"><ChevronRight size={16} /></button>
         </div>
-        <div className="tms-search"><SearchIcon size={14} /><span>Search</span></div>
-        <div className="tms-topbar-right"><span className="tms-account">Sony IP360</span></div>
+        <div className="tms-search"><TeamsSearchAsset size={15} /><span>Search</span></div>
+        <div className="tms-topbar-right">
+          <button className="tms-profile" aria-label="Brian Englund, available">
+            <span className="tms-profile-avatar" aria-hidden="true">
+              BE<span className="tms-presence" />
+            </span>
+          </button>
+        </div>
       </div>
 
       <div className="tms-body">
-        {/* App rail */}
+        {/* Icon-only app rail using genuine Teams/Copilot assets */}
         <nav className="tms-rail" aria-label="Teams">
-          <div className="tms-rail-brand" aria-hidden="true"><TeamsLogo size={28} /></div>
-          <div className="tms-rail-item tms-rail-item-active"><TeamsChatIcon size={22} /><span>Chat</span></div>
-          <div className="tms-rail-item"><VideoIcon size={22} /><span>Meet</span></div>
-          <div className="tms-rail-item"><PeopleIcon size={22} /><span>Teams</span></div>
-          <div className="tms-rail-item"><AdvisorIcon size={20} /><span>Copilot</span></div>
-          <div className="tms-rail-item"><BellIcon size={22} /><span>Activity</span></div>
+          <div className="tms-rail-brand" aria-hidden="true"><TeamsTeamsAsset size={28} /></div>
+          <button className="tms-rail-item tms-rail-item-active" aria-label="Chat" title="Chat"><TeamsChatAsset size={22} /></button>
+          <button className="tms-rail-item" aria-label="Meet" title="Meet"><TeamsVideoAsset size={22} /></button>
+          <button className="tms-rail-item" aria-label="Teams" title="Teams"><TeamsTeamsAsset size={22} /></button>
+          <button className="tms-rail-item" aria-label="Copilot" title="Copilot"><TeamsCopilotAsset size={24} /></button>
+          <button className="tms-rail-item" aria-label="Calendar" title="Calendar"><TeamsCalendarAsset size={22} /></button>
+          <button className="tms-rail-item" aria-label="Activity" title="Activity"><TeamsActivityAsset size={22} /></button>
         </nav>
 
         {/* Chat navigation sidebar — selecting the Advisor enters the chat */}
         <aside className="tms-sidebar" aria-label="Chat">
           <div className="tms-sidebar-head">
             <span className="tms-sidebar-title">Chat</span>
-            <div className="tms-sidebar-head-actions" aria-hidden="true">
-              <SearchIcon size={15} /><VideoIcon size={16} /><PlusIcon size={15} />
+            <div className="tms-sidebar-head-actions">
+              <button className="tms-sb-action" aria-label="Search chat" title="Search"><TeamsSearchAsset size={15} /></button>
+              <button className="tms-sb-action" aria-label="Meet now" title="Meet now"><TeamsVideoAsset size={16} /></button>
+              <button className="tms-sb-action" aria-label="New chat" title="New chat"><TeamsComposeAsset size={15} /></button>
             </div>
           </div>
           <div className="tms-sidebar-filters" aria-hidden="true">
             <span className="tms-filter tms-filter-active">Recent</span>
             <span className="tms-filter">Unread</span>
+            <span className="tms-filter">Meeting chats</span>
           </div>
           <div className="tms-sidebar-section">
             <span className="tms-sidebar-label">Favorites</span>
@@ -121,7 +157,7 @@ export function TeamsScene({ context, activationUrl, reducedMotion = false }: Pr
                 <span className="tms-conv-title">IP360 Planning</span>
                 <span className="tms-conv-sub">{TEAM} · Channel</span>
               </div>
-              <div className="tms-conv-actions" aria-hidden="true"><VideoIcon size={18} /><DotsIcon size={16} /></div>
+              <div className="tms-conv-actions" aria-hidden="true"><TeamsVideoAsset size={18} /><TeamsOverflowAsset size={16} /></div>
             </header>
             <div className="tms-messages" ref={scrollRef}>
               <div className="tms-turn tms-turn-assistant">
@@ -214,30 +250,40 @@ export function TeamsScene({ context, activationUrl, reducedMotion = false }: Pr
               </div>
             </div>
             <div className="tms-composer" aria-hidden="true">
-              <div className="tms-composer-box"><span className="tms-composer-input">Message IP360 Planning</span><span className="tms-composer-send"><SendIcon size={18} /></span></div>
+              <div className="tms-composer-box"><span className="tms-composer-input">Message IP360 Planning</span></div>
             </div>
           </section>
         ) : (
           <section className="tms-main" aria-label="Conversation">
             <header className="tms-conv-header">
-              <span className="tms-conv-avatar" aria-hidden="true"><AdvisorIcon size={20} /></span>
+              <span className="tms-conv-avatar" aria-hidden="true"><AdvisorIcon size={22} /></span>
               <div className="tms-conv-titles">
                 <span className="tms-conv-title">{ASSISTANT}</span>
                 <span className="tms-conv-sub">{TEAM} · {CONVERSATION}</span>
               </div>
-              <div className="tms-conv-actions" aria-hidden="true"><VideoIcon size={18} /><DotsIcon size={16} /></div>
+              <div className="tms-conv-actions">
+                <button className="tms-conv-action" aria-label="Video call" title="Video call"><TeamsVideoAsset size={18} /></button>
+                <button className="tms-conv-action" aria-label="More options" title="More options"><TeamsOverflowAsset size={16} /></button>
+              </div>
             </header>
 
             <div className="tms-messages" ref={scrollRef}>
+              {convo.submitted && sentAt !== null && (
+                <div className="tms-daysep"><span>{formatTeamsTime(sentAt)}</span></div>
+              )}
+
               {convo.submitted && (
                 <div className="tms-turn tms-turn-user">
-                  <div className="tms-bubble tms-bubble-user">{TEAMS_PROMPT}</div>
+                  <div className="tms-user-wrap">
+                    <div className="tms-bubble tms-bubble-user">{TEAMS_PROMPT}</div>
+                    <span className="tms-delivery"><TeamsCheckAsset size={13} /> Sent</span>
+                  </div>
                 </div>
               )}
 
               {convo.submitted && (
                 <div className="tms-turn tms-turn-assistant">
-                  <span className="tms-turn-avatar" aria-hidden="true"><AdvisorIcon size={18} /></span>
+                  <span className="tms-turn-avatar" aria-hidden="true"><AdvisorIcon size={20} /></span>
                   <div className="tms-turn-content">
                     <div className="tms-turn-meta">
                       <span className="tms-turn-name">{ASSISTANT}</span>
@@ -245,15 +291,15 @@ export function TeamsScene({ context, activationUrl, reducedMotion = false }: Pr
                     </div>
 
                     {convo.phase === 'thinking' && convo.currentStage && (
-                      <div className="tms-progress" role="status">
-                        <span className="tms-progress-dot" aria-hidden="true" />
-                        <span>{convo.currentStage}</span>
+                      <div className="tms-progress" role="status" aria-live="polite">
+                        <span className="tms-progress-mark" aria-hidden="true"><AdvisorIcon size={16} /></span>
+                        <span key={convo.currentStage} className="tms-progress-text">{convo.currentStage}</span>
                       </div>
                     )}
 
                     {(convo.phase === 'revealing' || convo.phase === 'done') && (
                       <>
-                        <div className="tms-bubble tms-bubble-assistant">{COPILOT_LEAD_IN}</div>
+                        <div className="tms-bubble tms-bubble-assistant tms-ps-reveal">{COPILOT_LEAD_IN}</div>
                         <PlayStationDecisionCard
                           context={context}
                           activationUrl={activationUrl}
@@ -266,26 +312,36 @@ export function TeamsScene({ context, activationUrl, reducedMotion = false }: Pr
               )}
             </div>
 
-            {/* Interactive composer with the preloaded prompt */}
+            {/* Interactive Teams composer with tool controls */}
             <div className="tms-composer">
               <div className="tms-composer-box">
                 <textarea
                   className="tms-composer-field"
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  onKeyDown={convo.handleComposerKeyDown}
+                  onKeyDown={onComposerKeyDown}
                   disabled={convo.busy || convo.phase === 'done'}
                   rows={1}
+                  placeholder={PLACEHOLDER}
                   aria-label="Message Sony IP360 Advisor"
                 />
-                <button
-                  className="tms-composer-sendbtn"
-                  onClick={convo.submit}
-                  disabled={convo.busy || convo.phase === 'done' || convo.submitted}
-                  aria-label="Send"
-                >
-                  <SendIcon size={18} />
-                </button>
+                <div className="tms-composer-tools">
+                  <button className="tms-tool" aria-label="Emoji" title="Emoji" tabIndex={-1}><EmojiIcon size={18} /></button>
+                  <button className="tms-tool" aria-label="Attach file" title="Attach file" tabIndex={-1}><PaperclipIcon size={18} /></button>
+                  <button className="tms-tool" aria-label="Attach image" title="Attach image" tabIndex={-1}><TeamsImageAsset size={18} /></button>
+                  <button className="tms-tool" aria-label="Loop component" title="Loop component" tabIndex={-1}><LoopIcon size={18} /></button>
+                  <button className="tms-tool" aria-label="More options" title="More options" tabIndex={-1}><PlusIcon size={18} /></button>
+                  <span className="tms-tool-divider" aria-hidden="true" />
+                  <button
+                    className="tms-composer-sendbtn"
+                    onClick={submit}
+                    disabled={!canSend}
+                    aria-label="Send"
+                    title="Send"
+                  >
+                    <SendArrowIcon size={18} />
+                  </button>
+                </div>
               </div>
             </div>
           </section>
