@@ -60,11 +60,14 @@ test('Slack scene places Slackbot right of search AND above Home in the rail', (
   assert.ok(slack.includes('img'), 'slackbot rendered as an image');
 });
 
-test('Teams scene uses the genuine supplied Teams + Copilot assets in the rail', () => {
-  // HX-6V-F: rail uses the captured Teams UI assets under /icons/teams.
-  assert.ok(teams.includes('/icons/teams/teams.png'), 'genuine Teams mark in rail');
+test('Teams rail uses the genuine multicolor Copilot + camera assets that visibly match', () => {
+  // HX-6V-G re-audit: genuine assets are used ONLY where the committed PNG
+  // visibly matches. Copilot mark and the camera (Meet) are genuine.
   assert.ok(teams.includes('/icons/teams/copilot.png'), 'genuine multicolor Copilot mark in rail');
-  assert.ok(teams.includes('/icons/teams/chat.png'), 'genuine Chat asset');
+  assert.ok(teams.includes('/icons/teams/video.png'), 'genuine camera (Meet) asset');
+  // Chat/Teams/Calendar committed PNGs did NOT match their function (panel /
+  // grid / contact card) and were replaced with correct outline SVGs.
+  assert.equal(teams.includes('/icons/teams/chat.png'), false, 'panel-glyph chat.png not used as Chat');
 });
 
 test('Claude scene uses the real Claude logo beside responses/preparing/account', () => {
@@ -87,13 +90,12 @@ test('supplied Advisor icon exists in the asset dir', () => {
   assert.ok(readFileSync(p).length > 1000, 'advisor.png too small');
 });
 
-test('geometric placeholder marks are removed where the real logo now belongs', () => {
-  // TeamsScene no longer uses the geometric TeamsMark; ClaudeScene no longer
-  // uses the geometric ClaudeMark. (They may remain defined in icons.tsx.)
-  const teamsSrc = readFileSync(resolve(repoRoot, 'client/src/sony/TeamsScene.tsx'), 'utf8');
+test('Claude shell uses no geometric ClaudeMark placeholder (real logo only)', () => {
+  // Claude uses the supplied claude.png. (Teams legitimately uses the TeamsMark
+  // SVG for its rail brand because no genuine Teams brand PNG was supplied.)
   const claudeSrc = readFileSync(resolve(repoRoot, 'client/src/sony/ClaudeScene.tsx'), 'utf8');
-  assert.equal(teamsSrc.includes('TeamsMark'), false, 'geometric TeamsMark removed from Teams shell');
   assert.equal(claudeSrc.includes('ClaudeMark'), false, 'geometric ClaudeMark removed from Claude shell');
+  assert.ok(claudeSrc.includes('ClaudeLogo'), 'Claude uses the supplied logo');
 });
 
 test('logos are used with contain fit (not stretched/distorted)', () => {

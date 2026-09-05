@@ -278,12 +278,8 @@
 .tms-bubble-user { background: #5b5fc7; color: #fff; border-bottom-right-radius: 2px; }
 .tms-bubble-assistant { background: #f0f0f5; color: #242424; margin-bottom: 8px; }
 
-.tms-composer { flex-shrink: 0; padding: 10px 24px 16px; }
-.tms-composer-box {
-  border: 1px solid #d6d6e0; border-radius: 8px; padding: 10px 12px;
-  display: flex; align-items: center; justify-content: space-between; color: #8a8a8a; font-size: 14px;
-}
-.tms-composer-send { color: #5b5fc7; }
+/* (Composer styles consolidated in the HX-6V-G block below.) */
+.tms-composer-input { color: #8a8a8a; font-size: 14px; }
 
 /* ======================================================================= */
 /* CLAUDE COWORK                                                            */
@@ -732,7 +728,9 @@
 
 /* ---- Teams: planning-channel notification + interactive composer ------- */
 .tms-conv-avatar-plain { background: #7b83eb; color: #fff; font-size: 12px; font-weight: 700; }
-.tms-chat-btn { display: flex; align-items: center; gap: 10px; width: 100%; background: transparent; border: none; padding: 0; text-align: left; cursor: pointer; }
+.tms-chat-btn { display: flex; align-items: center; gap: 10px; width: 100%; background: transparent; border: none; padding: 0; text-align: left; cursor: pointer; outline: none; }
+/* Heavy outline only on real keyboard focus (not on the selected row itself). */
+.tms-chat-btn:focus-visible { outline: 2px solid #5b5fc7; outline-offset: 2px; border-radius: 6px; }
 /* Expanded Teams adaptive card (HX-6V-E): wide, responsive two-column. */
 .tms-notify {
   margin-top: 4px; width: 100%; max-width: 900px; background: #fff; border: 1px solid #e6e8ef;
@@ -768,15 +766,7 @@
 @media (max-width: 900px) {
   .tms-notify-grid { grid-template-columns: 1fr; gap: 14px; }
 }
-.tms-progress { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #5b5b5b; margin: 6px 0; }
-.tms-progress-dot { width: 8px; height: 8px; border-radius: 50%; background: #5b5fc7; animation: sony-pulse 1s ease-in-out infinite; }
-.tms-composer-field {
-  flex: 1; border: none; outline: none; resize: none; font-family: var(--sony-font);
-  font-size: 14px; color: #242424; background: transparent; line-height: 1.4; max-height: 88px;
-}
-.tms-composer-sendbtn { background: transparent; border: none; color: #5b5fc7; cursor: pointer; padding: 4px; display: inline-flex; }
-.tms-composer-sendbtn:disabled { color: #b8bac6; cursor: default; }
-@media (prefers-reduced-motion: reduce) { .tms-progress-dot { animation: none; } }
+/* (HX-6V-D progress-dot + composer rules superseded by the HX-6V-F/G blocks.) */
 
 /* ---- Claude: interactive composer + writing state ---------------------- */
 .cla-writing { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #9a988e; margin-top: 10px; font-style: italic; }
@@ -840,7 +830,13 @@
 }
 
 /* Top-bar profile treatment (Brian Englund + presence) */
-.tms-profile { background: transparent; border: none; cursor: pointer; padding: 0; }
+.tms-topbar-right { display: flex; align-items: center; gap: 10px; justify-content: flex-end; }
+.tms-topbar-more { background: transparent; border: none; cursor: pointer; color: #5b5b5b; padding: 5px; border-radius: 6px; display: inline-flex; }
+.tms-topbar-more:hover { background: rgba(0,0,0,0.05); }
+.tms-profile { background: transparent; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; gap: 8px; }
+.tms-profile-name { font-size: 13px; font-weight: 600; color: #242424; }
+/* Name is visible at the presentation resolution; collapses on narrow widths. */
+@media (max-width: 1180px) { .tms-profile-name { display: none; } }
 .tms-profile-avatar {
   position: relative; width: 30px; height: 30px; border-radius: 50%;
   background: linear-gradient(135deg,#6b76d6,#8a6bd6); color: #fff;
@@ -873,11 +869,13 @@
 /* Reasoning: Advisor mark + soft crossfade/breathing (not a busy spinner) */
 .tms-progress { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #444; margin: 8px 0; min-height: 24px; }
 .tms-progress-mark { display: inline-flex; opacity: 0.9; }
-.tms-progress-text { animation: tms-breathe 1050ms ease-in-out infinite; }
-@keyframes tms-breathe { 0%,100% { opacity: 0.55; } 50% { opacity: 1; } }
-/* crossfade in: each new phrase keys a fresh element, fading up from 0 */
-.tms-progress-text { animation-name: tms-breathe, tms-fadein; animation-duration: 1050ms, 320ms; }
-@keyframes tms-fadein { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: none; } }
+/* Calm crossfade: each phrase fades in ONCE (from ~75%) and holds full opacity;
+   no repeating loop, no blink, no scale. A fresh key per phrase re-runs it. */
+.tms-progress-text { animation: tms-crossfade 520ms ease-in-out both; }
+@keyframes tms-crossfade {
+  from { opacity: 0.75; }
+  to { opacity: 1; }
+}
 @media (prefers-reduced-motion: reduce) {
   .tms-progress-text { animation: none; opacity: 1; }
 }
@@ -889,24 +887,28 @@
   .sony-ps-reveal, .tms-ps-reveal { animation: none; }
 }
 
-/* Teams composer with tool row */
-.tms-composer { flex-shrink: 0; padding: 10px 24px 16px; }
+/* Teams composer — single-line horizontal strip (HX-6V-G) */
+.tms-composer { flex-shrink: 0; padding: 8px 24px 16px; }
 .tms-composer-box {
-  border: 1px solid #d6d9ec; border-radius: 10px; background: #fff; padding: 8px 10px 6px;
-  display: flex; flex-direction: column; gap: 4px;
+  max-width: 1080px; margin: 0 auto; min-height: 44px;
+  border: 1px solid #d6d9ec; border-radius: 10px; background: #fff; padding: 0 8px 0 14px;
+  display: flex; align-items: center; gap: 8px;
 }
 .tms-composer-box:focus-within { border-color: #5b5fc7; box-shadow: 0 0 0 1px #5b5fc7; }
 .tms-composer-field {
-  width: 100%; border: none; outline: none; resize: none; background: transparent;
-  font-family: var(--sony-font); font-size: 14px; color: #242424; line-height: 1.45;
-  max-height: 96px; padding: 4px 4px 0;
+  flex: 1; min-width: 0; border: none; outline: none; resize: none; background: transparent;
+  font-family: var(--sony-font); font-size: 14px; color: #242424; line-height: 1.4;
+  max-height: 120px; padding: 12px 0; /* ~44px single-row; grows on Shift+Enter */
 }
-.tms-composer-tools { display: flex; align-items: center; gap: 2px; padding-top: 2px; }
-.tms-tool { background: transparent; border: none; cursor: default; padding: 5px; border-radius: 6px; color: #616161; display: inline-flex; }
+.tms-composer-tools { display: flex; align-items: center; gap: 2px; margin-left: auto; flex-shrink: 0; }
+.tms-tool { background: transparent; border: none; cursor: default; padding: 6px; border-radius: 6px; color: #5b5b5b; display: inline-flex; }
 .tms-tool:hover { background: rgba(0,0,0,0.05); }
-.tms-tool-divider { width: 1px; height: 18px; background: #e2e2e2; margin: 0 4px 0 auto; }
+.tms-tool:focus-visible { outline: 2px solid #5b5fc7; outline-offset: 1px; }
+.tms-tool-divider { width: 1px; height: 20px; background: #e2e2e2; margin: 0 4px; }
 .tms-composer-sendbtn {
-  background: transparent; border: none; cursor: pointer; color: #5b5fc7; padding: 5px; border-radius: 6px;
+  background: transparent; border: none; cursor: pointer; color: #5b5b5b; padding: 6px; border-radius: 6px;
   display: inline-flex;
 }
-.tms-composer-sendbtn:disabled { color: #b8bac6; cursor: default; }
+.tms-composer-sendbtn:hover:not(:disabled) { color: #5b5fc7; background: rgba(91,95,199,0.08); }
+.tms-composer-sendbtn:focus-visible { outline: 2px solid #5b5fc7; outline-offset: 1px; }
+.tms-composer-sendbtn:disabled { color: #bcbcc4; cursor: default; }

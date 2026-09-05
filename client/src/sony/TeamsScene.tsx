@@ -7,8 +7,9 @@ import { TEAMS_PROMPT, TEAMS_STAGES, TEAMS_SECTION_COUNT } from './interactiveFi
 import { formatTeamsTime } from './teamsTime';
 import {
   AdvisorIcon, ChevronLeft, ChevronRight, PlusIcon,
-  TeamsCopilotAsset, TeamsChatAsset, TeamsVideoAsset, TeamsTeamsAsset, TeamsActivityAsset,
-  TeamsCalendarAsset, TeamsSearchAsset, TeamsComposeAsset, TeamsOverflowAsset, TeamsCheckAsset,
+  TeamsMark, ChatBubbleIcon, PeopleIcon, CalendarIcon,
+  TeamsCopilotAsset, TeamsVideoAsset, TeamsActivityAsset,
+  TeamsSearchAsset, TeamsComposeAsset, TeamsOverflowAsset, TeamsCheckAsset,
   TeamsImageAsset, EmojiIcon, PaperclipIcon, LoopIcon, SendArrowIcon,
 } from './icons';
 
@@ -47,8 +48,8 @@ export function TeamsScene({ context, activationUrl, reducedMotion = false, now 
     progressStages: TEAMS_STAGES,
     sectionCount: TEAMS_SECTION_COUNT,
     reducedMotion,
-    stageMs: reducedMotion ? 150 : 2100,   // ~6.3s reasoning across 3 states
-    revealMs: reducedMotion ? 70 : 820,    // ~6.6s progressive reveal across 8 steps
+    stageMs: reducedMotion ? 150 : 1550,   // ~4.7s reasoning across 3 states
+    revealMs: reducedMotion ? 70 : 640,    // ~4.5–5s progressive reveal (7 steps)
   });
   const scrollRef = useFollowScroll<HTMLDivElement>(`${view}:${convo.phase}:${convo.currentStage ?? ''}:${convo.revealed}`);
 
@@ -87,7 +88,9 @@ export function TeamsScene({ context, activationUrl, reducedMotion = false, now 
         </div>
         <div className="tms-search"><TeamsSearchAsset size={15} /><span>Search</span></div>
         <div className="tms-topbar-right">
+          <button className="tms-topbar-more" aria-label="Settings and more" title="Settings and more"><TeamsOverflowAsset size={16} /></button>
           <button className="tms-profile" aria-label="Brian Englund, available">
+            <span className="tms-profile-name">Brian Englund</span>
             <span className="tms-profile-avatar" aria-hidden="true">
               BE<span className="tms-presence" />
             </span>
@@ -96,14 +99,19 @@ export function TeamsScene({ context, activationUrl, reducedMotion = false, now 
       </div>
 
       <div className="tms-body">
-        {/* Icon-only app rail using genuine Teams/Copilot assets */}
+        {/* Icon-only app rail. Each destination shows its correct symbol: the
+            Teams brand mark, a speech-bubble Chat, a camera Meet, a people
+            Teams glyph, the genuine multicolor Copilot mark, a calendar, and a
+            bell Activity. (Committed PNGs that did not visibly match — chat=
+            panel, teams=grid, calendar=contact card — are replaced with crisp
+            outline SVGs; genuine assets are kept only where they truly match.) */}
         <nav className="tms-rail" aria-label="Teams">
-          <div className="tms-rail-brand" aria-hidden="true"><TeamsTeamsAsset size={28} /></div>
-          <button className="tms-rail-item tms-rail-item-active" aria-label="Chat" title="Chat"><TeamsChatAsset size={22} /></button>
+          <div className="tms-rail-brand" aria-hidden="true"><TeamsMark size={28} /></div>
+          <button className="tms-rail-item tms-rail-item-active" aria-label="Chat" title="Chat"><ChatBubbleIcon size={22} /></button>
           <button className="tms-rail-item" aria-label="Meet" title="Meet"><TeamsVideoAsset size={22} /></button>
-          <button className="tms-rail-item" aria-label="Teams" title="Teams"><TeamsTeamsAsset size={22} /></button>
+          <button className="tms-rail-item" aria-label="Teams" title="Teams"><PeopleIcon size={22} /></button>
           <button className="tms-rail-item" aria-label="Copilot" title="Copilot"><TeamsCopilotAsset size={24} /></button>
-          <button className="tms-rail-item" aria-label="Calendar" title="Calendar"><TeamsCalendarAsset size={22} /></button>
+          <button className="tms-rail-item" aria-label="Calendar" title="Calendar"><CalendarIcon size={22} /></button>
           <button className="tms-rail-item" aria-label="Activity" title="Activity"><TeamsActivityAsset size={22} /></button>
         </nav>
 
@@ -330,7 +338,7 @@ export function TeamsScene({ context, activationUrl, reducedMotion = false, now 
                   <button className="tms-tool" aria-label="Attach file" title="Attach file" tabIndex={-1}><PaperclipIcon size={18} /></button>
                   <button className="tms-tool" aria-label="Attach image" title="Attach image" tabIndex={-1}><TeamsImageAsset size={18} /></button>
                   <button className="tms-tool" aria-label="Loop component" title="Loop component" tabIndex={-1}><LoopIcon size={18} /></button>
-                  <button className="tms-tool" aria-label="More options" title="More options" tabIndex={-1}><PlusIcon size={18} /></button>
+                  <button className="tms-tool" aria-label="More actions" title="More actions" tabIndex={-1}><PlusIcon size={18} /></button>
                   <span className="tms-tool-divider" aria-hidden="true" />
                   <button
                     className="tms-composer-sendbtn"

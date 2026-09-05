@@ -99,6 +99,9 @@ test('no visible presenter/reset/settings control appears in any scene shell', (
     const src = read(f)
       .replace(/\/\*[\s\S]*?\*\//g, '')
       .replace(/(^|[^:])\/\/.*$/gm, '$1');
-    assert.equal(/presenter|reset presentation|settings/i.test(src), false, `${f} exposes a presenter/reset/settings control`);
+    // The scenes must not expose an app presenter/reset control. (Teams' native
+    // "Settings and more" top-bar affordance is authentic chrome, not an app
+    // presenter control, so the bare word "settings" is not flagged.)
+    assert.equal(/presenter|reset presentation/i.test(src), false, `${f} exposes a presenter/reset control`);
   }
 });

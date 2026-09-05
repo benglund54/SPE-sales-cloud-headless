@@ -102,10 +102,12 @@ export function LoopIcon({ size = 18, className, style }: IconProps) {
     </svg>
   );
 }
-export function SendArrowIcon({ size = 18, className, style }: IconProps) {
+/** Thin outline paper airplane pointing right (Teams send). Never filled. */
+export function SendArrowIcon({ size = 20, className, style }: IconProps) {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
-      <path d="M3 11l17-8-8 17-2.5-6.5z" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <path d="M3.4 11.9 20 4.2a0.4 0.4 0 0 1 .55.5l-6.2 15.9a0.4 0.4 0 0 1-.74.02l-3-6.2a0.5 0.5 0 0 0-.23-.23z" />
+      <path d="M10.6 13.9 20.3 4.4" />
     </svg>
   );
 }
@@ -203,6 +205,15 @@ export function HomeIcon({ size = 18, className, style }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
       <path d="M12 3 2 12h3v8h5v-6h4v6h5v-8h3z" />
+    </svg>
+  );
+}
+export function CalendarIcon({ size = 20, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <rect x="3.5" y="4.5" width="17" height="16" rx="2" />
+      <line x1="3.5" y1="9" x2="20.5" y2="9" />
+      <line x1="8" y1="2.5" x2="8" y2="6" /><line x1="16" y1="2.5" x2="16" y2="6" />
     </svg>
   );
 }
