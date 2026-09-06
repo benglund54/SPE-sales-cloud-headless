@@ -76,9 +76,11 @@ test('Teams rail uses the genuine multicolor Copilot + camera assets that visibl
   assert.ok(teamsSrc.includes('TeamsSendAsset'), 'supplied right-facing send icon wired to the composer');
 });
 
-test('Claude scene uses the real Claude logo beside responses/preparing/account', () => {
-  // Claude scene starts in "preparing"; the preparing state shows the logo.
-  assert.ok(claude.includes('/logos/claude.png'), 'claude logo image used');
+test('Claude web scene uses the supplied wordmark + starburst (semantic paths)', () => {
+  // HX-6V-L: the Claude web home renders the supplied "Claude" wordmark in the
+  // sidebar and the static orange starburst in the greeting.
+  assert.ok(claude.includes('/logos/claude-wordmark.png'), 'supplied Claude wordmark');
+  assert.ok(claude.includes('/logos/claude-star.png'), 'supplied static starburst in the greeting');
 });
 
 test('Sony IP360 Advisor identity uses the supplied Advisor icon, NOT the Slack logo', () => {
@@ -96,12 +98,12 @@ test('supplied Advisor icon exists in the asset dir', () => {
   assert.ok(readFileSync(p).length > 1000, 'advisor.png too small');
 });
 
-test('Claude shell uses no geometric ClaudeMark placeholder (real logo only)', () => {
-  // Claude uses the supplied claude.png. (Teams legitimately uses the TeamsMark
-  // SVG for its rail brand because no genuine Teams brand PNG was supplied.)
+test('Claude shell uses no geometric ClaudeMark placeholder (supplied assets only)', () => {
+  // HX-6V-L: the Claude web scene uses the supplied wordmark + starburst assets
+  // (and the animated thinking GIF); no geometric ClaudeMark/ClaudeLogo redraw.
   const claudeSrc = readFileSync(resolve(repoRoot, 'client/src/sony/ClaudeScene.tsx'), 'utf8');
-  assert.equal(claudeSrc.includes('ClaudeMark'), false, 'geometric ClaudeMark removed from Claude shell');
-  assert.ok(claudeSrc.includes('ClaudeLogo'), 'Claude uses the supplied logo');
+  assert.equal(claudeSrc.includes('ClaudeMark'), false, 'geometric ClaudeMark not used');
+  assert.ok(claudeSrc.includes('ClaudeWordmark') && claudeSrc.includes('ClaudeStar'), 'supplied wordmark + starburst');
 });
 
 test('logos are used with contain fit (not stretched/distorted)', () => {

@@ -43,12 +43,30 @@ export function ClaudeLogo(p: IconProps) {
  * Claude activity mark for the ACTIVE Thinking / Writing indicator only.
  * Uses the supplied genuinely-animated orange starburst GIF directly (682
  * frames, infinite loop) — no CSS animation is applied on top. Under reduced
- * motion, callers pass `static` to swap to the still starburst (claude.png),
- * which does not move. Static Claude branding elsewhere keeps using ClaudeLogo.
+ * motion, callers pass `static` to swap to the still supplied starburst
+ * (claude-star.png), which does not move.
  */
 export function ClaudeThinkingMark({ static: isStatic, alt, ...p }: IconProps & { static?: boolean; alt?: string }) {
-  const src = isStatic ? '/logos/claude.png' : '/logos/claude-thinking.gif';
+  const src = isStatic ? '/logos/claude-star.png' : '/logos/claude-thinking.gif';
   return <LogoImg src={src} alt={alt ?? 'Claude'} {...p} />;
+}
+/** Supplied "Claude" wordmark for the web sidebar (upper-left). */
+export function ClaudeWordmark({ size = 22, className, style }: IconProps) {
+  // 138×44 asset → keep aspect (width ≈ 3.14× height); size sets the height.
+  return (
+    <img
+      src="/logos/claude-wordmark.png"
+      alt="Claude"
+      height={size}
+      className={className}
+      style={{ height: size, width: 'auto', display: 'block', objectFit: 'contain', ...style }}
+    />
+  );
+}
+/** Supplied static orange starburst — home greeting mark + reduced-motion mark. */
+export function ClaudeStar(p: IconProps & { alt?: string }) {
+  const { alt, ...rest } = p;
+  return <LogoImg src="/logos/claude-star.png" alt={alt ?? ''} {...rest} />;
 }
 export function SonyLogo(p: IconProps) {
   return <LogoImg src="/logos/sony.png" alt="Sony" {...p} />;
@@ -379,6 +397,66 @@ export function ArtifactIcon({ size = 16, className, style }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
       <path d="M12 3 4 7.5v9L12 21l8-4.5v-9z" /><path d="M12 3v18" /><path d="m4 7.5 8 4.5 8-4.5" />
+    </svg>
+  );
+}
+
+/* ---- HX-6V-L: neutral glyphs for the Claude web-chat chrome --------------- */
+export function MicIcon({ size = 18, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 14 0" /><path d="M12 18v3" />
+    </svg>
+  );
+}
+export function ChevronDownIcon({ size = 16, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
+export function DownloadIcon({ size = 16, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <path d="M12 3v12" /><path d="m7 10 5 5 5-5" /><path d="M5 19h14" />
+    </svg>
+  );
+}
+export function SidebarToggleIcon({ size = 16, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16" />
+    </svg>
+  );
+}
+export function SlidersIcon({ size = 16, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <path d="M4 7h10" /><path d="M18 7h2" /><circle cx="16" cy="7" r="2" />
+      <path d="M4 17h2" /><path d="M10 17h10" /><circle cx="8" cy="17" r="2" />
+    </svg>
+  );
+}
+export function PaletteIcon({ size = 18, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <path d="M12 3a9 9 0 1 0 0 18c1 0 1.5-.8 1.5-1.5 0-1 .8-1.5 1.5-1.5H17a4 4 0 0 0 4-4c0-5-4-9-9-9z" />
+      <circle cx="7.5" cy="11" r="0.8" fill="currentColor" /><circle cx="10" cy="7.5" r="0.8" fill="currentColor" /><circle cx="14.5" cy="7.5" r="0.8" fill="currentColor" />
+    </svg>
+  );
+}
+export function CloseIcon({ size = 14, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <path d="m6 6 12 12" /><path d="m18 6-12 12" />
+    </svg>
+  );
+}
+export function ShareIcon({ size = 15, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <path d="M12 15V4" /><path d="m8 8 4-4 4 4" /><path d="M6 12v6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-6" />
     </svg>
   );
 }

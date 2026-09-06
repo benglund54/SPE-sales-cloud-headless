@@ -39,7 +39,7 @@ test('the activity mark uses the semantic asset; reduced motion swaps to the sta
   const icons = read('client/src/sony/icons.tsx');
   assert.ok(/ClaudeThinkingMark/.test(icons), 'ClaudeThinkingMark exists');
   assert.ok(/claude-thinking\.gif/.test(icons), 'animated GIF wired');
-  assert.ok(/isStatic\s*\?\s*'\/logos\/claude\.png'/.test(icons), 'reduced-motion → static claude.png');
+  assert.ok(/isStatic\s*\?\s*'\/logos\/claude-star\.png'/.test(icons), 'reduced-motion → static starburst');
   const scene = read('client/src/sony/ClaudeScene.tsx');
   assert.ok(/ClaudeThinkingMark[^>]*static={reducedMotion}/.test(scene), 'scene passes reducedMotion to the mark');
 });
