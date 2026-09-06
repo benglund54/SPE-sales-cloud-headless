@@ -164,7 +164,9 @@ test('send button uses the supplied right-facing send PNG — never a solid purp
   // via TeamsSendAsset. The old diagonal SendArrowIcon SVG is no longer wired
   // into the composer send slot, and there is no rotate transform on it.
   const src = readFileSync(resolve(repoRoot, 'client/src/sony/TeamsScene.tsx'), 'utf8');
-  const sendBtn = src.match(/tms-composer-sendbtn[\s\S]*?<\/button>/)?.[0] ?? '';
+  // Target the INTERACTIVE Advisor send button (the one wired to submit); the
+  // decorative channel composer also renders a tms-composer-sendbtn.
+  const sendBtn = src.match(/tms-composer-sendbtn"\s*\n?\s*onClick={submit}[\s\S]*?<\/button>/)?.[0] ?? '';
   assert.ok(sendBtn.includes('TeamsSendAsset'), 'send slot renders the supplied send asset');
   assert.equal(sendBtn.includes('SendArrowIcon'), false, 'old diagonal SVG not in the send slot');
   assert.equal(/rotate|transform/i.test(sendBtn), false, 'supplied icon is not rotated/redrawn');
@@ -313,4 +315,79 @@ test('other rail items keep the existing light-gray (non-white, non-stretched) t
   // wash — untouched for any future/other use.
   const css = readFileSync(resolve(repoRoot, 'client/src/sony/sony.css'), 'utf8');
   assert.ok(/\.tms-rail-item-active\s*{\s*background:\s*rgba\(91,95,199,0\.12\)/.test(css), 'generic active treatment untouched');
+});
+
+// ---- HX-6V-J addendum: IP360 Planning channel composer parity ------------
+/** Isolate the planning-channel composer block (the one with the placeholder). */
+function planningComposer(src: string): string {
+  const start = src.indexOf('Message IP360 Planning');
+  assert.ok(start > -1, 'planning composer placeholder present');
+  // Walk back to the enclosing .tms-composer and forward past its tools.
+  const open = src.lastIndexOf('<div className="tms-composer">', start);
+  const end = src.indexOf('</section>', start);
+  return src.slice(open, end);
+}
+
+test('IP360 Planning composer renders the same seven controls in the same order', () => {
+  const src = readFileSync(resolve(repoRoot, 'client/src/sony/TeamsScene.tsx'), 'utf8');
+  const block = planningComposer(src);
+  // Same left placeholder, then the shared control group in the same order.
+  assert.ok(block.includes('Message IP360 Planning'), 'placeholder retained');
+  assert.ok(block.includes('tms-composer-tools'), 'shared right-aligned tool group');
+  const order = ['Emoji', 'Attach file', 'Attach image', 'Loop component', 'More actions'];
+  let last = -1;
+  for (const label of order) {
+    const idx = block.indexOf(`aria-label="${label}"`);
+    assert.ok(idx > last, `control out of order or missing: ${label}`);
+    last = idx;
+  }
+  // Divider precedes the send control.
+  const divider = block.indexOf('tms-tool-divider');
+  const send = block.indexOf('tms-composer-sendbtn');
+  assert.ok(divider > last && send > divider, 'divider then send, last');
+});
+
+test('IP360 Planning composer reuses the SHARED icon implementations (no approximations)', () => {
+  const src = readFileSync(resolve(repoRoot, 'client/src/sony/TeamsScene.tsx'), 'utf8');
+  const block = planningComposer(src);
+  // Exact same components/assets as the Advisor composer.
+  for (const comp of ['EmojiIcon', 'PaperclipIcon', 'TeamsImageAsset', 'LoopIcon', 'PlusIcon', 'TeamsSendAsset']) {
+    assert.ok(block.includes(comp), `reuses shared component: ${comp}`);
+  }
+  // Right-facing outline send plane (the corrected supplied asset), size 20 —
+  // identical to the Advisor composer. (Braces escaped: {20} is a literal here.)
+  assert.ok(/TeamsSendAsset size=\{20\}/.test(block), 'same send asset + size (20)');
+  // Same tool sizes (18) as the Advisor composer.
+  assert.equal((block.match(/size=\{18\}/g) ?? []).length, 5, 'five 18px tool glyphs');
+});
+
+test('IP360 Planning composer shows send DISABLED and is fully inert (no submit/navigation)', () => {
+  const src = readFileSync(resolve(repoRoot, 'client/src/sony/TeamsScene.tsx'), 'utf8');
+  const block = planningComposer(src);
+  // Send is disabled (muted) because the channel composer is empty.
+  assert.ok(/tms-composer-sendbtn"\s+disabled/.test(block), 'send control disabled');
+  // Decorative: NO click/submit/route handlers anywhere in the block.
+  assert.equal(/onClick|onSubmit|href=|setView|convo\.submit/.test(block), false, 'no handlers — inert');
+  // No extra keyboard stops: every control is tabIndex={-1} or disabled.
+  const buttons = block.match(/<button[^>]*>/g) ?? [];
+  assert.ok(buttons.length >= 6, 'six control buttons present');
+  for (const b of buttons) {
+    assert.ok(/tabIndex={-1}|disabled/.test(b), `control adds no keyboard stop: ${b.slice(0, 60)}`);
+  }
+  // Accessible labeling retained on the controls.
+  for (const label of ['Emoji', 'Attach file', 'Attach image', 'Loop component', 'More actions', 'Send']) {
+    assert.ok(block.includes(`aria-label="${label}"`), `labelled: ${label}`);
+  }
+});
+
+test('IP360 Planning composer does not disturb the opening notification or CTA', () => {
+  // Default static render is the planning view; the notification + CTA are intact
+  // and the composer is present alongside them.
+  assert.ok(teams.includes('Cross-Sony Collaboration Request'), 'notification intact');
+  assert.ok(teams.includes('Open Sony IP360 Advisor'), 'CTA intact');
+  assert.ok(teams.includes('Message IP360 Planning'), 'channel composer present');
+  // The disabled send dims via opacity (muted), applied to the shared rule.
+  const css = readFileSync(resolve(repoRoot, 'client/src/sony/sony.css'), 'utf8');
+  const dis = css.match(/\.tms-composer-sendbtn:disabled\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/opacity:\s*0?\.[0-9]/.test(dis), 'disabled send is visually muted');
 });

@@ -283,7 +283,7 @@
 .tms-bubble-assistant { background: #f0f0f5; color: #242424; margin-bottom: 8px; }
 
 /* (Composer styles consolidated in the HX-6V-G block below.) */
-.tms-composer-input { color: #8a8a8a; font-size: 14px; }
+.tms-composer-input { flex: 1; min-width: 0; color: #8a8a8a; font-size: 14px; }
 
 /* ======================================================================= */
 /* CLAUDE COWORK                                                            */
@@ -960,4 +960,7 @@
 }
 .tms-composer-sendbtn:hover:not(:disabled) { color: #5b5fc7; background: rgba(91,95,199,0.08); }
 .tms-composer-sendbtn:focus-visible { outline: 2px solid #5b5fc7; outline-offset: 1px; }
-.tms-composer-sendbtn:disabled { color: #bcbcc4; cursor: default; }
+/* Muted disabled send (applies equally to the Advisor composer when its field
+   is empty and to the decorative channel composer): the PNG plane dims via
+   opacity since its color is baked into the asset. */
+.tms-composer-sendbtn:disabled { color: #bcbcc4; cursor: default; opacity: 0.4; }

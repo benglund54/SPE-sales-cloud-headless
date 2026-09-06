@@ -257,8 +257,25 @@ export function TeamsScene({ context, activationUrl, reducedMotion = false, now 
                 </div>
               </div>
             </div>
-            <div className="tms-composer" aria-hidden="true">
-              <div className="tms-composer-box"><span className="tms-composer-input">Message IP360 Planning</span></div>
+            {/* Channel composer — decorative parity with the Advisor composer:
+                the same seven right-aligned controls (shared components/assets,
+                dimensions, spacing, alignment). Noninteractive on the opening
+                screen — no handlers, no keyboard stops, send shown disabled. */}
+            <div className="tms-composer">
+              <div className="tms-composer-box">
+                <span className="tms-composer-input">Message IP360 Planning</span>
+                <div className="tms-composer-tools">
+                  <button className="tms-tool" aria-label="Emoji" title="Emoji" tabIndex={-1}><EmojiIcon size={18} /></button>
+                  <button className="tms-tool" aria-label="Attach file" title="Attach file" tabIndex={-1}><PaperclipIcon size={18} /></button>
+                  <button className="tms-tool" aria-label="Attach image" title="Attach image" tabIndex={-1}><TeamsImageAsset size={18} /></button>
+                  <button className="tms-tool" aria-label="Loop component" title="Loop component" tabIndex={-1}><LoopIcon size={18} /></button>
+                  <button className="tms-tool" aria-label="More actions" title="More actions" tabIndex={-1}><PlusIcon size={18} /></button>
+                  <span className="tms-tool-divider" aria-hidden="true" />
+                  <button className="tms-composer-sendbtn" disabled aria-label="Send" title="Send" tabIndex={-1}>
+                    <TeamsSendAsset size={20} />
+                  </button>
+                </div>
+              </div>
             </div>
           </section>
         ) : (
