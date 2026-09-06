@@ -262,3 +262,55 @@ test('supplied upload filenames never appear in committed sources or assets', ()
     assert.equal(existsSync(resolve(repoRoot, `client/public/icons/teams/${bad}`)), false, `${bad} present`);
   }
 });
+
+// ---- HX-6V-I: Teams Chat rail calibration --------------------------------
+test('selected Chat rail icon is enlarged (~30–32px), same supplied asset', () => {
+  const src = readFileSync(resolve(repoRoot, 'client/src/sony/TeamsScene.tsx'), 'utf8');
+  // Still the supplied semantic asset, now rendered larger to match real Teams.
+  const chatBtn = src.match(/tms-rail-item-chat-selected[\s\S]*?<\/button>/)?.[0] ?? '';
+  assert.ok(chatBtn.includes('TeamsChatRailAsset'), 'still uses the supplied chat-rail asset');
+  const size = Number(chatBtn.match(/TeamsChatRailAsset size={(\d+)}/)?.[1] ?? '0');
+  assert.ok(size >= 30 && size <= 32, `chat icon enlarged to ~30–32px (got ${size})`);
+  // Accessibility + label preserved.
+  assert.ok(chatBtn.includes('aria-label="Chat"') && chatBtn.includes('title="Chat"'), 'labelled Chat');
+  // Asset still maps to the semantic path (not the upload name).
+  const icons = readFileSync(resolve(repoRoot, 'client/src/sony/icons.tsx'), 'utf8');
+  assert.ok(/TeamsChatRailAsset[\s\S]*?file="chat-rail\.png"/.test(icons), 'TeamsChatRailAsset → chat-rail.png');
+});
+
+test('selected Chat cell is a full-width solid-white cell — no lavender tile, no indicator', () => {
+  const css = readFileSync(resolve(repoRoot, 'client/src/sony/sony.css'), 'utf8');
+  const rule = css.match(/\.tms-rail-item-chat-selected\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/background:\s*#fff/i.test(rule), 'solid white background');
+  assert.ok(/align-self:\s*stretch/.test(rule), 'stretches to full rail width');
+  assert.ok(/width:\s*100%/.test(rule), 'full width');
+  assert.ok(/border-radius:\s*0/.test(rule), 'no rounded tile');
+  // No border or shadow (and therefore no inner white square).
+  assert.ok(/border:\s*none/.test(rule), 'no border');
+  assert.ok(/box-shadow:\s*none/.test(rule), 'no shadow');
+  // The active indicator bar is suppressed for the selected Chat state.
+  const before = css.match(/\.tms-rail-item-chat-selected::before\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/content:\s*none/.test(before), 'active indicator bar removed for Chat');
+  // Chat no longer carries the generic lavender active treatment.
+  const scene = readFileSync(resolve(repoRoot, 'client/src/sony/TeamsScene.tsx'), 'utf8');
+  const chatBtn = scene.match(/aria-label="Chat"[\s\S]*?<\/button>/)?.[0] ?? '';
+  assert.equal(/tms-rail-item-active/.test(scene.match(/tms-rail-item[^"]*"\s+aria-label="Chat"/)?.[0] ?? ''), false,
+    'Chat button no longer uses the generic lavender active class');
+});
+
+test('other rail items keep the existing light-gray (non-white, non-stretched) treatment', () => {
+  const scene = readFileSync(resolve(repoRoot, 'client/src/sony/TeamsScene.tsx'), 'utf8');
+  // Only the Chat button carries the white full-cell selection; the other rail
+  // items remain plain .tms-rail-item.
+  const selectedCount = (scene.match(/tms-rail-item-chat-selected/g) ?? []).length;
+  assert.equal(selectedCount, 1, 'exactly one selected (Chat) rail cell');
+  for (const label of ['Meet', 'Teams', 'Copilot', 'Calendar', 'Activity']) {
+    const btn = scene.match(new RegExp(`className="tms-rail-item"[^>]*aria-label="${label}"`))?.[0] ?? '';
+    assert.ok(btn.length > 0, `${label} is a plain rail item`);
+    assert.equal(/chat-selected/.test(btn), false, `${label} is not white-selected`);
+  }
+  // The generic active rule still exists (unused by Chat now) with the lavender
+  // wash — untouched for any future/other use.
+  const css = readFileSync(resolve(repoRoot, 'client/src/sony/sony.css'), 'utf8');
+  assert.ok(/\.tms-rail-item-active\s*{\s*background:\s*rgba\(91,95,199,0\.12\)/.test(css), 'generic active treatment untouched');
+});

@@ -832,6 +832,17 @@
   content: ''; position: absolute; left: -8px; top: 12px; bottom: 12px; width: 3px;
   background: #5b5fc7; border-radius: 2px;
 }
+/* HX-6V-I: selected Chat matches real Teams — a solid white cell that fills the
+   full rail width and the full slot height. No lavender tile, radius, border,
+   shadow, inner white square, or indicator bar; the white cell IS the selection
+   indicator. The larger asset's own white background blends into this cell. */
+.tms-rail-item-chat-selected {
+  align-self: stretch; width: 100%; border-radius: 0;
+  background: #fff; box-shadow: none; border: none;
+}
+.tms-rail-item-chat-selected::before { content: none; }
+/* Keep a subtle hover on the (already white) selected Chat cell. */
+.tms-rail-item-chat-selected:hover { background: #fff; }
 
 /* Top-bar profile treatment (Brian Englund + presence).
    Single nonwrapping horizontal group — ellipsis, name, BE avatar, presence —

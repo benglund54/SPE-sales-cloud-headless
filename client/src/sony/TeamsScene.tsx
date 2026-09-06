@@ -107,7 +107,7 @@ export function TeamsScene({ context, activationUrl, reducedMotion = false, now 
             outline SVGs; genuine assets are kept only where they truly match.) */}
         <nav className="tms-rail" aria-label="Teams">
           <div className="tms-rail-brand" aria-hidden="true"><TeamsMark size={28} /></div>
-          <button className="tms-rail-item tms-rail-item-active" aria-label="Chat" title="Chat"><TeamsChatRailAsset size={24} /></button>
+          <button className="tms-rail-item tms-rail-item-chat-selected" aria-label="Chat" title="Chat"><TeamsChatRailAsset size={31} /></button>
           <button className="tms-rail-item" aria-label="Meet" title="Meet"><TeamsVideoAsset size={22} /></button>
           <button className="tms-rail-item" aria-label="Teams" title="Teams"><PeopleIcon size={22} /></button>
           <button className="tms-rail-item" aria-label="Copilot" title="Copilot"><TeamsCopilotAsset size={24} /></button>
