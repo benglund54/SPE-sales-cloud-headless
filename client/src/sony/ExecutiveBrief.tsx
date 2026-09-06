@@ -5,9 +5,11 @@ interface Props {
   context: SonyActivationContext;
   activationUrl: string | null;
   /**
-   * Progressive reveal count (1..5). When omitted, all sections render (static
-   * default — preserves existing render tests). 1 reco · 2 facts · 3 value ·
-   * 4 decisions · 5 guardrails (+ banner/action).
+   * Progressive reveal count (1..8). When omitted, all sections render (static
+   * default — preserves existing render tests). Reveal order (HX-6V-J):
+   * 1 header (label/title/subtitle) · 2 recommendation · 3 grounded facts ·
+   * 4 connected value · 5 decisions · 6 risks · 7 draft banner ·
+   * 8 Salesforce action (last). Still renders exactly five section cards.
    */
   revealed?: number;
 }
@@ -32,22 +34,28 @@ export function ExecutiveBrief({ context, activationUrl, revealed }: Props) {
   const bsv = releaseMoments.find((r) => r.title === 'Beyond the Spider-Verse');
   const lead = opCoRoles.find((r) => r.participationStatus === 'Accountable');
   const participants = opCoRoles.filter((r) => r.participationStatus === 'Pending');
-  // Undefined → show all (static default). Otherwise gate sections 1..5.
+  // Undefined → show all (static default). Otherwise gate steps 1..8.
   const show = (n: number) => revealed === undefined || revealed >= n;
+  // Reveal-entrance class only while progressively revealing (not on the static
+  // default render). Each revealed block enters once and settles opaque.
+  const reveal = revealed === undefined ? '' : ' sony-brief-reveal';
 
   return (
     <article className="sony-brief" aria-label={ARTIFACT_LABEL}>
-      <header className="sony-brief-head">
+      {/* 1 — Artifact label, title, subtitle */}
+      {show(1) && (
+      <header className={`sony-brief-head${reveal}`}>
         <div className="sony-brief-titles">
           <span className="sony-brief-artifact-tag">{ARTIFACT_LABEL}</span>
           <h1 className="sony-brief-title">{BRIEF_TITLE}</h1>
           <span className="sony-brief-supporting">{SUPPORTING_LABEL}</span>
         </div>
       </header>
+      )}
 
-      {/* 1 — Executive recommendation (PURPLE = Claude recommendation) */}
-      {show(1) && (
-      <section className="sony-brief-section sony-brief-reco" aria-label="Executive recommendation">
+      {/* 2 — Executive recommendation (PURPLE = Claude recommendation) */}
+      {show(2) && (
+      <section className={`sony-brief-section sony-brief-reco${reveal}`} aria-label="Executive recommendation">
         <h2 className="sony-brief-h2">Executive recommendation</h2>
         <p className="sony-brief-reco-text">{context.executiveRecommendation}</p>
         <p className="sony-brief-reco-conclusion">
@@ -57,9 +65,9 @@ export function ExecutiveBrief({ context, activationUrl, revealed }: Props) {
       )}
 
       <div className="sony-brief-grid">
-        {/* 2 — Grounded facts (BLUE = authoritative data) */}
-        {show(2) && (
-        <section className="sony-brief-section sony-brief-facts" aria-label="Grounded facts">
+        {/* 3 — Grounded facts (BLUE = authoritative data) */}
+        {show(3) && (
+        <section className={`sony-brief-section sony-brief-facts${reveal}`} aria-label="Grounded facts">
           <h2 className="sony-brief-h2">Grounded facts</h2>
           <ul className="sony-brief-facts-list">
             <li><b>Spider-Man: Brand New Day</b> — {bnd?.status.toLowerCase()}, Sony Pictures</li>
@@ -74,9 +82,9 @@ export function ExecutiveBrief({ context, activationUrl, revealed }: Props) {
         </section>
         )}
 
-        {/* 3 — Connected Sony value (NEUTRAL) */}
-        {show(3) && (
-        <section className="sony-brief-section sony-brief-value" aria-label="Connected Sony value">
+        {/* 4 — Connected Sony value (NEUTRAL) */}
+        {show(4) && (
+        <section className={`sony-brief-section sony-brief-value${reveal}`} aria-label="Connected Sony value">
           <h2 className="sony-brief-h2">Connected Sony value</h2>
           <p className="sony-brief-chain">{context.scenes.slack.experienceSummary}</p>
           <ul className="sony-brief-roles">
@@ -97,9 +105,9 @@ export function ExecutiveBrief({ context, activationUrl, revealed }: Props) {
         </section>
         )}
 
-        {/* 4 — Decisions still pending (AMBER = human decisions) */}
-        {show(4) && (
-        <section className="sony-brief-section sony-brief-decisions" aria-label="Decisions still pending">
+        {/* 5 — Decisions still pending (AMBER = human decisions) */}
+        {show(5) && (
+        <section className={`sony-brief-section sony-brief-decisions${reveal}`} aria-label="Decisions still pending">
           <h2 className="sony-brief-h2">Decisions still pending</h2>
           <p className="sony-brief-decisions-note">Awaiting the Sony IP Council — not accepted, not executed here.</p>
           <ol className="sony-brief-decisions-list">
@@ -115,9 +123,9 @@ export function ExecutiveBrief({ context, activationUrl, revealed }: Props) {
         </section>
         )}
 
-        {/* 5 — Risks and guardrails (GREEN/NEUTRAL = governance) */}
-        {show(5) && (
-        <section className="sony-brief-section sony-brief-guardrails" aria-label="Risks and guardrails">
+        {/* 6 — Risks and guardrails (GREEN/NEUTRAL = governance) */}
+        {show(6) && (
+        <section className={`sony-brief-section sony-brief-guardrails${reveal}`} aria-label="Risks and guardrails">
           <h2 className="sony-brief-h2">Risks &amp; guardrails</h2>
           <ul className="sony-brief-risks">
             {context.keyRisks.map((r) => (
@@ -133,16 +141,17 @@ export function ExecutiveBrief({ context, activationUrl, revealed }: Props) {
         )}
       </div>
 
-      {show(5) && (
-        <>
-          {/* Exact status banner */}
-          <div className="sony-brief-banner" role="status">
-            {governance.statusBanner}
-          </div>
-          <div className="sony-brief-actions">
-            <ActivationLink url={activationUrl} label={ACTIVATION_ACTION_LABEL} />
-          </div>
-        </>
+      {/* 7 — Exact status banner */}
+      {show(7) && (
+        <div className={`sony-brief-banner${reveal}`} role="status">
+          {governance.statusBanner}
+        </div>
+      )}
+      {/* 8 — Salesforce action (revealed last) */}
+      {show(8) && (
+        <div className={`sony-brief-actions${reveal}`}>
+          <ActivationLink url={activationUrl} label={ACTIVATION_ACTION_LABEL} />
+        </div>
       )}
     </article>
   );

@@ -62,5 +62,12 @@ export const SLACKBOT_ANSWER: AnswerSection[] = [
 // 1 why · 2 metrics · 3 ownership/lifecycle · 4 decisions · 5 permitted ·
 // 6 restricted · 7 banner+Salesforce action.
 export const TEAMS_SECTION_COUNT = 7;
-export const CLAUDE_SECTION_COUNT = 5; // reco / facts / value / decisions / risks
+// Finer reveal for a natural downward build (HX-6V-J) — nine increments in
+// reading order: 1 lead-in sentence (in the scene) · 2 header
+// (label/title/subtitle) · 3 recommendation · 4 grounded facts · 5 connected
+// value · 6 decisions · 7 risks · 8 draft banner · 9 Salesforce action (last).
+// The scene reveals the lead-in at step 1, then passes (revealed - 1) to the
+// brief, which gates its eight steps. The brief still renders exactly five
+// sony-brief-section cards.
+export const CLAUDE_SECTION_COUNT = 9;
 

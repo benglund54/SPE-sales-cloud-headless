@@ -39,6 +39,17 @@ export function TeamsLogo(p: IconProps) {
 export function ClaudeLogo(p: IconProps) {
   return <LogoImg src="/logos/claude.png" alt="Claude" {...p} />;
 }
+/**
+ * Claude activity mark for the ACTIVE Thinking / Writing indicator only.
+ * Uses the supplied genuinely-animated orange starburst GIF directly (682
+ * frames, infinite loop) — no CSS animation is applied on top. Under reduced
+ * motion, callers pass `static` to swap to the still starburst (claude.png),
+ * which does not move. Static Claude branding elsewhere keeps using ClaudeLogo.
+ */
+export function ClaudeThinkingMark({ static: isStatic, alt, ...p }: IconProps & { static?: boolean; alt?: string }) {
+  const src = isStatic ? '/logos/claude.png' : '/logos/claude-thinking.gif';
+  return <LogoImg src={src} alt={alt ?? 'Claude'} {...p} />;
+}
 export function SonyLogo(p: IconProps) {
   return <LogoImg src="/logos/sony.png" alt="Sony" {...p} />;
 }

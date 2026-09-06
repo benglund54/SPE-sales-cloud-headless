@@ -5,7 +5,7 @@ import { useConversation } from './useConversation';
 import { useFollowScroll } from './useFollowScroll';
 import { CLAUDE_PROMPT, CLAUDE_STAGES, CLAUDE_SECTION_COUNT } from './interactiveFixtures';
 import {
-  ClaudeLogo, CoworkIcon, CodeIcon, PlusIcon, FolderIcon, ArtifactIcon, ClockIcon, GearIcon,
+  ClaudeLogo, ClaudeThinkingMark, CoworkIcon, CodeIcon, PlusIcon, FolderIcon, ArtifactIcon, ClockIcon, GearIcon,
 } from './icons';
 
 interface Props {
@@ -30,10 +30,15 @@ export function ClaudeScene({ context, activationUrl, reducedMotion = false }: P
   const convo = useConversation({
     progressStages: CLAUDE_STAGES,
     sectionCount: CLAUDE_SECTION_COUNT,
+    // Reasoning ≈ 3.5–4.5s (5 stages), response build ≈ 5.5–7s (9 increments:
+    // the lead-in + eight brief steps), ≈ 9.5–11.5s total Send→done.
+    stageMs: 820,
+    revealMs: 720,
     reducedMotion,
   });
   const scrollRef = useFollowScroll<HTMLDivElement>(
-    `${convo.phase}:${convo.currentStage ?? ''}:${convo.revealed}`
+    `${convo.phase}:${convo.stageIndex}:${convo.revealed}`,
+    { smooth: true, reducedMotion }
   );
 
   return (
@@ -82,24 +87,43 @@ export function ClaudeScene({ context, activationUrl, reducedMotion = false }: P
           {convo.submitted && (
             <div className="cla-turn cla-turn-assistant">
               {convo.phase === 'thinking' ? (
-                <div className="cla-preparing" role="status">
-                  <ClaudeLogo size={24} className="cla-preparing-mark" />
-                  <span className="cla-preparing-text">{convo.currentStage}</span>
+                <div className="cla-reasoning" role="status" aria-live="polite">
+                  {/* Completed states settle above in a muted, static style. */}
+                  {CLAUDE_STAGES.slice(0, convo.stageIndex).map((s) => (
+                    <div key={s} className="cla-reason-step cla-reason-done">
+                      <span className="cla-reason-check" aria-hidden="true">✓</span>
+                      <span className="cla-reason-text">{s}</span>
+                    </div>
+                  ))}
+                  {/* One active state with the orange mark immediately to its
+                      left. The mark keys on nothing (never remounts), so it does
+                      not blink; only the text crossfades as the stage changes. */}
+                  <div className="cla-reason-step cla-reason-active">
+                    <ClaudeThinkingMark size={20} static={reducedMotion} className="cla-thinking-mark" />
+                    <span key={convo.currentStage ?? ''} className="cla-reason-text cla-reason-crossfade">
+                      {convo.currentStage}
+                    </span>
+                  </div>
                 </div>
               ) : (
                 <>
-                  <div className="cla-assistant-row">
+                  {/* Reveal step 1 — the opening recommendation sentence. */}
+                  <div className="cla-assistant-row sony-brief-reveal">
                     <ClaudeLogo size={22} />
                     <p className="cla-lead-in">{CLAUDE_LEAD_IN}</p>
                   </div>
+                  {/* Reveal steps 2..9 — the brief (gated by revealed - 1). */}
                   <ExecutiveBrief
                     context={context}
                     activationUrl={activationUrl}
-                    revealed={convo.phase === 'done' ? CLAUDE_SECTION_COUNT : convo.revealed}
+                    revealed={convo.phase === 'done' ? undefined : Math.max(0, convo.revealed - 1)}
                   />
+                  {/* Writing frontier: sits beneath the newest revealed block and
+                      is removed cleanly once the brief has fully rendered. */}
                   {convo.phase === 'revealing' && (
                     <div className="cla-writing" role="status" aria-live="polite">
-                      <span className="cla-writing-dot" aria-hidden="true" />Writing…
+                      <ClaudeThinkingMark size={16} static={reducedMotion} className="cla-writing-mark" />
+                      <span>Writing…</span>
                     </div>
                   )}
                 </>

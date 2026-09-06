@@ -78,6 +78,8 @@ export interface ConversationApi {
   submitted: boolean;
   /** Current progress-stage label, or null when not thinking. */
   currentStage: string | null;
+  /** Index of the current progress stage (0..stages-1); 0 when not thinking. */
+  stageIndex: number;
   /** Number of answer sections currently visible (0..sectionCount). */
   revealed: number;
   /** True while generating (thinking or still revealing) — disables re-submit. */
@@ -160,6 +162,7 @@ export function useConversation(config: ConversationConfig): ConversationApi {
     phase: state.phase,
     submitted: state.submitted,
     currentStage,
+    stageIndex: Math.min(state.stageIndex, progressStages.length - 1),
     revealed: state.revealed,
     busy,
     submit,

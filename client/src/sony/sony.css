@@ -330,11 +330,21 @@
   line-height: 1.5; max-width: 560px;
 }
 .cla-turn-assistant { font-size: 16px; }
-.cla-preparing { display: flex; align-items: center; gap: 10px; color: #6b6a63; font-size: 15px; }
-.cla-preparing-mark { animation: cla-spin 1.1s linear infinite; }
-@keyframes cla-spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .cla-preparing-mark { animation: none; } }
-.cla-preparing-text { font-style: italic; }
+/* HX-6V-J reasoning: one active state with the orange Claude mark to its left;
+   completed states settle above in a muted, static style. The animated mark is
+   the supplied GIF used directly — NO CSS animation on top, never rotates. */
+.cla-reasoning { display: flex; flex-direction: column; gap: 7px; }
+.cla-reason-step { display: flex; align-items: center; gap: 10px; font-size: 15px; }
+.cla-reason-done { color: #a19f97; }
+.cla-reason-done .cla-reason-text { font-style: normal; }
+.cla-reason-check { color: #b9b7ae; font-size: 12px; width: 20px; text-align: center; flex-shrink: 0; }
+.cla-reason-active { color: #6b6a63; }
+.cla-reason-active .cla-reason-text { font-style: italic; }
+.cla-thinking-mark { flex-shrink: 0; }
+/* Only the active TEXT crossfades as the stage changes; the mark never blinks
+   or remounts. Calm single fade-in, never to 0, never an infinite loop. */
+.cla-reason-crossfade { animation: cla-crossfade 420ms ease-in-out both; }
+@keyframes cla-crossfade { from { opacity: 0.75; } to { opacity: 1; } }
 .cla-assistant-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; }
 .cla-lead-in {
   font-family: Georgia, 'Times New Roman', serif; font-size: 17px; line-height: 1.5; color: #2b2a27;
@@ -773,9 +783,21 @@
 /* (HX-6V-D progress-dot + composer rules superseded by the HX-6V-F/G blocks.) */
 
 /* ---- Claude: interactive composer + writing state ---------------------- */
-.cla-writing { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #9a988e; margin-top: 10px; font-style: italic; }
-.cla-writing-dot { width: 7px; height: 7px; border-radius: 50%; background: #d97757; animation: sony-pulse 1s ease-in-out infinite; }
-@media (prefers-reduced-motion: reduce) { .cla-writing-dot { animation: none; } }
+/* Writing frontier: the orange Claude mark (supplied GIF, no CSS motion) with a
+   muted "Writing…" label, sitting beneath the newest revealed content. */
+.cla-writing { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #9a988e; margin-top: 12px; font-style: italic; }
+.cla-writing-mark { flex-shrink: 0; }
+/* Progressive-reveal entrance for each brief increment: a subtle upward slide +
+   fade that settles permanently opaque. Slightly overlaps the next increment so
+   the build reads continuous rather than stop-start. */
+.sony-brief-reveal { animation: cla-reveal 340ms ease-out both; }
+@keyframes cla-reveal { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+/* Reduced motion: no breath, no translate, static mark; states change with a
+   short fade or immediately, and the full sequence still completes. */
+@media (prefers-reduced-motion: reduce) {
+  .cla-reason-crossfade { animation: none; opacity: 1; }
+  .sony-brief-reveal { animation: none; opacity: 1; transform: none; }
+}
 .cla-composer-field {
   width: 100%; border: none; outline: none; resize: none; background: transparent;
   font-family: var(--sony-font); font-size: 14px; color: #2b2a27; line-height: 1.5; margin-bottom: 10px;

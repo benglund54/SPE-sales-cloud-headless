@@ -69,9 +69,11 @@ test('Slackbot answer has the three governed sections with grounded facts', () =
   assert.ok(body.includes('Draft — no audience activated and no customer communication sent.'));
 });
 
-test('section counts match the artifacts (Teams 7 finer steps, Claude 5)', () => {
+test('section counts match the artifacts (Teams 7 finer steps, Claude 9)', () => {
   assert.equal(TEAMS_SECTION_COUNT, 7);
-  assert.equal(CLAUDE_SECTION_COUNT, 5);
+  // HX-6V-J: nine reveal increments — lead-in + eight brief steps (header,
+  // reco, facts, value, decisions, risks, banner, Salesforce action).
+  assert.equal(CLAUDE_SECTION_COUNT, 9);
 });
 
 // ---- Key handling contract (from useConversation.handleComposerKeyDown) --
