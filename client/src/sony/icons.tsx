@@ -79,6 +79,10 @@ export const TeamsOverflowAsset = (p: IconProps) => <TeamsAsset file="overflow.p
 export const TeamsCaretAsset = (p: IconProps) => <TeamsAsset file="caret.png" alt="" {...p} />;
 export const TeamsCheckAsset = (p: IconProps) => <TeamsAsset file="check-circle.png" alt="Sent" {...p} />;
 export const TeamsImageAsset = (p: IconProps) => <TeamsAsset file="image.png" alt="" {...p} />;
+/** Genuine right-facing Teams send icon (supplied). Not the diagonal SVG. */
+export const TeamsSendAsset = (p: IconProps) => <TeamsAsset file="send.png" alt="Send" {...p} />;
+/** Genuine purple circular Chat speech-bubble for the rail (supplied). */
+export const TeamsChatRailAsset = (p: IconProps) => <TeamsAsset file="chat-rail.png" alt="Chat" {...p} />;
 
 /* Composer glyphs not present in the supplied ZIP — inline SVG (currentColor). */
 export function EmojiIcon({ size = 18, className, style }: IconProps) {

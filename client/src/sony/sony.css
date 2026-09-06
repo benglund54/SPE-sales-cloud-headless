@@ -197,7 +197,7 @@
 }
 .tms-topbar {
   height: 48px; flex-shrink: 0; background: #eef1f6;
-  display: grid; grid-template-columns: 120px 1fr 160px; align-items: center;
+  display: grid; grid-template-columns: 120px 1fr auto; align-items: center;
   padding: 0 16px; gap: 12px;
 }
 .tms-topbar-left { display: flex; gap: 8px; }
@@ -247,6 +247,10 @@
   display: flex; align-items: center; justify-content: center; border: 1px solid #e0e0e0;
 }
 .tms-chat-avatar-plain { background: #7b83eb; color: #fff; font-size: 12px; font-weight: 700; border: none; }
+/* Favorites-list Advisor avatar: artwork fills ~84% of the circle, tightly
+   fitted (scoped to this row only). object-fit keeps aspect + sharpness. */
+.tms-chat-avatar-advisor { overflow: hidden; }
+.tms-chat-avatar-advisor img { width: 27px; height: 27px; object-fit: contain; }
 .tms-chat-meta { display: flex; flex-direction: column; min-width: 0; }
 .tms-chat-name { font-size: 14px; font-weight: 600; color: #242424; }
 .tms-chat-preview { font-size: 12px; color: #616161; }
@@ -829,12 +833,24 @@
   background: #5b5fc7; border-radius: 2px;
 }
 
-/* Top-bar profile treatment (Brian Englund + presence) */
-.tms-topbar-right { display: flex; align-items: center; gap: 10px; justify-content: flex-end; }
-.tms-topbar-more { background: transparent; border: none; cursor: pointer; color: #5b5b5b; padding: 5px; border-radius: 6px; display: inline-flex; }
+/* Top-bar profile treatment (Brian Englund + presence).
+   Single nonwrapping horizontal group — ellipsis, name, BE avatar, presence —
+   vertically centered. The name never wraps or shrinks; there is comfortable
+   room between the ellipsis and the name, and a natural smaller gap between the
+   name and the avatar. The 'auto' top-bar grid column sizes to this group, so
+   the centered search bar is never displaced. */
+.tms-topbar-right {
+  display: flex; align-items: center; gap: 12px; justify-content: flex-end;
+  flex-wrap: nowrap; white-space: nowrap; flex-shrink: 0;
+}
+.tms-topbar-more { background: transparent; border: none; cursor: pointer; color: #5b5b5b; padding: 5px; border-radius: 6px; display: inline-flex; flex-shrink: 0; }
 .tms-topbar-more:hover { background: rgba(0,0,0,0.05); }
-.tms-profile { background: transparent; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; gap: 8px; }
-.tms-profile-name { font-size: 13px; font-weight: 600; color: #242424; }
+.tms-profile {
+  background: transparent; border: none; cursor: pointer; padding: 0;
+  display: flex; align-items: center; gap: 8px;
+  flex-wrap: nowrap; white-space: nowrap; flex-shrink: 0;
+}
+.tms-profile-name { font-size: 13px; font-weight: 600; color: #242424; white-space: nowrap; flex-shrink: 0; }
 /* Name is visible at the presentation resolution; collapses on narrow widths. */
 @media (max-width: 1180px) { .tms-profile-name { display: none; } }
 .tms-profile-avatar {

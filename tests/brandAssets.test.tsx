@@ -68,6 +68,12 @@ test('Teams rail uses the genuine multicolor Copilot + camera assets that visibl
   // Chat/Teams/Calendar committed PNGs did NOT match their function (panel /
   // grid / contact card) and were replaced with correct outline SVGs.
   assert.equal(teams.includes('/icons/teams/chat.png'), false, 'panel-glyph chat.png not used as Chat');
+  // HX-6V-H: the supplied purple speech-bubble is used for the rail Chat slot
+  // (always rendered). The supplied right-facing send PNG is wired to the
+  // composer send button (advisor view only), asserted against the source.
+  assert.ok(teams.includes('/icons/teams/chat-rail.png'), 'supplied purple Chat bubble in the rail');
+  const teamsSrc = readFileSync(resolve(repoRoot, 'client/src/sony/TeamsScene.tsx'), 'utf8');
+  assert.ok(teamsSrc.includes('TeamsSendAsset'), 'supplied right-facing send icon wired to the composer');
 });
 
 test('Claude scene uses the real Claude logo beside responses/preparing/account', () => {

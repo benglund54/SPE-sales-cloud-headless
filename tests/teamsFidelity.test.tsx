@@ -25,7 +25,12 @@ const teams = renderToStaticMarkup(
 
 // ---- Genuine supplied Teams assets ---------------------------------------
 test('supplied Teams UI assets exist under the semantic path (no metadata)', () => {
-  for (const f of ['teams', 'copilot', 'chat', 'video', 'activity', 'calendar', 'search', 'compose', 'overflow', 'check-circle', 'image']) {
+  for (const f of [
+    'teams', 'copilot', 'chat', 'video', 'activity', 'calendar', 'search',
+    'compose', 'overflow', 'check-circle', 'image',
+    // HX-6V-H supplied assets, stored under semantic names (not the upload names):
+    'send', 'chat-rail',
+  ]) {
     const p = resolve(repoRoot, `client/public/icons/teams/${f}.png`);
     assert.ok(existsSync(p), `missing icon: ${f}.png`);
     assert.ok(readFileSync(p).length > 100, `${f}.png too small`);
@@ -44,6 +49,8 @@ test('Teams rail: genuine Copilot + camera assets; correct SVGs where PNGs did n
   assert.equal(teams.includes('/icons/teams/chat.png'), false, 'panel-glyph not used as Chat');
   assert.equal(teams.includes('/icons/teams/teams.png'), false, 'grid-glyph not used as Teams/brand');
   assert.equal(teams.includes('/icons/teams/calendar.png'), false, 'contact-card glyph not used as Calendar');
+  // HX-6V-H: the rail Chat slot now uses the supplied purple speech-bubble.
+  assert.ok(teams.includes('/icons/teams/chat-rail.png'), 'supplied purple Chat bubble in the rail');
 });
 
 // ---- Realistic chrome anchors --------------------------------------------
@@ -152,13 +159,22 @@ test('composer control order and accessible labels', () => {
   assert.ok(src.includes('tms-tool-divider'), 'divider before send');
 });
 
-test('send icon is a thin OUTLINE paper airplane — never a solid purple fill', () => {
+test('send button uses the supplied right-facing send PNG — never a solid purple fill', () => {
+  // HX-6V-H: the send icon is now the supplied /icons/teams/send.png, rendered
+  // via TeamsSendAsset. The old diagonal SendArrowIcon SVG is no longer wired
+  // into the composer send slot, and there is no rotate transform on it.
+  const src = readFileSync(resolve(repoRoot, 'client/src/sony/TeamsScene.tsx'), 'utf8');
+  const sendBtn = src.match(/tms-composer-sendbtn[\s\S]*?<\/button>/)?.[0] ?? '';
+  assert.ok(sendBtn.includes('TeamsSendAsset'), 'send slot renders the supplied send asset');
+  assert.equal(sendBtn.includes('SendArrowIcon'), false, 'old diagonal SVG not in the send slot');
+  assert.equal(/rotate|transform/i.test(sendBtn), false, 'supplied icon is not rotated/redrawn');
+  // Accessible name / tooltip / click preserved on the button.
+  assert.ok(sendBtn.includes('aria-label="Send"') && sendBtn.includes('title="Send"'), 'labelled Send');
+  assert.ok(sendBtn.includes('onClick={submit}') && sendBtn.includes('disabled={!canSend}'), 'click + disabled preserved');
+  // The TeamsSendAsset maps to the semantic send.png (not the upload filename).
   const icons = readFileSync(resolve(repoRoot, 'client/src/sony/icons.tsx'), 'utf8');
-  const send = icons.match(/export function SendArrowIcon[\s\S]*?\n}/)?.[0] ?? '';
-  assert.ok(send.includes('fill="none"'), 'outline (fill:none)');
-  assert.ok(send.includes('stroke="currentColor"'), 'stroke, not fill');
-  assert.equal(/fill="currentColor"/.test(send), false, 'no solid fill');
-  // Resting send button is gray (not purple background/fill).
+  assert.ok(/TeamsSendAsset[\s\S]*?file="send\.png"/.test(icons), 'TeamsSendAsset → send.png');
+  // Resting send button is gray (not a solid purple background/fill).
   const css = readFileSync(resolve(repoRoot, 'client/src/sony/sony.css'), 'utf8');
   const btn = css.match(/\.tms-composer-sendbtn\s*{[^}]*}/)?.[0] ?? '';
   assert.equal(/background:\s*#5b5fc7/.test(btn), false, 'no solid purple resting background');
@@ -188,4 +204,61 @@ test('v14 opening notification content preserved within the refined chrome', () 
   for (const m of ['1.85M', '91.58', '82.3', '84', '53.9']) assert.ok(teams.includes(m));
   assert.ok(teams.includes('Draft — no audience activated and no customer communication sent.'));
   assert.ok(teams.includes('Open Sony IP360 Advisor'));
+});
+
+// ---- HX-6V-H: Favorites Advisor avatar, one-line profile, supplied icons ---
+test('Favorites-list Advisor avatar is enlarged and scoped to that row only', () => {
+  const src = readFileSync(resolve(repoRoot, 'client/src/sony/TeamsScene.tsx'), 'utf8');
+  // The Favorites row avatar carries the scoping class and a larger artwork.
+  assert.ok(/tms-chat-avatar tms-chat-avatar-advisor[\s\S]*?<AdvisorIcon size={2[6-8]} \/>/.test(src),
+    'Favorites Advisor artwork enlarged (~27px in a 32px circle ≈ 84%)');
+  // The OTHER Advisor marks (conversation header, turn avatar, reasoning) keep
+  // their smaller sizes — the enlargement is NOT applied globally.
+  assert.ok(src.includes('tms-conv-avatar" aria-hidden="true"><AdvisorIcon size={22}'), 'header avatar unchanged');
+  assert.ok(src.includes('tms-turn-avatar" aria-hidden="true"><AdvisorIcon size={20}'), 'turn avatar unchanged');
+  assert.ok(src.includes('tms-progress-mark" aria-hidden="true"><AdvisorIcon size={16}'), 'reasoning mark unchanged');
+  // The scoping class is defined only for the Favorites avatar, with contain fit.
+  const css = readFileSync(resolve(repoRoot, 'client/src/sony/sony.css'), 'utf8');
+  const rule = css.match(/\.tms-chat-avatar-advisor img\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/object-fit:\s*contain/.test(rule), 'artwork keeps aspect ratio (contain)');
+});
+
+test('top-bar profile is a single nonwrapping one-line group (Brian Englund)', () => {
+  assert.ok(teams.includes('Brian Englund'), 'presenter name');
+  assert.ok(teams.includes('tms-presence'), 'presence indicator');
+  const css = readFileSync(resolve(repoRoot, 'client/src/sony/sony.css'), 'utf8');
+  const right = css.match(/\.tms-topbar-right\s*{[^}]*}/g)?.join('\n') ?? '';
+  assert.ok(/white-space:\s*nowrap/.test(right), 'right group never wraps');
+  assert.ok(/flex-shrink:\s*0/.test(right), 'right group does not shrink');
+  const name = css.match(/\.tms-profile-name\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/white-space:\s*nowrap/.test(name), 'name never wraps');
+  assert.ok(/flex-shrink:\s*0/.test(name), 'name never shrinks');
+  const prof = css.match(/\.tms-profile\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/align-items:\s*center/.test(prof), 'vertically centered');
+  assert.ok(/white-space:\s*nowrap/.test(prof), 'profile group never wraps');
+  // The top-bar right grid column sizes to the group (auto) so the centered
+  // search bar is never displaced.
+  const bar = css.match(/\.tms-topbar\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/grid-template-columns:\s*120px 1fr auto/.test(bar), 'right column auto-sizes to the profile group');
+  // The name still collapses only at genuinely narrow widths.
+  assert.ok(/@media \(max-width: 1180px\)[\s\S]*tms-profile-name\s*{\s*display:\s*none/.test(css), 'name collapses only when narrow');
+});
+
+test('supplied upload filenames never appear in committed sources or assets', () => {
+  // The uploads (\"Send Icon.png\", \"Chat Icon.png\") must be stored under
+  // semantic names only; the original upload names must not leak anywhere.
+  for (const rel of [
+    'client/src/sony/TeamsScene.tsx',
+    'client/src/sony/icons.tsx',
+    'client/src/sony/sony.css',
+  ]) {
+    const src = readFileSync(resolve(repoRoot, rel), 'utf8');
+    // Match the literal upload filenames (with extension) and the macOS/upload
+    // \"imgi_\" prefix — not the ordinary English words \"send icon\".
+    assert.equal(/Send Icon\.png|Chat Icon\.png|imgi_/i.test(src), false, `upload filename leaked in ${rel}`);
+  }
+  // And no such files were copied into the public asset dir.
+  for (const bad of ['Send Icon.png', 'Chat Icon.png']) {
+    assert.equal(existsSync(resolve(repoRoot, `client/public/icons/teams/${bad}`)), false, `${bad} present`);
+  }
 });

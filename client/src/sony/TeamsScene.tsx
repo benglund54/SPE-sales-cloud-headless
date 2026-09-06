@@ -7,10 +7,10 @@ import { TEAMS_PROMPT, TEAMS_STAGES, TEAMS_SECTION_COUNT } from './interactiveFi
 import { formatTeamsTime } from './teamsTime';
 import {
   AdvisorIcon, ChevronLeft, ChevronRight, PlusIcon,
-  TeamsMark, ChatBubbleIcon, PeopleIcon, CalendarIcon,
+  TeamsMark, PeopleIcon, CalendarIcon,
   TeamsCopilotAsset, TeamsVideoAsset, TeamsActivityAsset,
   TeamsSearchAsset, TeamsComposeAsset, TeamsOverflowAsset, TeamsCheckAsset,
-  TeamsImageAsset, EmojiIcon, PaperclipIcon, LoopIcon, SendArrowIcon,
+  TeamsImageAsset, TeamsChatRailAsset, TeamsSendAsset, EmojiIcon, PaperclipIcon, LoopIcon,
 } from './icons';
 
 interface Props {
@@ -107,7 +107,7 @@ export function TeamsScene({ context, activationUrl, reducedMotion = false, now 
             outline SVGs; genuine assets are kept only where they truly match.) */}
         <nav className="tms-rail" aria-label="Teams">
           <div className="tms-rail-brand" aria-hidden="true"><TeamsMark size={28} /></div>
-          <button className="tms-rail-item tms-rail-item-active" aria-label="Chat" title="Chat"><ChatBubbleIcon size={22} /></button>
+          <button className="tms-rail-item tms-rail-item-active" aria-label="Chat" title="Chat"><TeamsChatRailAsset size={24} /></button>
           <button className="tms-rail-item" aria-label="Meet" title="Meet"><TeamsVideoAsset size={22} /></button>
           <button className="tms-rail-item" aria-label="Teams" title="Teams"><PeopleIcon size={22} /></button>
           <button className="tms-rail-item" aria-label="Copilot" title="Copilot"><TeamsCopilotAsset size={24} /></button>
@@ -144,7 +144,7 @@ export function TeamsScene({ context, activationUrl, reducedMotion = false, now 
               </li>
               <li className={`tms-chat ${view === 'advisor' ? 'tms-chat-active' : ''}`} aria-current={view === 'advisor' ? 'true' : undefined}>
                 <button className="tms-chat-btn" onClick={() => setView('advisor')}>
-                  <span className="tms-chat-avatar" aria-hidden="true"><AdvisorIcon size={18} /></span>
+                  <span className="tms-chat-avatar tms-chat-avatar-advisor" aria-hidden="true"><AdvisorIcon size={27} /></span>
                   <span className="tms-chat-meta">
                     <span className="tms-chat-name">{ASSISTANT}</span>
                     <span className="tms-chat-preview">{CONVERSATION}</span>
@@ -347,7 +347,7 @@ export function TeamsScene({ context, activationUrl, reducedMotion = false, now 
                     aria-label="Send"
                     title="Send"
                   >
-                    <SendArrowIcon size={18} />
+                    <TeamsSendAsset size={20} />
                   </button>
                 </div>
               </div>
