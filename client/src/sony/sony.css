@@ -329,6 +329,8 @@
 .claw-chat-dot { width: 6px; height: 6px; border-radius: 50%; background: #d97757; flex-shrink: 0; }
 .claw-chat-dot-idle { background: #c3c1b6; }
 .claw-design { margin-top: 8px; }
+/* Supplied Design palette glyph — crisp, aspect-preserved, transparent bg. */
+.claw-design-icon { object-fit: contain; flex-shrink: 0; }
 .claw-account {
   display: flex; align-items: center; gap: 8px; padding: 12px 6px 2px; margin-top: 8px;
   border-top: 1px solid #e6e4da; color: #57564f; font-size: 13px;
@@ -361,13 +363,17 @@
 
 /* Composer (shared home + conversation shells). */
 .claw-composer { flex-shrink: 0; }
-/* Home composer: a tall rounded rect with a dedicated multiline text region on
-   top and a separate control row below. The prompt wraps in the text region and
-   never overlaps the controls. */
-.claw-composer-home { width: 100%; max-width: 760px; }
+/* Home composer (HX-6V-N): ONE real rounded container centered below the
+   greeting — a text region on top and a control row below, split vertically
+   with space-between. Visible neutral border + very soft shadow, bounded width,
+   real min-height; never a thin strip, never floating children. */
+.claw-composer-home { width: 100%; display: flex; justify-content: center; }
 .claw-composer-home .claw-composer-box {
-  flex-direction: column; align-items: stretch; gap: 14px; padding: 16px 18px 12px;
-  border-radius: 16px; box-shadow: 0 6px 24px rgba(40,38,32,0.08); border-color: #e6e4da; background: #fff;
+  box-sizing: border-box;
+  width: min(844px, calc(100% - 48px)); min-height: 146px;
+  flex-direction: column; align-items: stretch; justify-content: space-between; gap: 12px;
+  padding: 20px 22px; border: 1px solid #D9D8D3; border-radius: 20px;
+  background: #FFFFFF; box-shadow: 0 8px 24px rgba(0,0,0,0.04);
 }
 .claw-composer-textrow { display: flex; align-items: flex-start; gap: 12px; }
 .claw-composer-box {

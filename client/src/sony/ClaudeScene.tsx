@@ -5,9 +5,9 @@ import { useConversation } from './useConversation';
 import { useFollowScroll } from './useFollowScroll';
 import { CLAUDE_PROMPT, CLAUDE_STAGES, CLAUDE_SECTION_COUNT } from './interactiveFixtures';
 import {
-  ClaudeStar, ClaudeThinkingMark, ClaudeFaceIcon,
+  ClaudeStar, ClaudeThinkingMark, ClaudeFaceIcon, ClaudeDesignAsset,
   PlusIcon, FolderIcon, ArtifactIcon, CodeIcon, GearIcon, SearchIcon,
-  MicIcon, ChevronDownIcon, DownloadIcon, SidebarToggleIcon, SlidersIcon, PaletteIcon,
+  MicIcon, ChevronDownIcon, DownloadIcon, SidebarToggleIcon, SlidersIcon,
   ShareIcon, PencilIcon, TrendIcon, GradCapIcon, CoffeeIcon,
 } from './icons';
 import type { CSSProperties } from 'react';
@@ -121,7 +121,9 @@ export function ClaudeScene({ context, activationUrl, reducedMotion = false }: P
           ))}
         </div>
 
-        <button className="claw-nav-item claw-design" tabIndex={-1}><PaletteIcon size={18} /><span>Design</span></button>
+        <button className="claw-nav-item claw-design" tabIndex={-1}>
+          <ClaudeDesignAsset size={20} className="claw-design-icon" /><span>Design</span>
+        </button>
 
         <div className="claw-account">
           <span className="claw-avatar" aria-hidden="true">BE</span>
@@ -225,40 +227,43 @@ export function ClaudeScene({ context, activationUrl, reducedMotion = false }: P
                 <ClaudeStar size={30} className="claw-greeting-star" /> {GREETING}
               </h1>
 
-              {/* Large preloaded home composer — a dedicated multiline text
-                  region above a separate control row; the prompt wraps in the
-                  text region and never overlaps the controls. */}
+              {/* Large preloaded home composer — one real rounded container
+                  (.claw-composer-box) with a dedicated multiline text region on
+                  top and the control row below (space-between column). The
+                  prompt wraps in the text region and never leaves the box. */}
               <div className="claw-composer claw-composer-home">
-                <div className="claw-composer-textrow">
-                  <textarea
-                    className="claw-composer-field claw-composer-field-home"
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    onKeyDown={onKeyDown}
-                    rows={3}
-                    placeholder={HOME_PLACEHOLDER}
-                    aria-label="Message Claude"
-                  />
-                  <span className="claw-status-dot" aria-hidden="true" />
-                </div>
-                <div className="claw-home-tools">
-                  <button className="claw-composer-plus" tabIndex={-1} aria-hidden="true"><PlusIcon size={18} /></button>
-                  <div className="claw-mode" role="group" aria-label="Mode">
-                    <span className="claw-mode-seg claw-mode-seg-active">Chat</span>
-                    <span className="claw-mode-seg">Cowork</span>
+                <div className="claw-composer-box">
+                  <div className="claw-composer-textrow">
+                    <textarea
+                      className="claw-composer-field claw-composer-field-home"
+                      value={prompt}
+                      onChange={(e) => setPrompt(e.target.value)}
+                      onKeyDown={onKeyDown}
+                      rows={3}
+                      placeholder={HOME_PLACEHOLDER}
+                      aria-label="Message Claude"
+                    />
+                    <span className="claw-status-dot" aria-hidden="true" />
                   </div>
-                  <span className="claw-home-model" aria-hidden="true">
-                    <span className="claw-model">Sonnet 5</span><span className="claw-effort">Medium</span>
-                    <MicIcon size={17} className="claw-composer-mic" />
-                    <ChevronDownIcon size={15} />
-                  </span>
-                  <button
-                    className="claw-send"
-                    onClick={submit}
-                    disabled={!canSend}
-                    aria-label="Send"
-                    title="Send"
-                  >↑</button>
+                  <div className="claw-home-tools">
+                    <button className="claw-composer-plus" tabIndex={-1} aria-hidden="true"><PlusIcon size={18} /></button>
+                    <div className="claw-mode" role="group" aria-label="Mode">
+                      <span className="claw-mode-seg claw-mode-seg-active">Chat</span>
+                      <span className="claw-mode-seg">Cowork</span>
+                    </div>
+                    <span className="claw-home-model" aria-hidden="true">
+                      <span className="claw-model">Sonnet 5</span><span className="claw-effort">Medium</span>
+                      <MicIcon size={17} className="claw-composer-mic" />
+                      <ChevronDownIcon size={15} />
+                    </span>
+                    <button
+                      className="claw-send"
+                      onClick={submit}
+                      disabled={!canSend}
+                      aria-label="Send"
+                      title="Send"
+                    >↑</button>
+                  </div>
                 </div>
               </div>
 

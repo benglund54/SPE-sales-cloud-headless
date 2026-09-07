@@ -68,6 +68,11 @@ export function ClaudeStar(p: IconProps & { alt?: string }) {
   const { alt, ...rest } = p;
   return <LogoImg src="/logos/claude-star.png" alt={alt ?? ''} {...rest} />;
 }
+/** Supplied Claude "Design" palette glyph (transparent). Decorative — the
+ *  adjacent "Design" label provides the accessible name, so alt is empty. */
+export function ClaudeDesignAsset(p: IconProps) {
+  return <LogoImg src="/icons/claude/design.png" alt="" {...p} />;
+}
 export function SonyLogo(p: IconProps) {
   return <LogoImg src="/logos/sony.png" alt="Sony" {...p} />;
 }
