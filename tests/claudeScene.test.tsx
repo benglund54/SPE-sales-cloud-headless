@@ -68,14 +68,16 @@ test('grounded facts show authoritative metric labels and values', () => {
   assert.ok(brief.includes('Engagement Score') && brief.includes('82.3'));
   assert.ok(brief.includes('Cross-Affinity Score') && brief.includes('84'));
   assert.ok(brief.includes('Source: Governed CRM signals'));
-  assert.ok(brief.includes('PlayStation catalog anchor'));
+  // HX-7H: the PlayStation catalog is now the labelled anchor tile row.
+  assert.ok(brief.includes('PlayStation Catalog Anchors'));
 });
 
-test('release moments: Brand New Day active; Beyond the Spider-Verse In Development, no date', () => {
+test('pipeline title tiles render Brand New Day + Beyond the Spider-Verse (no dates)', () => {
+  // HX-7H: release titles now render as compact tiles (artwork + badge),
+  // replacing the former text lines. Titles + Pictures badges appear; no dates.
   assert.ok(brief.includes('Spider-Man: Brand New Day'));
-  assert.ok(/active release moment/i.test(brief));
-  assert.ok(brief.includes('Beyond the Spider-Verse'));
-  assert.ok(brief.includes('In Development'));
+  assert.ok(brief.includes('Spider-Man: Beyond the Spider-Verse'));
+  assert.ok(brief.includes('Pictures Pipeline') && brief.includes('CURRENT') && brief.includes('FUTURE'));
   // No invented year anywhere in the brief.
   assert.equal(/\b(19|20)\d{2}\b/.test(brief), false, 'a year leaked into the brief');
 });

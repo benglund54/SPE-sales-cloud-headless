@@ -673,6 +673,36 @@
 .sony-brief-facts .sony-brief-h2 { color: #4b63d6; }
 .sony-brief-facts-list { list-style: none; display: flex; flex-direction: column; gap: 3px; }
 .sony-brief-source { font-size: 11px; color: var(--card-text-dim); margin-top: 6px; }
+
+/* HX-7H — compact pipeline title tiles: two labeled rows of three equal tiles.
+   No horizontal scroll, no carousel, no links. Poster art is object-fit:cover
+   in a reserved 36×50 frame; titles clamp to two lines; small CURRENT/FUTURE
+   badges on the Pictures row only; a fixed-size initials fallback replaces any
+   missing/failed artwork (never a broken-image icon). */
+.sony-tiles { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+.sony-tiles-group { display: flex; flex-direction: column; gap: 4px; }
+.sony-tiles-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--card-text-dim); }
+.sony-tiles-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.sony-tile {
+  display: flex; align-items: center; gap: 8px; min-width: 0; min-height: 56px;
+  padding: 6px 8px; border: 1px solid var(--card-border); border-radius: 8px; background: #fff;
+}
+.sony-tile-poster {
+  flex-shrink: 0; width: 36px; height: 50px; border-radius: 4px; overflow: hidden;
+  background: #ece9df; display: flex; align-items: center; justify-content: center;
+}
+.sony-tile-img { width: 36px; height: 50px; object-fit: cover; display: block; }
+.sony-tile-fallback { font-size: 12px; font-weight: 700; color: #6b6a63; }
+.sony-tile-title {
+  flex: 1; min-width: 0; font-size: 11.5px; line-height: 1.25; color: #2b2a27;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.sony-tile-badge {
+  flex-shrink: 0; align-self: flex-start; font-size: 9px; font-weight: 700; letter-spacing: 0.03em;
+  text-transform: uppercase; border-radius: 4px; padding: 2px 5px;
+}
+.sony-tile-badge-current { background: rgba(26,138,90,0.12); color: #1a8a5a; }
+.sony-tile-badge-future { background: rgba(75,99,214,0.12); color: #4b63d6; }
 .sony-brief-value { background: var(--card-surface-2); border: 1px solid var(--card-border); }
 .sony-brief-chain { font-weight: 700; margin-bottom: 6px; }
 .sony-brief-roles { list-style: none; display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }

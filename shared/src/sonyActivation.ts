@@ -87,6 +87,19 @@ export interface ReleaseMoment {
   status: 'Active release moment' | 'In Development';
 }
 
+/**
+ * Compact pipeline title tile (HX-7H). `propertyKey` is the stable Salesforce
+ * external key the Headless app resolves to LOCAL packaged artwork — no
+ * authenticated Salesforce URL, record ID, or imageUrl ever enters this
+ * browser contract. Pictures titles carry a CURRENT/FUTURE badge; PlayStation
+ * catalog anchors carry no status/badge (empty string).
+ */
+export interface PipelineTitle {
+  title: string;
+  status: 'CURRENT' | 'FUTURE' | '';
+  propertyKey: string;
+}
+
 export interface Approvals {
   sonyPictures: 'Pending';
   playStation: 'Pending';
@@ -172,6 +185,11 @@ export interface SonyActivationContext {
   // Release posture for referenced Spider-Man properties
   releaseMoments: ReleaseMoment[];
 
+  // Compact pipeline title tiles (HX-7H) — artwork resolved locally by
+  // propertyKey. Additive; releaseMoments above is unchanged.
+  picturesPipelineTiles: PipelineTitle[];
+  playstationAnchorTiles: PipelineTitle[];
+
   // Approved narrative wording
   whitespaceRationale: string;
   proposedFanExperience: string;
@@ -256,6 +274,17 @@ const rawContext: SonyActivationContext = {
   releaseMoments: [
     { title: 'Spider-Man: Brand New Day', status: 'Active release moment' },
     { title: 'Beyond the Spider-Verse', status: 'In Development' },
+  ],
+
+  picturesPipelineTiles: [
+    { title: 'Spider-Man: Brand New Day', status: 'CURRENT', propertyKey: 'PROP-BND' },
+    { title: 'Spider-Noir', status: 'CURRENT', propertyKey: 'PROP-SPIDER-NOIR' },
+    { title: 'Spider-Man: Beyond the Spider-Verse', status: 'FUTURE', propertyKey: 'PROP-BTSV' },
+  ],
+  playstationAnchorTiles: [
+    { title: 'Marvel’s Spider-Man', status: '', propertyKey: 'PROP-MSM' },
+    { title: 'Marvel’s Spider-Man 2', status: '', propertyKey: 'PROP-MSM2' },
+    { title: 'Marvel’s Spider-Man: Miles Morales', status: '', propertyKey: 'PROP-MSMM' },
   ],
 
   whitespaceRationale:
@@ -506,6 +535,25 @@ export function validateSonyActivationContext(input: unknown): ValidationResult 
     const allowed = new Set(['Active release moment', 'In Development']);
     if (!c.releaseMoments.every((r: any) => allowed.has(r?.status))) {
       push('releaseMoments status must be "Active release moment" or "In Development"');
+    }
+  }
+
+  // Pipeline title tiles (HX-7H) — exactly three per row, stable propertyKeys,
+  // Pictures CURRENT/FUTURE, PlayStation anchors blank. No imageUrl/assetKey.
+  const keyOk = (k: any) => typeof k === 'string' && /^PROP-[A-Z0-9-]+$/.test(k);
+  if (!Array.isArray(c.picturesPipelineTiles) || c.picturesPipelineTiles.length !== 3) {
+    push('picturesPipelineTiles must have exactly three entries');
+  } else if (!c.picturesPipelineTiles.every((t: any) => keyOk(t?.propertyKey) && (t?.status === 'CURRENT' || t?.status === 'FUTURE'))) {
+    push('picturesPipelineTiles need a PROP- key and a CURRENT/FUTURE status');
+  }
+  if (!Array.isArray(c.playstationAnchorTiles) || c.playstationAnchorTiles.length !== 3) {
+    push('playstationAnchorTiles must have exactly three entries');
+  } else if (!c.playstationAnchorTiles.every((t: any) => keyOk(t?.propertyKey) && t?.status === '')) {
+    push('playstationAnchorTiles need a PROP- key and a blank status (no badge)');
+  }
+  for (const t of [...(c.picturesPipelineTiles ?? []), ...(c.playstationAnchorTiles ?? [])]) {
+    if (t && ('imageUrl' in t || 'assetKey' in t)) {
+      push('pipeline tiles must not carry imageUrl/assetKey in the browser contract');
     }
   }
 

@@ -1,5 +1,6 @@
 import type { SonyActivationContext } from 'shared/src/sonyActivation';
 import { ActivationLink } from './ActivationLink';
+import { PipelineTiles } from './PipelineTiles';
 
 interface Props {
   context: SonyActivationContext;
@@ -27,11 +28,9 @@ const ACTIVATION_ACTION_LABEL = 'Review governed activation in Salesforce';
  * from the shared Activation context.
  */
 export function ExecutiveBrief({ context, activationUrl, revealed }: Props) {
-  const { audience, governance, modelScores, releaseMoments, opCoRoles } = context;
+  const { audience, governance, modelScores, opCoRoles } = context;
   const engagement = modelScores.find((m) => m.label === 'Engagement Score');
   const crossAffinity = modelScores.find((m) => m.label === 'Cross-Affinity Score');
-  const bnd = releaseMoments.find((r) => r.title === 'Spider-Man: Brand New Day');
-  const bsv = releaseMoments.find((r) => r.title === 'Beyond the Spider-Verse');
   const lead = opCoRoles.find((r) => r.participationStatus === 'Accountable');
   const participants = opCoRoles.filter((r) => r.participationStatus === 'Pending');
   // Undefined → show all (static default). Otherwise gate steps 1..8.
@@ -69,10 +68,14 @@ export function ExecutiveBrief({ context, activationUrl, revealed }: Props) {
         {show(3) && (
         <section className={`sony-brief-section sony-brief-facts${reveal}`} aria-label="Grounded facts">
           <h2 className="sony-brief-h2">Grounded facts</h2>
+          {/* Compact pipeline title tiles replace the former release-title text
+              lines (Brand New Day / Beyond the Spider-Verse / Marvel's portfolio)
+              so titles are not duplicated. Remaining grounded facts follow. */}
+          <PipelineTiles
+            pictures={context.picturesPipelineTiles}
+            playstation={context.playstationAnchorTiles}
+          />
           <ul className="sony-brief-facts-list">
-            <li><b>Spider-Man: Brand New Day</b> — {bnd?.status.toLowerCase()}, Sony Pictures</li>
-            <li><b>Beyond the Spider-Verse</b> — {bsv?.status}</li>
-            <li>Marvel’s Spider-Man portfolio — PlayStation catalog anchor</li>
             <li><b>{audience.size}</b> qualified aggregate {context.region} audience</li>
             <li>Opportunity / Priority Score <b>{audience.opportunityScore}</b> · Ranked #{audience.qualifiedOpportunityRank} qualified</li>
             <li>{context.region} ranked #{audience.modeledRevenueRegionRank} by modeled revenue</li>
