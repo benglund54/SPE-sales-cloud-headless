@@ -289,17 +289,20 @@
 /* CLAUDE WEB CHAT (HX-6V-L) — replaces the former Cowork shell             */
 /* ======================================================================= */
 :root { --claw-serif: 'Georgia', 'Times New Roman', 'Iowan Old Style', serif; }
+/* Exact Claude surfaces (HX-6V-M), scoped to .claw only. */
 .claw {
   flex: 1; min-width: 0; min-height: 0; display: flex;
-  background: #faf9f5; color: #2b2a27;
+  background: #FCFCFB; color: #2b2a27;
 }
 
-/* ---- Fixed light sidebar ------------------------------------------------ */
+/* ---- Fixed light sidebar — one continuous #FBFBF9 surface --------------- */
 .claw-sidebar {
-  width: 264px; flex-shrink: 0; background: #f2f1ea; border-right: 1px solid #e6e4da;
+  width: 264px; flex-shrink: 0; background: #FBFBF9; border-right: 1px solid #ECEAE1;
   display: flex; flex-direction: column; padding: 16px 12px 12px;
 }
 .claw-brand { padding: 2px 8px 16px; }
+/* Wordmark as styled serif text — blends into #FBFBF9, crisp at 200%. */
+.claw-brand-text { font-family: var(--claw-serif); font-size: 22px; font-weight: 600; color: #1f1e1c; letter-spacing: -0.01em; }
 .claw-nav { display: flex; flex-direction: column; gap: 1px; }
 .claw-nav-item {
   display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
@@ -309,10 +312,6 @@
 .claw-nav-item:hover { background: #e8e6dd; }
 .claw-nav-new { color: #2b2a27; }
 .claw-nav-item span { line-height: 1; }
-.claw-upgrade-pill {
-  margin-left: auto; font-size: 11px; font-weight: 600; color: #3f6ad8;
-  background: #eaeff9; border-radius: 6px; padding: 2px 7px;
-}
 .claw-recents { flex: 1; min-height: 0; margin-top: 18px; display: flex; flex-direction: column; gap: 1px; overflow: hidden; }
 .claw-recents-head {
   display: flex; align-items: center; justify-content: space-between;
@@ -335,7 +334,7 @@
   border-top: 1px solid #e6e4da; color: #57564f; font-size: 13px;
 }
 .claw-avatar {
-  width: 26px; height: 26px; border-radius: 50%; background: #6a63d6; color: #fff;
+  width: 26px; height: 26px; border-radius: 50%; background: #E4E2DA; color: #46453f;
   font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 .claw-account-name { font-weight: 500; color: #2b2a27; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -343,22 +342,14 @@
 .claw-account-tools { display: flex; align-items: center; gap: 10px; margin-left: auto; color: #8a887e; flex-shrink: 0; }
 
 /* ---- Main pane ---------------------------------------------------------- */
-.claw-main { flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+.claw-main { flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; background: #FCFCFB; }
 
-/* Plan chip (shared home + conversation). */
-.claw-plan {
-  display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #8a887e;
-  background: #f0eee7; border-radius: 8px; padding: 5px 12px;
-}
-.claw-upgrade-link { color: #3f6ad8; cursor: default; }
-.claw-plan-close { color: #a8a69b; }
-
-/* Home top row (plan center, utility right). */
+/* Home top row — only the small outline Claude control, upper-right. */
 .claw-home-top {
-  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-  position: relative; padding: 14px 20px 0;
+  flex-shrink: 0; display: flex; align-items: center; justify-content: flex-end;
+  padding: 14px 20px 0;
 }
-.claw-home-util { position: absolute; right: 20px; top: 14px; color: #8a887e; }
+.claw-home-util { background: transparent; border: none; cursor: default; color: #8a887e; padding: 4px; display: inline-flex; }
 
 /* Home body — centered greeting + composer + suggestions. */
 .claw-home { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 24px; gap: 26px; }
@@ -370,11 +361,15 @@
 
 /* Composer (shared home + conversation shells). */
 .claw-composer { flex-shrink: 0; }
+/* Home composer: a tall rounded rect with a dedicated multiline text region on
+   top and a separate control row below. The prompt wraps in the text region and
+   never overlaps the controls. */
 .claw-composer-home { width: 100%; max-width: 760px; }
 .claw-composer-home .claw-composer-box {
-  flex-direction: column; align-items: stretch; gap: 12px; padding: 16px 18px;
-  border-radius: 16px; box-shadow: 0 6px 24px rgba(40,38,32,0.08); border-color: #e6e4da;
+  flex-direction: column; align-items: stretch; gap: 14px; padding: 16px 18px 12px;
+  border-radius: 16px; box-shadow: 0 6px 24px rgba(40,38,32,0.08); border-color: #e6e4da; background: #fff;
 }
+.claw-composer-textrow { display: flex; align-items: flex-start; gap: 12px; }
 .claw-composer-box {
   display: flex; align-items: center; gap: 8px;
   border: 1px solid #e0ded4; border-radius: 14px; background: #fff; padding: 6px 8px 6px 14px;
@@ -385,7 +380,11 @@
   font-family: var(--sony-font); font-size: 15px; color: #2b2a27; line-height: 1.5;
   max-height: 120px; padding: 8px 0;
 }
-.claw-composer-field-home { font-size: 16px; padding: 2px 0 6px; }
+/* Multiline home text region — real height, wraps naturally, never clips. */
+.claw-composer-field-home {
+  width: 100%; flex: 1; font-size: 16px; line-height: 1.55; padding: 0;
+  min-height: 64px; max-height: 168px; overflow-y: auto;
+}
 .claw-composer-field::placeholder { color: #9a988e; }
 .claw-composer-plus { background: transparent; border: none; cursor: default; color: #6b6a63; padding: 4px; display: inline-flex; flex-shrink: 0; }
 .claw-composer-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-shrink: 0; }
@@ -411,12 +410,15 @@
 .claw-send:disabled { background: #e8cabc; cursor: default; }
 .claw-send:focus-visible { outline: 2px solid #d97757; outline-offset: 2px; }
 
-/* Suggestion pills (decorative). */
+/* Suggestion chips (decorative) — outline icon + label. */
 .claw-suggestions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 .claw-suggestion {
-  font-size: 13px; color: #57564f; background: #fff; border: 1px solid #e6e4da;
-  border-radius: 10px; padding: 8px 14px;
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13.5px; color: #46453f; background: #fff; border: 1px solid #e6e4da;
+  border-radius: 10px; padding: 8px 14px; cursor: default; font-family: var(--sony-font);
+  box-shadow: 0 1px 2px rgba(40,38,32,0.04);
 }
+.claw-suggestion svg { color: #6b6a63; }
 
 /* Conversation header. */
 .claw-convo-header {

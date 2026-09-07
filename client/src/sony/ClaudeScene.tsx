@@ -5,11 +5,12 @@ import { useConversation } from './useConversation';
 import { useFollowScroll } from './useFollowScroll';
 import { CLAUDE_PROMPT, CLAUDE_STAGES, CLAUDE_SECTION_COUNT } from './interactiveFixtures';
 import {
-  ClaudeWordmark, ClaudeStar, ClaudeThinkingMark,
+  ClaudeStar, ClaudeThinkingMark, ClaudeFaceIcon,
   PlusIcon, FolderIcon, ArtifactIcon, CodeIcon, GearIcon, SearchIcon,
   MicIcon, ChevronDownIcon, DownloadIcon, SidebarToggleIcon, SlidersIcon, PaletteIcon,
-  CloseIcon, ShareIcon,
+  ShareIcon, PencilIcon, TrendIcon, GradCapIcon, CoffeeIcon,
 } from './icons';
+import type { CSSProperties } from 'react';
 
 interface Props {
   context: SonyActivationContext;
@@ -19,7 +20,8 @@ interface Props {
 
 const CLAUDE_LEAD_IN =
   'Here’s the decision brief. The opportunity is strong enough to advance to cross-OpCo review, but not to activation.';
-const GREETING = 'Good morning, Brian Englund';
+// Time-neutral greeting for the presentation — never a time-of-day calculation.
+const GREETING = 'Brian Englund returns!';
 const CONVERSATION_TITLE = 'Sony IP Council executive brief';
 const HOME_PLACEHOLDER = 'How can I help you today?';
 const CONVO_PLACEHOLDER = 'Write a message…';
@@ -30,7 +32,14 @@ const RECENT_CHATS = [
   'Executive briefing UI review for Sony',
   'Interactive Tableau dashboard layout',
 ];
-const SUGGESTIONS = ['Code', 'Write', 'Strategize', 'Learn', 'Life stuff'];
+// Suggestion chips (decorative) — icon + label.
+const SUGGESTIONS: { label: string; Icon: (p: { size?: number; className?: string; style?: CSSProperties }) => JSX.Element }[] = [
+  { label: 'Code', Icon: CodeIcon },
+  { label: 'Write', Icon: PencilIcon },
+  { label: 'Strategize', Icon: TrendIcon },
+  { label: 'Learn', Icon: GradCapIcon },
+  { label: 'Life stuff', Icon: CoffeeIcon },
+];
 
 /**
  * Familiar Claude WEB-CHAT scene (HX-6V-L) — replaces the former Cowork shell.
@@ -48,15 +57,17 @@ export function ClaudeScene({ context, activationUrl, reducedMotion = false }: P
   const convo = useConversation({
     progressStages: CLAUDE_STAGES,
     sectionCount: CLAUDE_SECTION_COUNT,
-    // Reasoning ≈ 4.1s (5 stages × 820ms), response build ≈ 6.5s (9 increments
-    // × 720ms), ≈ 10–12s total Send→done.
-    stageMs: 820,
-    revealMs: 720,
+    // Thinking ≈ 3.9s (5 stages × 780ms); response build ≈ 5.8s (9 increments
+    // × 640ms) with a ~260ms entrance; ≈ 10–11s total Send→done.
+    stageMs: 780,
+    revealMs: 640,
     reducedMotion,
   });
+  // Gentler, contained follow: reveal only enough to keep the newest content
+  // above the composer (never slams past unread sections; never the viewport).
   const scrollRef = useFollowScroll<HTMLDivElement>(
     `${convo.phase}:${convo.stageIndex}:${convo.revealed}`,
-    { smooth: true, reducedMotion }
+    { smooth: true, reducedMotion, mode: 'frontier' }
   );
 
   // The view is derived from submission — a single tree, no reload/flash.
@@ -81,15 +92,15 @@ export function ClaudeScene({ context, activationUrl, reducedMotion = false }: P
     <div className="claw" data-theme="claude">
       {/* ---- Fixed light Claude sidebar (both states) --------------------- */}
       <aside className="claw-sidebar" aria-label="Claude">
-        <div className="claw-brand"><ClaudeWordmark size={22} /></div>
+        {/* Wordmark as styled serif text so it blends into #FBFBF9 with no
+            white box or halo (the raster asset has an opaque background). */}
+        <div className="claw-brand"><span className="claw-brand-text">Claude</span></div>
 
         <nav className="claw-nav" aria-label="Claude navigation">
           <button className="claw-nav-item claw-nav-new" tabIndex={-1}><PlusIcon size={16} /><span>New</span></button>
           <button className="claw-nav-item" tabIndex={-1}><FolderIcon size={16} /><span>Projects</span></button>
           <button className="claw-nav-item" tabIndex={-1}><ArtifactIcon size={16} /><span>Artifacts</span></button>
-          <button className="claw-nav-item" tabIndex={-1}>
-            <CodeIcon size={16} /><span>Code</span><span className="claw-upgrade-pill">Upgrade</span>
-          </button>
+          <button className="claw-nav-item" tabIndex={-1}><CodeIcon size={16} /><span>Code</span></button>
           <button className="claw-nav-item" tabIndex={-1}><GearIcon size={16} /><span>Customize</span></button>
         </nav>
 
@@ -131,10 +142,6 @@ export function ClaudeScene({ context, activationUrl, reducedMotion = false }: P
                 <span>{CONVERSATION_TITLE}</span>
                 <ChevronDownIcon size={15} className="claw-convo-caret" />
               </div>
-              <div className="claw-plan" aria-hidden="true">
-                <span>Free plan · <a className="claw-upgrade-link">Upgrade</a></span>
-                <CloseIcon size={13} className="claw-plan-close" />
-              </div>
               <button className="claw-share" tabIndex={-1}><ShareIcon size={14} /><span>Share</span></button>
             </header>
 
@@ -145,17 +152,11 @@ export function ClaudeScene({ context, activationUrl, reducedMotion = false }: P
 
               <div className="claw-turn claw-turn-assistant">
                 {convo.phase === 'thinking' ? (
+                  // One active reasoning line only — completed phrases are
+                  // REPLACED via the crossfade, never stacked into a checklist.
+                  // The animated mark sits immediately to the left and stays
+                  // spatially stable (never remounts, never blinks).
                   <div className="cla-reasoning" role="status" aria-live="polite">
-                    {/* Completed states settle above, muted and stable. */}
-                    {CLAUDE_STAGES.slice(0, convo.stageIndex).map((s) => (
-                      <div key={s} className="cla-reason-step cla-reason-done">
-                        <span className="cla-reason-check" aria-hidden="true">✓</span>
-                        <span className="cla-reason-text">{s}</span>
-                      </div>
-                    ))}
-                    {/* One active state — the animated mark sits immediately to
-                        its left and never remounts (no blink); only the text
-                        crossfades as the stage changes. */}
                     <div className="cla-reason-step cla-reason-active">
                       <ClaudeThinkingMark size={20} static={reducedMotion} className="cla-thinking-mark" />
                       <span key={convo.currentStage ?? ''} className="cla-reason-text cla-reason-crossfade">
@@ -214,8 +215,9 @@ export function ClaudeScene({ context, activationUrl, reducedMotion = false }: P
         ) : (
           <>
             <div className="claw-home-top">
-              <span className="claw-plan" aria-hidden="true">Free plan · <a className="claw-upgrade-link">Upgrade</a></span>
-              <span className="claw-home-util" aria-hidden="true"><ChevronDownIcon size={16} /></span>
+              <button className="claw-home-util" tabIndex={-1} aria-label="Claude menu">
+                <ClaudeFaceIcon size={20} />
+              </button>
             </div>
 
             <div className="claw-home">
@@ -223,17 +225,22 @@ export function ClaudeScene({ context, activationUrl, reducedMotion = false }: P
                 <ClaudeStar size={30} className="claw-greeting-star" /> {GREETING}
               </h1>
 
-              {/* Large preloaded home composer. */}
+              {/* Large preloaded home composer — a dedicated multiline text
+                  region above a separate control row; the prompt wraps in the
+                  text region and never overlaps the controls. */}
               <div className="claw-composer claw-composer-home">
-                <textarea
-                  className="claw-composer-field claw-composer-field-home"
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  onKeyDown={onKeyDown}
-                  rows={1}
-                  placeholder={HOME_PLACEHOLDER}
-                  aria-label="Message Claude"
-                />
+                <div className="claw-composer-textrow">
+                  <textarea
+                    className="claw-composer-field claw-composer-field-home"
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    onKeyDown={onKeyDown}
+                    rows={3}
+                    placeholder={HOME_PLACEHOLDER}
+                    aria-label="Message Claude"
+                  />
+                  <span className="claw-status-dot" aria-hidden="true" />
+                </div>
                 <div className="claw-home-tools">
                   <button className="claw-composer-plus" tabIndex={-1} aria-hidden="true"><PlusIcon size={18} /></button>
                   <div className="claw-mode" role="group" aria-label="Mode">
@@ -255,9 +262,11 @@ export function ClaudeScene({ context, activationUrl, reducedMotion = false }: P
                 </div>
               </div>
 
-              <div className="claw-suggestions" aria-hidden="true">
-                {SUGGESTIONS.map((s) => (
-                  <span key={s} className="claw-suggestion">{s}</span>
+              <div className="claw-suggestions">
+                {SUGGESTIONS.map(({ label, Icon }) => (
+                  <button key={label} className="claw-suggestion" tabIndex={-1} aria-label={label}>
+                    <Icon size={16} /><span>{label}</span>
+                  </button>
                 ))}
               </div>
             </div>

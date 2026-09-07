@@ -460,3 +460,42 @@ export function ShareIcon({ size = 15, className, style }: IconProps) {
     </svg>
   );
 }
+/* Small outline Claude control shown at the top-right of the web start screen. */
+export function ClaudeFaceIcon({ size = 18, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <path d="M5 12a7 7 0 0 1 14 0v6l-2.2-1.4a2 2 0 0 0-1.1-.3H9a4 4 0 0 1-4-4z" />
+      <circle cx="9.5" cy="12" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="14.5" cy="12" r="0.9" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+/* ---- Suggestion-chip glyphs — CodeIcon reused for "Code". ----------------- */
+export function PencilIcon({ size = 16, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <path d="M4 20h4L18.5 9.5a2 2 0 0 0-2.8-2.8L5 17z" /><path d="M14.5 6.5 17.5 9.5" />
+    </svg>
+  );
+}
+export function TrendIcon({ size = 16, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <path d="M4 16l4-5 4 3 5-7" /><path d="M17 7h3v3" />
+    </svg>
+  );
+}
+export function GradCapIcon({ size = 16, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <path d="M12 4 2 9l10 5 10-5z" /><path d="M6 11v4c0 1.5 2.7 3 6 3s6-1.5 6-3v-4" />
+    </svg>
+  );
+}
+export function CoffeeIcon({ size = 16, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <path d="M4 8h13v5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z" /><path d="M17 9h2a2 2 0 0 1 0 4h-2" /><path d="M7 3v2M11 3v2" />
+    </svg>
+  );
+}

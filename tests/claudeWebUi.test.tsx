@@ -37,31 +37,31 @@ test('no Cowork application shell or segmented Cowork/Code header remains', () =
   assert.equal(/cla-mode-seg-active"><[^>]*>\s*Cowork/.test(src), false, 'no Cowork app segment');
 });
 
-test('normal web-sidebar Code item is present (with its Upgrade pill)', () => {
+test('normal web-sidebar Code item is present (no Upgrade pill after HX-6V-M)', () => {
   assert.ok(home.includes('>Code<') || /Code<\/span>/.test(home), 'Code sidebar item');
-  assert.ok(home.includes('claw-upgrade-pill') && home.includes('Upgrade'), 'Upgrade pill on Code');
+  assert.equal(home.includes('claw-upgrade-pill'), false, 'no Upgrade pill on Code');
   // And the normal web nav items.
   for (const item of ['New', 'Projects', 'Artifacts', 'Customize', 'Design']) {
     assert.ok(home.includes(item), `sidebar item: ${item}`);
   }
 });
 
-// ---- Supplied assets at semantic paths -----------------------------------
-test('supplied Claude wordmark + static starburst exist and are used via semantic paths', () => {
-  for (const f of ['claude-wordmark.png', 'claude-star.png']) {
-    const p = resolve(repoRoot, `client/public/logos/${f}`);
-    assert.ok(existsSync(p), `${f} present`);
-    assert.ok(readFileSync(p).length > 200, `${f} non-trivial`);
-  }
-  assert.ok(home.includes('/logos/claude-wordmark.png'), 'wordmark used');
-  assert.ok(home.includes('/logos/claude-star.png'), 'starburst used');
+// ---- Assets: styled-text wordmark + supplied starburst -------------------
+test('styled-text wordmark (no white box) + supplied static starburst', () => {
+  // HX-6V-M: brand is styled serif text (raster PNG had an opaque background),
+  // greeting still uses the supplied starburst asset.
+  assert.ok(/claw-brand-text">Claude</.test(home), 'wordmark as styled serif text');
+  assert.equal(home.includes('/logos/claude-wordmark.png'), false, 'no raster wordmark in the brand');
+  const p = resolve(repoRoot, 'client/public/logos/claude-star.png');
+  assert.ok(existsSync(p) && readFileSync(p).length > 200, 'starburst asset present');
+  assert.ok(home.includes('/logos/claude-star.png'), 'starburst used in greeting');
   // No upload/screenshot/imgi_/mov names leak in the scene or asset dir.
   assert.equal(/imgi_|Screenshot|Screen Recording|\.mov|upper left/i.test(src), false, 'no upload names in scene');
 });
 
 // ---- Home state -----------------------------------------------------------
 test('home: deterministic greeting, static star, large preloaded composer, pills', () => {
-  assert.ok(home.includes('Good morning, Brian Englund'), 'exact deterministic greeting');
+  assert.ok(home.includes('Brian Englund returns!'), 'exact time-neutral greeting');
   assert.ok(home.includes('claw-greeting-star'), 'static starburst in greeting');
   // The greeting mark is NOT the animated GIF and carries no animation.
   assert.equal(/claw-greeting[\s\S]*claude-thinking\.gif/.test(home), false, 'greeting mark is static, not the GIF');

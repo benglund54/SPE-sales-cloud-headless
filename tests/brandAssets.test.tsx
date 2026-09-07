@@ -76,10 +76,12 @@ test('Teams rail uses the genuine multicolor Copilot + camera assets that visibl
   assert.ok(teamsSrc.includes('TeamsSendAsset'), 'supplied right-facing send icon wired to the composer');
 });
 
-test('Claude web scene uses the supplied wordmark + starburst (semantic paths)', () => {
-  // HX-6V-L: the Claude web home renders the supplied "Claude" wordmark in the
-  // sidebar and the static orange starburst in the greeting.
-  assert.ok(claude.includes('/logos/claude-wordmark.png'), 'supplied Claude wordmark');
+test('Claude web scene: styled-text wordmark + supplied starburst greeting', () => {
+  // HX-6V-M: the raster wordmark PNG has an opaque background, so the sidebar
+  // brand is styled serif text "Claude" (no white box); the greeting still uses
+  // the supplied static orange starburst.
+  assert.ok(/claw-brand-text">Claude</.test(claude), 'wordmark rendered as styled text');
+  assert.equal(claude.includes('/logos/claude-wordmark.png'), false, 'no raster wordmark in the brand (white-box risk)');
   assert.ok(claude.includes('/logos/claude-star.png'), 'supplied static starburst in the greeting');
 });
 
@@ -103,7 +105,8 @@ test('Claude shell uses no geometric ClaudeMark placeholder (supplied assets onl
   // (and the animated thinking GIF); no geometric ClaudeMark/ClaudeLogo redraw.
   const claudeSrc = readFileSync(resolve(repoRoot, 'client/src/sony/ClaudeScene.tsx'), 'utf8');
   assert.equal(claudeSrc.includes('ClaudeMark'), false, 'geometric ClaudeMark not used');
-  assert.ok(claudeSrc.includes('ClaudeWordmark') && claudeSrc.includes('ClaudeStar'), 'supplied wordmark + starburst');
+  // HX-6V-M: brand is styled text "Claude"; greeting uses the supplied starburst.
+  assert.ok(claudeSrc.includes('claw-brand-text') && claudeSrc.includes('ClaudeStar'), 'styled-text wordmark + starburst');
 });
 
 test('logos are used with contain fit (not stretched/distorted)', () => {

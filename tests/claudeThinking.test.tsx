@@ -58,12 +58,13 @@ test('NO Claude thinking/writing element rotates or spins infinitely', () => {
   assert.equal(/rotate/i.test(scene), false, 'no rotation in the scene');
 });
 
-// ---- Reasoning progression: one active, completed settled above -----------
-test('reasoning shows one active state with the mark, completed states settled above, in order', () => {
+// ---- Reasoning progression: ONE active line, no checklist accumulation ----
+test('reasoning shows exactly one active line — completed phrases replaced, not stacked', () => {
   const scene = read('client/src/sony/ClaudeScene.tsx');
-  // Completed states rendered from CLAUDE_STAGES[0..stageIndex-1] muted.
-  assert.ok(/CLAUDE_STAGES\.slice\(0,\s*convo\.stageIndex\)/.test(scene), 'completed states above');
-  assert.ok(/cla-reason-done/.test(scene), 'muted settled style for completed');
+  // HX-6V-M: the completed-checklist map is gone; only the single active line.
+  assert.equal(/CLAUDE_STAGES\.slice\(0,\s*convo\.stageIndex\)/.test(scene), false, 'no accumulated checklist');
+  assert.equal(/cla-reason-done/.test(scene), false, 'no stacked completed rows');
+  assert.equal(/cla-reason-check/.test(scene), false, 'no checkmark history');
   assert.ok(/cla-reason-active/.test(scene), 'one active state');
   // Active mark sits immediately to the LEFT of the active text.
   assert.ok(/cla-reason-active[\s\S]*ClaudeThinkingMark[\s\S]*cla-reason-text/.test(scene),
@@ -156,8 +157,12 @@ test('scroll following is contained (scrollTop/scrollTo on the element) and smoo
   // Never CALLS scrollIntoView (which would move the whole viewport). The word
   // may appear in the doc comment explaining why it is avoided.
   assert.equal(/\.scrollIntoView\s*\(/.test(hook), false, 'never calls scrollIntoView');
-  assert.ok(/el\.scrollTo\(\{\s*top:\s*el\.scrollHeight,\s*behavior:\s*'smooth'/.test(hook), 'smooth contained follow');
+  assert.ok(/el\.scrollTo\(\{\s*top,\s*behavior:\s*'smooth'/.test(hook), 'smooth contained follow (computed top)');
   assert.ok(/reducedMotion/.test(hook), 'reduced motion forces an instant jump');
+  // HX-6V-M: gentler "frontier" follow — reveal only enough for the newest
+  // content, never slamming to scrollHeight past unread sections.
+  assert.ok(/mode === 'frontier'/.test(hook), 'frontier follow mode exists');
   const scene = read('client/src/sony/ClaudeScene.tsx');
-  assert.ok(/useFollowScroll[\s\S]*{\s*smooth:\s*true,\s*reducedMotion\s*}/.test(scene), 'Claude opts into smooth follow');
+  assert.ok(/useFollowScroll[\s\S]*smooth:\s*true,\s*reducedMotion,\s*mode:\s*'frontier'/.test(scene),
+    'Claude opts into the gentler frontier follow');
 });
