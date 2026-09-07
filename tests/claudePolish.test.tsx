@@ -29,14 +29,17 @@ const brief = (revealed?: number) =>
 // ---- Composer sizing root-cause fix --------------------------------------
 test('home composer width is pinned (flex:none + min-width:0 + width + max-width)', () => {
   const box = css.match(/\.claw-composer-home \.claw-composer-box\s*{[^}]*}/)?.[0] ?? '';
-  assert.ok(/flex:\s*none/.test(box), 'flex:none — not a growable flex item');
+  // HX-6V-P: non-growing flex config pins the CSS box to ~640–660px (not 844px).
+  assert.ok(/flex:\s*0 0 auto/.test(box), 'flex:0 0 auto — not a growable flex item');
   assert.ok(/min-width:\s*0/.test(box), 'min-width:0 — no min-content blowout');
-  assert.ok(/width:\s*min\(844px,\s*calc\(100% - 48px\)\)/.test(box), 'declared width ~844px');
-  assert.ok(/max-width:\s*844px/.test(box), 'hard max-width 844px');
+  assert.ok(/width:\s*min\(6[45][0-9]px,\s*calc\(100% - 48px\)\)/.test(box), 'declared width ~640–660px');
+  assert.ok(/max-width:\s*6[45][0-9]px/.test(box), 'hard max-width ~640–660px');
+  // Not the old 844px CSS declaration (comments mentioning 844 are fine).
+  assert.equal(/(?:max-)?width:\s*(?:min\()?844px/.test(box), false, 'not the old 844px CSS width');
   // Two-line region, not three over-reserved rows.
   const rows = Number(src.match(/claw-composer-field-home[\s\S]*?rows={(\d+)}/)?.[1] ?? '0');
   assert.equal(rows, 2, 'two-line home textarea');
-  assert.ok(/min-height:\s*14[0-9]px|15[0-5]px/.test(box), 'box min-height ~145–155px');
+  assert.ok(/min-height:\s*1(?:1[6-9]|2[0-4])px/.test(box), 'box min-height ~116–124px');
 });
 
 test('starting cluster is raised with explicit greeting/composer/chip gaps', () => {
@@ -117,4 +120,21 @@ test('banner + Salesforce action preserved and last; no Free plan / Upgrade', ()
   assert.equal(/free plan|upgrade/i.test(home) || /free plan|upgrade/i.test(src), false, 'no Free plan / Upgrade');
   // No hard-coded Salesforce URL / record id.
   assert.equal(/a03bm00001|lightning\.force\.com|Activation__c/.test(src), false, 'no hard-coded SF URL/id');
+});
+
+// ---- HX-6V-P: home composer scale correction (only) -----------------------
+test('HX-6V-P: home composer CSS scaled down ~24–25% (≈650×120), results column untouched', () => {
+  const box = css.match(/\.claw-composer-home \.claw-composer-box\s*{[^}]*}/)?.[0] ?? '';
+  const w = Number(box.match(/max-width:\s*(\d+)px/)?.[1] ?? '0');
+  const h = Number(box.match(/min-height:\s*(\d+)px/)?.[1] ?? '0');
+  assert.ok(w >= 640 && w <= 660, `CSS max-width in the 640–660 band (got ${w})`);
+  assert.ok(h >= 116 && h <= 124, `CSS min-height in the 116–124 band (got ${h})`);
+  // Roughly a 24–25% reduction from the prior 844×148.
+  assert.ok(1 - w / 844 >= 0.20 && 1 - w / 844 <= 0.28, 'width reduced ~24%');
+  assert.ok(1 - h / 148 >= 0.16 && 1 - h / 148 <= 0.30, 'height reduced ~19–24%');
+  // The lower control row cannot enlarge the box past the target.
+  assert.ok(/flex:\s*0 0 auto/.test(box) && /min-width:\s*0/.test(box), 'non-growing flex config');
+  // The v26 results reading column is UNCHANGED at ~940px.
+  const turn = css.match(/\.claw-turn\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/max-width:\s*940px/.test(turn), 'response column still 940px (results layout untouched)');
 });

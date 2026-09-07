@@ -381,14 +381,16 @@
 .claw-composer-home { width: 100%; display: flex; justify-content: center; margin-bottom: 38px; }
 .claw-composer-home .claw-composer-box {
   box-sizing: border-box;
-  /* HX-6V-O: as a flex child the default min-width:auto let the box grow to its
-     wide tool-row min-content (~1110px), overriding the declared width. Pin the
-     size with flex:none + min-width:0 + max-width so ~844px is authoritative. */
-  flex: none; min-width: 0;
-  width: min(844px, calc(100% - 48px)); max-width: 844px;
-  min-height: 148px;
-  flex-direction: column; align-items: stretch; justify-content: space-between; gap: 10px;
-  padding: 18px 20px; border: 1px solid #D9D8D3; border-radius: 19px;
+  /* HX-6V-P: the prior ~844px CSS target treated screenshot/device pixels as CSS
+     pixels, so the box rendered ~1110 device px — ~30% too wide/tall. A
+     non-growing flex config pins the CSS box to ~650px (≈845 screenshot px at
+     the reference DPR); flex:0 0 auto + min-width:0 stop the wide control row
+     from enlarging it past the target. */
+  flex: 0 0 auto; min-width: 0;
+  width: min(650px, calc(100% - 48px)); max-width: 650px;
+  min-height: 120px;
+  flex-direction: column; align-items: stretch; justify-content: space-between; gap: 8px;
+  padding: 14px 18px; border: 1px solid #D9D8D3; border-radius: 18px;
   background: #FFFFFF; box-shadow: 0 8px 24px rgba(0,0,0,0.04);
 }
 .claw-composer-textrow { display: flex; align-items: flex-start; gap: 12px; }
@@ -403,10 +405,10 @@
   max-height: 120px; padding: 8px 0;
 }
 /* Multiline home text region — smallest accessible size that fits the two-line
-   prompt with comfortable padding; wraps naturally, never clips. */
+   prompt; scaled down with the composer (HX-6V-P). Wraps naturally, never clips. */
 .claw-composer-field-home {
-  width: 100%; flex: 1; font-size: 16px; line-height: 1.5; padding: 0;
-  min-height: 48px; max-height: 140px; overflow-y: auto;
+  width: 100%; flex: 1; font-size: 15px; line-height: 1.45; padding: 0;
+  min-height: 38px; max-height: 120px; overflow-y: auto;
 }
 .claw-composer-field::placeholder { color: #9a988e; }
 .claw-composer-plus { background: transparent; border: none; cursor: default; color: #6b6a63; padding: 4px; display: inline-flex; flex-shrink: 0; }

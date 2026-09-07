@@ -38,13 +38,15 @@ test('composer box has a visible background, border, radius, bounded width, min-
   assert.ok(/border:\s*1px solid #D9D8D3/i.test(box), 'visible 1px neutral border');
   assert.ok(/border-radius:\s*(?:18|19|20)px/.test(box), '~18–20px radius');
   assert.ok(/box-shadow:\s*0 8px 24px rgba\(0,0,0,0\.04\)/.test(box), 'very soft shadow');
-  assert.ok(/width:\s*min\(844px,\s*calc\(100% - 48px\)\)/.test(box), 'bounded width ~844px, responsive');
-  assert.ok(/max-width:\s*844px/.test(box), 'hard max-width 844px');
-  assert.ok(/min-height:\s*14[0-9]px|15[0-5]px/.test(box), 'min-height ~145–155px');
+  // HX-6V-P: CSS max-width corrected to ~640–660px (the prior 844px treated
+  // screenshot/device px as CSS px). Never back to ~844px.
+  assert.ok(/width:\s*min\(6[45][0-9]px,\s*calc\(100% - 48px\)\)/.test(box), 'bounded width ~640–660px, responsive');
+  assert.ok(/max-width:\s*6[45][0-9]px/.test(box), 'hard max-width ~640–660px');
+  assert.equal(/max-width:\s*844px/.test(box), false, 'not the old 844px CSS width');
+  assert.ok(/min-height:\s*1(?:1[6-9]|2[0-4])px/.test(box), 'min-height ~116–124px');
   assert.ok(/box-sizing:\s*border-box/.test(box), 'border-box');
-  // HX-6V-O root-cause fix: flex:none + min-width:0 so the declared width is
-  // authoritative (the box no longer grows to its tool-row min-content).
-  assert.ok(/flex:\s*none/.test(box) && /min-width:\s*0/.test(box), 'flex:none + min-width:0 pin the width');
+  // Non-growing flex config so the wide control row cannot enlarge the box.
+  assert.ok(/flex:\s*0 0 auto/.test(box) && /min-width:\s*0/.test(box), 'flex:0 0 auto + min-width:0 pin the width');
   assert.ok(/flex-direction:\s*column/.test(box) && /justify-content:\s*space-between/.test(box),
     'column with space-between');
   // The box is NOT display:contents / a pseudo-element / positioned children.
@@ -63,8 +65,8 @@ test('preloaded prompt sits in the text region; status dot inside the box; contr
   const rows = Number(src.match(/claw-composer-field-home[\s\S]*?rows={(\d+)}/)?.[1] ?? '0');
   assert.ok(rows >= 2, `multiline text region (rows=${rows})`);
   const fieldCss = css.match(/\.claw-composer-field-home\s*{[^}]*}/)?.[0] ?? '';
-  // Smallest accessible two-line region (~48px) — not an over-reserved 3-row box.
-  assert.ok(/min-height:\s*(?:4[0-9]|5[0-9])px/.test(fieldCss) && /resize/.test(css) === true, 'two-line text region height + no resize');
+  // Smallest accessible two-line region (~38px after the HX-6V-P scale-down).
+  assert.ok(/min-height:\s*(?:3[5-9]|4[0-9])px/.test(fieldCss) && /resize/.test(css) === true, 'two-line text region height + no resize');
 });
 
 test('lower control row order + Send active with preloaded prompt', () => {
