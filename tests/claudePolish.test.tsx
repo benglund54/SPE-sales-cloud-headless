@@ -63,24 +63,32 @@ test('response turns + conversation composer share one ~940px reading column', (
 });
 
 // ---- Content-driven cards + Risks list -----------------------------------
-test('brief uses independent column stacks (no cross-column row-height coupling)', () => {
-  // HX-7H-C: two independent .sony-brief-col flex stacks inside the grid — a
-  // taller card in one column never opens a void beside the other column.
+test('brief uses a named-area grid: facts full-width, value|decisions pair, risks full-width', () => {
+  // HX-7H-D: grid-template-areas place the cards; facts and risks span both
+  // columns; value + decisions share the middle row. Sections stay in show(n)
+  // gate order so the 9-step reveal is unchanged.
+  const grid = css.match(/\.sony-brief-grid\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/grid-template-areas:\s*'facts facts' 'value decisions' 'risks risks'/.test(grid),
+    'facts + risks full-width; value|decisions paired');
+  assert.ok(/align-items:\s*start/.test(grid), 'content-driven (no stretch)');
   const scene = readFileSync(resolve(repoRoot, 'client/src/sony/ExecutiveBrief.tsx'), 'utf8');
-  assert.equal((scene.match(/className="sony-brief-col"/g) ?? []).length, 2, 'two column stacks');
-  const grid = css.match(/\.claw \.sony-brief-grid\s*{[^}]*}/)?.[0] ?? '';
-  assert.ok(/align-items:\s*start/.test(grid), 'columns align to start (no stretch)');
-  const col = css.match(/\.sony-brief-col\s*{[^}]*}/)?.[0] ?? '';
-  assert.ok(/flex-direction:\s*column/.test(col) && /min-width:\s*0/.test(col), 'each column flows its own cards');
+  for (const area of ['sony-area-facts', 'sony-area-value', 'sony-area-decisions', 'sony-area-risks']) {
+    assert.ok(scene.includes(area), `area class present: ${area}`);
+  }
+  // No fixed card heights.
   const cards = css.match(/\.claw \.sony-brief-facts,[^{]*{[^}]*}/)?.[0] ?? '';
   assert.ok(/height:\s*auto/.test(cards), 'cards content-driven');
 });
 
-test('Risks is a clean stacked list (not the cramped 2×2 mini-cards), all four statements kept', () => {
-  const risks = css.match(/\.claw \.sony-brief-risks\s*{[^}]*}/)?.[0] ?? '';
-  assert.ok(/flex-direction:\s*column/.test(risks) && /flex-wrap:\s*nowrap/.test(risks), 'stacked, not wrapped 2×2');
-  const chip = css.match(/\.claw \.sony-brief-risk-chip\s*{[^}]*}/)?.[0] ?? '';
-  assert.ok(/max-width:\s*none/.test(chip) && /width:\s*100%/.test(chip), 'full-width rows, not 48% minis');
+test('full-width Risks uses a compact 2×2 internal grid; all four statements + three confirmations kept', () => {
+  // HX-7H-D: full-width Risks card → four statements in a 2-column internal grid
+  // (uses the width to stay short), confirmations wrap beneath.
+  const risks = css.match(/(?<!\.claw )\.sony-brief-risks\s*{[^}]*}/)?.[0]
+    ?? css.match(/\.sony-brief-risks\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/display:\s*grid/.test(risks) && /grid-template-columns:\s*1fr 1fr/.test(risks), '2×2 internal grid');
+  const guards = css.match(/(?<!\.claw )\.sony-brief-guards\s*{[^}]*}/)?.[0]
+    ?? css.match(/\.sony-brief-guards\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/flex-wrap:\s*wrap/.test(guards), 'confirmations wrap in a balanced row');
   // All four approved risk statements still render.
   const full = brief(undefined);
   for (const r of ctx.keyRisks) assert.ok(full.includes(r), `risk preserved: ${r}`);

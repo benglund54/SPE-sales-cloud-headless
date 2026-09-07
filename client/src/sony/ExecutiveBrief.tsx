@@ -63,59 +63,36 @@ export function ExecutiveBrief({ context, activationUrl, revealed }: Props) {
       </section>
       )}
 
-      {/* Independent left/right card stacks (HX-7H-C) so a taller card in one
-          column never opens a blank void beside the shorter card in the other.
-          Left: Grounded Facts → Decisions. Right: Connected Value → Risks. Each
-          section keeps its own show(n) gate, so the 9-step reveal order (3→4→5→6)
-          is preserved regardless of DOM nesting. Still five sony-brief-section. */}
+      {/* HX-7H-D — named-area grid: Grounded Facts (full width) → Connected
+          Value | Decisions (side by side) → Risks (full width). Sections stay in
+          show(n) gate order (3→4→5→6) so the 9-step reveal is unchanged; CSS
+          grid-template-areas place them visually. Still five sony-brief-section.
+          Collapses to one column ≤900px in this same semantic order. */}
       <div className="sony-brief-grid">
-        <div className="sony-brief-col">
-        {/* 3 — Grounded facts (BLUE = authoritative data) */}
+        {/* 3 — Grounded facts (full width) */}
         {show(3) && (
-        <section className={`sony-brief-section sony-brief-facts${reveal}`} aria-label="Grounded facts">
+        <section className={`sony-brief-section sony-brief-facts sony-area-facts${reveal}`} aria-label="Grounded facts">
           <h2 className="sony-brief-h2">Grounded facts</h2>
-          {/* Compact pipeline title tiles replace the former release-title text
-              lines (Brand New Day / Beyond the Spider-Verse / Marvel's portfolio)
-              so titles are not duplicated. Remaining grounded facts follow. */}
+          {/* Pipeline title tiles — full canonical titles, wrap naturally. */}
           <PipelineTiles
             pictures={context.picturesPipelineTiles}
             playstation={context.playstationAnchorTiles}
           />
-          {/* Compact chip layout — every value + meaning preserved. */}
-          <ul className="sony-brief-facts-chips">
-            <li><b>{audience.size}</b> qualified aggregate {context.region} audience</li>
-            <li><b>{audience.opportunityScore}</b> Opportunity / Priority · Ranked #{audience.qualifiedOpportunityRank}</li>
-            <li>{context.region} ranked #{audience.modeledRevenueRegionRank} by modeled revenue</li>
-            <li><b>{engagement?.value}</b> {engagement?.label}</li>
-            <li><b>{crossAffinity?.value}</b> {crossAffinity?.label}</li>
+          {/* Five-cell metric strip — value + label, evenly distributed. */}
+          <ul className="sony-brief-metric-strip">
+            <li><b>{audience.size}</b><span>Qualified {context.region} audience</span></li>
+            <li><b>{audience.opportunityScore}</b><span>Opportunity / priority · #{audience.qualifiedOpportunityRank}</span></li>
+            <li><b>#{audience.modeledRevenueRegionRank}</b><span>{context.region} modeled revenue</span></li>
+            <li><b>{engagement?.value}</b><span>{engagement?.label}</span></li>
+            <li><b>{crossAffinity?.value}</b><span>{crossAffinity?.label}</span></li>
           </ul>
           <div className="sony-brief-source">Source: {context.provenance.displayLabel}</div>
         </section>
         )}
 
-        {/* 5 — Decisions still pending (AMBER = human decisions) — left stack */}
-        {show(5) && (
-        <section className={`sony-brief-section sony-brief-decisions${reveal}`} aria-label="Decisions still pending">
-          <h2 className="sony-brief-h2">Decisions still pending</h2>
-          <p className="sony-brief-decisions-note">Awaiting the Sony IP Council — not accepted, not executed here.</p>
-          <ol className="sony-brief-decisions-list">
-            {context.decisions.ipCouncil.map((d) => (
-              <li key={d}>{d}</li>
-            ))}
-          </ol>
-          <div className="sony-brief-stages">
-            <span>Current stage: <b>{governance.currentLifecycleStage}</b></span>
-            <span>Next stage: <b>{governance.nextLifecycleStage}</b></span>
-            <span className="sony-brief-rights">Rights review: {governance.rightsReview}</span>
-          </div>
-        </section>
-        )}
-        </div>
-
-        <div className="sony-brief-col">
-        {/* 4 — Connected Sony value (NEUTRAL) — right stack */}
+        {/* 4 — Connected Sony value (left of the middle pair) */}
         {show(4) && (
-        <section className={`sony-brief-section sony-brief-value${reveal}`} aria-label="Connected Sony value">
+        <section className={`sony-brief-section sony-brief-value sony-area-value${reveal}`} aria-label="Connected Sony value">
           <h2 className="sony-brief-h2">Connected Sony value</h2>
           <p className="sony-brief-chain">{context.scenes.slack.experienceSummary}</p>
           <ul className="sony-brief-roles">
@@ -136,9 +113,27 @@ export function ExecutiveBrief({ context, activationUrl, revealed }: Props) {
         </section>
         )}
 
-        {/* 6 — Risks and guardrails (GREEN/NEUTRAL = governance) — right stack */}
+        {/* 5 — Decisions still pending (right of the middle pair) */}
+        {show(5) && (
+        <section className={`sony-brief-section sony-brief-decisions sony-area-decisions${reveal}`} aria-label="Decisions still pending">
+          <h2 className="sony-brief-h2">Decisions still pending</h2>
+          <p className="sony-brief-decisions-note">Awaiting the Sony IP Council — not accepted, not executed here.</p>
+          <ol className="sony-brief-decisions-list">
+            {context.decisions.ipCouncil.map((d) => (
+              <li key={d}>{d}</li>
+            ))}
+          </ol>
+          <div className="sony-brief-stages">
+            <span>Current stage: <b>{governance.currentLifecycleStage}</b></span>
+            <span>Next stage: <b>{governance.nextLifecycleStage}</b></span>
+            <span className="sony-brief-rights">Rights review: {governance.rightsReview}</span>
+          </div>
+        </section>
+        )}
+
+        {/* 6 — Risks and guardrails (full width) */}
         {show(6) && (
-        <section className={`sony-brief-section sony-brief-guardrails${reveal}`} aria-label="Risks and guardrails">
+        <section className={`sony-brief-section sony-brief-guardrails sony-area-risks${reveal}`} aria-label="Risks and guardrails">
           <h2 className="sony-brief-h2">Risks &amp; guardrails</h2>
           <ul className="sony-brief-risks">
             {context.keyRisks.map((r) => (
@@ -152,7 +147,6 @@ export function ExecutiveBrief({ context, activationUrl, revealed }: Props) {
           </ul>
         </section>
         )}
-        </div>
       </div>
 
       {/* 7 — Exact status banner */}

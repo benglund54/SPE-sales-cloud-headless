@@ -132,8 +132,12 @@ test('tile grid uses repeat(3,1fr) with min-width:0 (no forced horizontal overfl
   assert.ok(/grid-template-columns:\s*repeat\(3,\s*1fr\)/.test(row), 'three equal columns');
   const tile = css.match(/\.sony-tile\s*{[^}]*}/)?.[0] ?? '';
   assert.ok(/min-width:\s*0/.test(tile), 'tiles can shrink (no overflow)');
+  // HX-7H-D: titles wrap naturally and show in full — NO truncation of any kind.
   const title = css.match(/\.sony-tile-title\s*{[^}]*}/)?.[0] ?? '';
-  assert.ok(/-webkit-line-clamp:\s*2/.test(title) && /overflow:\s*hidden/.test(title), 'two-line clamp');
+  assert.equal(/-webkit-line-clamp/.test(title), false, 'no line-clamp hiding a title');
+  assert.equal(/text-overflow:\s*ellipsis/.test(title), false, 'no single-line ellipsis');
+  assert.equal(/white-space:\s*nowrap/.test(title), false, 'no forced nowrap');
+  assert.equal(/overflow:\s*hidden/.test(title), false, 'no clipped overflow');
   const img = css.match(/\.sony-tile-img\s*{[^}]*}/)?.[0] ?? '';
   assert.ok(/object-fit:\s*cover/.test(img), 'poster object-fit: cover');
 });
@@ -147,4 +151,46 @@ test('pipeline contract carries only title/status/propertyKey (no imageUrl/asset
   const shared = readFileSync(resolve(repoRoot, 'shared/src/sonyActivation.ts'), 'utf8');
   const picturesBlock = shared.match(/picturesPipelineTiles:\s*\[[\s\S]*?playstationAnchorTiles:\s*\[[\s\S]*?\],/)?.[0] ?? '';
   assert.equal(/imageUrl|assetKey|lightning\.force\.com|a03bm00001/.test(picturesBlock), false, 'no imageUrl/assetKey/SF leak');
+});
+
+// ---- HX-7H-D: full titles readable + deliberate metric strip ---------------
+test('all six canonical titles render in full (no shortened aliases)', () => {
+  const full = brief(undefined);
+  for (const t of [
+    'Spider-Man: Brand New Day',
+    'Spider-Noir',
+    'Spider-Man: Beyond the Spider-Verse',
+    'Marvel’s Spider-Man',
+    'Marvel’s Spider-Man 2',
+    'Marvel’s Spider-Man: Miles Morales',
+  ]) {
+    assert.ok(full.includes(t), `canonical title present: ${t}`);
+  }
+});
+
+test('grounded-facts metric strip: five cells, exact values + labels, in order', () => {
+  const full = brief(undefined);
+  const strip = full.match(/sony-brief-metric-strip[\s\S]*?<\/ul>/)?.[0] ?? '';
+  assert.ok(strip, 'metric strip renders');
+  // Five <li> cells.
+  assert.equal((strip.match(/<li>/g) ?? []).length, 5, 'five metric cells');
+  // Exact values present, once each, in the required order.
+  const order = ['1.85M', '91.58', '#3', '82.3', '84'];
+  let last = -1;
+  for (const v of order) {
+    const i = strip.indexOf(v);
+    assert.ok(i > last, `metric value in order: ${v}`);
+    last = i;
+  }
+  // Labels associated with each value + source preserved.
+  assert.ok(/Opportunity \/ priority/i.test(strip));
+  assert.ok(/modeled revenue/i.test(strip));
+  assert.ok(strip.includes('Engagement Score') && strip.includes('Cross-Affinity Score'));
+  assert.ok(full.includes('Source: Governed CRM signals'));
+});
+
+test('no title-truncating CSS remains on the tile title', () => {
+  const css = readFileSync(resolve(repoRoot, 'client/src/sony/sony.css'), 'utf8');
+  const title = css.match(/\.sony-tile-title\s*{[^}]*}/)?.[0] ?? '';
+  assert.equal(/text-overflow|line-clamp|nowrap|overflow:\s*hidden/.test(title), false, 'no truncation rule');
 });

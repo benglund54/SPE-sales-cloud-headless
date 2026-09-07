@@ -61,11 +61,11 @@ test('renders the Claude lead-in once revealed', () => {
 });
 
 test('grounded facts show authoritative metric labels and values', () => {
-  // HX-7H-C: metrics condensed to compact chips — every value + meaning kept.
+  // HX-7H-D: metrics in a deliberate five-cell strip — every value + meaning kept.
   assert.ok(brief.includes('1.85M'));
-  assert.ok(brief.includes('Opportunity / Priority') && brief.includes('91.58'));
-  assert.ok(brief.includes('Ranked #1') || brief.includes('#1'));
-  assert.ok(brief.includes('#3 by modeled revenue'));
+  assert.ok(/Opportunity \/ priority/i.test(brief) && brief.includes('91.58'));
+  assert.ok(brief.includes('#1'));
+  assert.ok(brief.includes('#3') && /modeled revenue/i.test(brief));
   assert.ok(brief.includes('Engagement Score') && brief.includes('82.3'));
   assert.ok(brief.includes('Cross-Affinity Score') && brief.includes('84'));
   assert.ok(brief.includes('Source: Governed CRM signals'));
