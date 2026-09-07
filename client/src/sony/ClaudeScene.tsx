@@ -5,8 +5,9 @@ import { useConversation } from './useConversation';
 import { useFollowScroll } from './useFollowScroll';
 import { CLAUDE_PROMPT, CLAUDE_STAGES, CLAUDE_SECTION_COUNT } from './interactiveFixtures';
 import {
-  ClaudeStar, ClaudeThinkingMark, ClaudeFaceIcon, ClaudeDesignAsset,
-  PlusIcon, FolderIcon, ArtifactIcon, CodeIcon, GearIcon, SearchIcon,
+  ClaudeStar, ClaudeThinkingMark, ClaudeDesignAsset,
+  ClaudeGhostIcon, ClaudeProjectsIcon, ClaudeArtifactsIcon, ClaudeCodeIcon, ClaudeCustomizeIcon,
+  PlusIcon, SearchIcon,
   MicIcon, ChevronDownIcon, DownloadIcon, SidebarToggleIcon, SlidersIcon,
   ShareIcon, PencilIcon, TrendIcon, GradCapIcon, CoffeeIcon,
 } from './icons';
@@ -34,7 +35,7 @@ const RECENT_CHATS = [
 ];
 // Suggestion chips (decorative) — icon + label.
 const SUGGESTIONS: { label: string; Icon: (p: { size?: number; className?: string; style?: CSSProperties }) => JSX.Element }[] = [
-  { label: 'Code', Icon: CodeIcon },
+  { label: 'Code', Icon: ClaudeCodeIcon },
   { label: 'Write', Icon: PencilIcon },
   { label: 'Strategize', Icon: TrendIcon },
   { label: 'Learn', Icon: GradCapIcon },
@@ -98,10 +99,10 @@ export function ClaudeScene({ context, activationUrl, reducedMotion = false }: P
 
         <nav className="claw-nav" aria-label="Claude navigation">
           <button className={`claw-nav-item claw-nav-new${inConversation ? '' : ' claw-nav-selected'}`} tabIndex={-1}><PlusIcon size={18} /><span>New</span></button>
-          <button className="claw-nav-item" tabIndex={-1}><FolderIcon size={18} /><span>Projects</span></button>
-          <button className="claw-nav-item" tabIndex={-1}><ArtifactIcon size={18} /><span>Artifacts</span></button>
-          <button className="claw-nav-item" tabIndex={-1}><CodeIcon size={18} /><span>Code</span></button>
-          <button className="claw-nav-item" tabIndex={-1}><GearIcon size={18} /><span>Customize</span></button>
+          <button className="claw-nav-item" tabIndex={-1}><ClaudeProjectsIcon size={18} /><span>Projects</span></button>
+          <button className="claw-nav-item" tabIndex={-1}><ClaudeArtifactsIcon size={18} /><span>Artifacts</span></button>
+          <button className="claw-nav-item" tabIndex={-1}><ClaudeCodeIcon size={18} /><span>Code</span></button>
+          <button className="claw-nav-item" tabIndex={-1}><ClaudeCustomizeIcon size={18} /><span>Customize</span></button>
         </nav>
 
         <div className="claw-recents">
@@ -222,7 +223,7 @@ export function ClaudeScene({ context, activationUrl, reducedMotion = false }: P
           <>
             <div className="claw-home-top">
               <button className="claw-home-util" tabIndex={-1} aria-label="Claude menu">
-                <ClaudeFaceIcon size={20} />
+                <ClaudeGhostIcon size={18} />
               </button>
             </div>
 

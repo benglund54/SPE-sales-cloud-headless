@@ -111,10 +111,11 @@ test('bottom profile avatar is neutral light-gray (not purple)', () => {
 });
 
 // ---- Upper-right outline Claude control (inert, labelled) ----------------
-test('upper-right control is the small outline Claude control with an accessible label', () => {
-  assert.ok(/claw-home-util[^>]*aria-label="Claude menu"[\s\S]*ClaudeFaceIcon/.test(src)
-    || /ClaudeFaceIcon[\s\S]*claw-home-util/.test(src), 'ClaudeFaceIcon in the labelled home-util control');
-  assert.ok(/aria-label="Claude menu"/.test(src), 'accessible label');
+test('upper-right control is the small incognito/ghost Claude control with an accessible label', () => {
+  // HX-6V-I: the upper-right control now uses the ghost/incognito icon.
+  assert.ok(/claw-home-util[^>]*aria-label="Claude menu"[\s\S]*ClaudeGhostIcon/.test(src),
+    'ClaudeGhostIcon in the labelled home-util control');
+  assert.ok(/aria-label="Claude menu"/.test(src), 'accessible label preserved');
 });
 
 // ---- Conversation header: title + Share; no plan/close -------------------

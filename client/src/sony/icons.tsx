@@ -73,6 +73,57 @@ export function ClaudeStar(p: IconProps & { alt?: string }) {
 export function ClaudeDesignAsset(p: IconProps) {
   return <LogoImg src="/icons/claude/design.png" alt="" {...p} />;
 }
+
+/* ---- HX-6V-I: reference-matched Claude web icons (inline SVG, currentColor,
+   transparent, rounded caps/joins). Dedicated to the Claude scene so the shared
+   generic icons (e.g. GearIcon in Slack) are unaffected. ------------------- */
+/** Upper-right incognito/ghost control — dome top, two dot eyes, scalloped hem. */
+export function ClaudeGhostIcon({ size = 20, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <path d="M4.5 12a7.5 7.5 0 0 1 15 0v7.2l-2.5-1.5-2.5 1.5-2.5-1.5-2.5 1.5-2.5-1.5z" />
+      <circle cx="9.5" cy="11.5" r="1" fill="currentColor" stroke="none" />
+      <circle cx="14.5" cy="11.5" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+/** Projects — a rounded tray/open box with two stacked lines above it. */
+export function ClaudeProjectsIcon({ size = 18, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <path d="M8 5h8" /><path d="M7 8h10" />
+      <path d="M4.5 11.5a1 1 0 0 1 1-1h13a1 1 0 0 1 1 1l-1.2 6a1.5 1.5 0 0 1-1.5 1.2H7.2a1.5 1.5 0 0 1-1.5-1.2z" />
+    </svg>
+  );
+}
+/** Artifacts — overlapping shapes: circle + rounded square + a wedge above. */
+export function ClaudeArtifactsIcon({ size = 18, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <circle cx="7.5" cy="15.5" r="3.5" />
+      <rect x="13" y="12" width="7" height="7" rx="1.4" />
+      <path d="M9.5 10.5 13.8 5.2a1 1 0 0 1 1.5-.1l3.1 3.1a1 1 0 0 1-.2 1.6l-6 3.1z" />
+    </svg>
+  );
+}
+/** Code — angular chevrons with a center slash: </> */
+export function ClaudeCodeIcon({ size = 18, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <path d="m7.5 7-4.5 5 4.5 5" /><path d="m16.5 7 4.5 5-4.5 5" /><path d="m13.5 5-3 14" />
+    </svg>
+  );
+}
+/** Customize — briefcase/toolbox: rounded body, top handle, center latch line. */
+export function ClaudeCustomizeIcon({ size = 18, className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} style={{ ...base(size), ...style }} aria-hidden="true">
+      <rect x="3.5" y="7.5" width="17" height="11.5" rx="2" />
+      <path d="M9 7.5V6a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 6v1.5" />
+      <path d="M9 13.25h6" />
+    </svg>
+  );
+}
 export function SonyLogo(p: IconProps) {
   return <LogoImg src="/logos/sony.png" alt="Sony" {...p} />;
 }
