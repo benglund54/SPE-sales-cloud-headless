@@ -98,8 +98,14 @@ test('connected value chain and roles', () => {
   assert.ok((brief.match(/Participation pending/g) || []).length >= 2);
 });
 
-test('renders exactly the three IP Council decisions (not shared/PlayStation sets)', () => {
-  for (const d of SONY_ACTIVATION_CONTEXT.decisions.ipCouncil) {
+test('renders the three concise IP Council decisions (not shared/PlayStation sets)', () => {
+  // HX-7H-D: the brief renders concise executive decision copy (presentation
+  // only; the shared contract's decisions.ipCouncil is unchanged).
+  for (const d of [
+    'Approve EMEA as the first IP360 planning candidate.',
+    'Confirm PlayStation and Sony Music participation and owners.',
+    'Authorize experience and measurement planning after rights review.',
+  ]) {
     assert.ok(brief.includes(d), `missing IP Council decision: ${d}`);
   }
   // Other decision sets must not appear in the brief.
@@ -112,7 +118,7 @@ test('renders exactly the three IP Council decisions (not shared/PlayStation set
 });
 
 test('decisions are framed as pending human decisions, not executed', () => {
-  assert.ok(/awaiting the sony ip council/i.test(brief));
+  assert.ok(/awaiting sony ip council approval: not accepted or executed/i.test(brief));
   assert.ok(brief.includes('OpCo Approval'));
   assert.ok(brief.includes('Ready for Orchestration'));
   assert.ok(brief.includes('Required — pending review'));

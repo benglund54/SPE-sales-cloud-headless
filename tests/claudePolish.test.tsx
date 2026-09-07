@@ -151,3 +151,38 @@ test('HX-6V-P: home composer CSS scaled down ~24–25% (≈650×120), results co
   const turn = css.match(/\.claw-turn\s*{[^}]*}/)?.[0] ?? '';
   assert.ok(/max-width:\s*940px/.test(turn), 'response column still 940px (results layout untouched)');
 });
+
+// ---- HX-7H-D: vertical-rhythm polish + concise Decisions copy --------------
+test('major brief groups use one compact ~13px gap (grid + banner + action)', () => {
+  const grid = css.match(/\.sony-brief-grid\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/gap:\s*13px/.test(grid), 'grid gap ~13px');
+  // Grid items carry no per-section margin (grid gap owns the rhythm).
+  const sec = css.match(/\.claw \.sony-brief-section\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/margin-bottom:\s*0/.test(sec), 'no per-section margin on grid items');
+  const banner = css.match(/\.claw \.sony-brief-banner\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/margin-top:\s*13px/.test(banner), 'banner sits ~13px below Risks');
+  const actions = css.match(/\.claw \.sony-brief-actions\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/margin-top:\s*13px/.test(actions), 'Salesforce action ~13px below the banner');
+});
+
+test('Decisions copy is the concise HX-7H-D wording; stages + rights preserved', () => {
+  const full = brief(undefined);
+  assert.ok(full.includes('Awaiting Sony IP Council approval: not accepted or executed.'), 'concise intro');
+  assert.ok(full.includes('Approve EMEA as the first IP360 planning candidate.'));
+  assert.ok(full.includes('Confirm PlayStation and Sony Music participation and owners.'));
+  assert.ok(full.includes('Authorize experience and measurement planning after rights review.'));
+  // Governance preserved.
+  assert.ok(full.includes('OpCo Approval') && full.includes('Ready for Orchestration'));
+  assert.ok(/Rights review:\s*Required — pending review/.test(full));
+});
+
+test('middle-card balance + compact risks (content-driven, no fixed heights)', () => {
+  const roles = css.match(/\.claw \.sony-brief-roles\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/gap:\s*7px/.test(roles), 'modest gap between OpCo rows');
+  // No arbitrary min-heights forcing balance.
+  assert.equal(/min-height:\s*[1-9]/.test(css.match(/\.claw \.sony-brief-value[^{]*{[^}]*}/)?.[0] ?? ''), false, 'no forced value min-height');
+  // All four risks + three confirmations still render.
+  const full = brief(undefined);
+  for (const r of ctx.keyRisks) assert.ok(full.includes(r), `risk kept: ${r}`);
+  assert.ok(full.includes('An internal Slack collaboration request has been posted for review'));
+});

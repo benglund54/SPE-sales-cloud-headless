@@ -117,11 +117,13 @@ export function ExecutiveBrief({ context, activationUrl, revealed }: Props) {
         {show(5) && (
         <section className={`sony-brief-section sony-brief-decisions sony-area-decisions${reveal}`} aria-label="Decisions still pending">
           <h2 className="sony-brief-h2">Decisions still pending</h2>
-          <p className="sony-brief-decisions-note">Awaiting the Sony IP Council — not accepted, not executed here.</p>
+          {/* HX-7H-D: concise executive decision copy (presentation only; the
+              shared contract's decisions.ipCouncil is unchanged). */}
+          <p className="sony-brief-decisions-note">Awaiting Sony IP Council approval: not accepted or executed.</p>
           <ol className="sony-brief-decisions-list">
-            {context.decisions.ipCouncil.map((d) => (
-              <li key={d}>{d}</li>
-            ))}
+            <li>Approve EMEA as the first IP360 planning candidate.</li>
+            <li>Confirm PlayStation and Sony Music participation and owners.</li>
+            <li>Authorize experience and measurement planning after rights review.</li>
           </ol>
           <div className="sony-brief-stages">
             <span>Current stage: <b>{governance.currentLifecycleStage}</b></span>

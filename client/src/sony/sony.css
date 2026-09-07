@@ -672,7 +672,7 @@
    Decisions (equal columns) → Risks (full width). One consistent 14px gap; no
    fixed card heights; content-driven. Collapses to one column ≤900px. */
 .sony-brief-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 13px; align-items: start;
   grid-template-areas: 'facts facts' 'value decisions' 'risks risks';
 }
 .sony-area-facts { grid-area: facts; }
@@ -860,8 +860,12 @@
 .claw .sony-brief-head { margin-bottom: 16px; }
 .claw .sony-brief-title { font-family: var(--claw-serif); font-size: 24px; color: #2b2a27; }
 .claw .sony-brief-section {
-  border: none !important; background: transparent !important; padding: 0; margin-bottom: 20px;
+  border: none !important; background: transparent !important; padding: 0; margin-bottom: 0;
 }
+/* HX-7H-D vertical rhythm: one compact ~13px gap between the major groups.
+   Grid items rely on the grid gap (no per-section margin); the full-width reco
+   above the grid, and the banner/action after it, use an explicit 13px. */
+.claw .sony-brief-reco { margin-bottom: 13px !important; }
 .claw .sony-brief-reco {
   border-left: 3px solid #d97757 !important; padding-left: 16px !important; background: transparent !important;
 }
@@ -871,7 +875,7 @@
 .claw .sony-brief-h2 { font-weight: 600; }
 .claw .sony-brief-section p, .claw .sony-brief-section li { line-height: 1.45; }
 /* HX-7H-C — independent column stacks: no cross-column row-height coupling. */
-.claw .sony-brief-grid { gap: 18px; align-items: start; }
+.claw .sony-brief-grid { gap: 13px; align-items: start; }
 .claw .sony-brief-col { gap: 14px; }
 .claw .sony-brief-facts, .claw .sony-brief-value, .claw .sony-brief-decisions, .claw .sony-brief-guardrails {
   background: #f6f4ec !important; border: 1px solid #ece9df !important; border-radius: 12px; padding: 16px !important;
@@ -887,11 +891,12 @@
 .claw .sony-brief-risk-chip { background: #fff; border-color: #ece9df; box-sizing: border-box; }
 .claw .sony-brief-banner {
   background: #faf3e6 !important; border: 1px solid #ecd9b0 !important; color: #96701f;
+  margin-top: 13px !important;
 }
 .claw .sony-brief section p, .claw .sony-brief li { font-size: 14px; }
 /* Salesforce action: a compact, column-aligned Claude action (not oversized,
    not full-width, not dominant). Governed URL behavior unchanged. */
-.claw .sony-brief-actions { margin-top: 16px; justify-content: flex-start; }
+.claw .sony-brief-actions { margin-top: 13px; justify-content: flex-start; }
 .claw .sony-brief .sony-activation-link { background: #d97757; padding: 9px 15px; font-size: 13px; border-radius: 9px; }
 /* Connected value: give role name + badge room so they never collide/wrap. */
 .claw .sony-brief-roles li { gap: 12px; }
@@ -933,10 +938,18 @@
 }
 .claw .sony-brief-risk-chip { background: #fbfaf6; border-color: #eae7dc; padding: 4px 8px; font-size: 11.5px; }
 .claw .sony-brief-banner { background: #faf3e6 !important; border-color: #ecdcb8 !important; }
-.claw .sony-brief-grid { gap: 14px; }
-/* HX-7H-D — 2×2 risks grid + confirmations wrap-row (all four + three kept). */
-.claw .sony-brief-risks { gap: 6px; }
-.claw .sony-brief-guards { gap: 3px 16px; margin-top: 8px; }
+.claw .sony-brief-grid { gap: 13px; }
+/* HX-7H-D — compact risks: tighter cell gaps + padding, less space around the
+   confirmation lines. All four statements + three confirmations preserved. */
+.claw .sony-brief-risks { gap: 6px; margin-bottom: 6px; }
+.claw .sony-brief-risk-chip { padding: 5px 9px; }
+.claw .sony-brief-guards { gap: 3px 16px; margin-top: 6px; }
+/* Middle-card balance: a modest, consistent gap between the three OpCo rows in
+   Connected Sony Value; tighter Decisions list rhythm. Content-driven — no
+   arbitrary min-heights. */
+.claw .sony-brief-roles { gap: 7px; }
+.claw .sony-brief-decisions-list { padding-left: 16px; line-height: 1.4; }
+.claw .sony-brief-decisions-list li { margin-bottom: 3px; }
 
 /* ======================================================================= */
 /* HX-6V-D interactive elements                                            */
