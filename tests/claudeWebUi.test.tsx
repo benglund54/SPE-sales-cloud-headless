@@ -92,8 +92,10 @@ test('transition: submit clears composer, guards duplicates, no reload; sidebar 
   // Single derived view — no route change / reload between states.
   assert.ok(src.includes('const inConversation = convo.submitted'), 'view derived from submission');
   assert.equal(/location\.(href|reload)|window\.open/.test(src), false, 'no reload/navigation on submit');
-  // The conversation chat row is created/selected only once submitted.
-  assert.ok(/inConversation &&[\s\S]*claw-chat-active[\s\S]*CONVERSATION_TITLE/.test(src), 'active chat row on submit');
+  // The IP Council chat row is always present; it gains the selected treatment
+  // only once a conversation is active (inConversation-gated class).
+  assert.ok(/claw-chat\$\{inConversation \? ' claw-chat-active' : ''\}/.test(src), 'chat selected only in conversation');
+  assert.ok(src.includes('{CONVERSATION_TITLE}'), 'IP Council chat row rendered');
 });
 
 // ---- Conversation state ---------------------------------------------------

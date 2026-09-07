@@ -72,7 +72,7 @@ test('home composer has a dedicated multiline text region above a separate contr
   const rows = Number(src.match(/claw-composer-field-home[\s\S]*?rows={(\d+)}/)?.[1] ?? '0');
   assert.ok(rows >= 2, `home field is multiline (rows=${rows})`);
   const fieldCss = css.match(/\.claw-composer-field-home\s*{[^}]*}/)?.[0] ?? '';
-  assert.ok(/min-height:\s*[5-9][0-9]px/.test(fieldCss), 'text region has a real min-height');
+  assert.ok(/min-height:\s*(?:4[0-9]|5[0-9])px/.test(fieldCss), 'text region has a real (two-line) min-height');
   // The exact preloaded prompt is present and wired via state; wraps in the field.
   assert.ok(home.includes(CLAUDE_PROMPT), 'exact preloaded prompt');
   assert.ok(src.includes('useState(CLAUDE_PROMPT)'), 'preloaded via state');

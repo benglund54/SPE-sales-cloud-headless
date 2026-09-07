@@ -36,11 +36,15 @@ test('composer box has a visible background, border, radius, bounded width, min-
   const box = css.match(/\.claw-composer-home \.claw-composer-box\s*{[^}]*}/)?.[0] ?? '';
   assert.ok(/background:\s*#FFFFFF/i.test(box), 'white background');
   assert.ok(/border:\s*1px solid #D9D8D3/i.test(box), 'visible 1px neutral border');
-  assert.ok(/border-radius:\s*20px/.test(box), '~20px radius');
+  assert.ok(/border-radius:\s*(?:18|19|20)px/.test(box), '~18–20px radius');
   assert.ok(/box-shadow:\s*0 8px 24px rgba\(0,0,0,0\.04\)/.test(box), 'very soft shadow');
   assert.ok(/width:\s*min\(844px,\s*calc\(100% - 48px\)\)/.test(box), 'bounded width ~844px, responsive');
-  assert.ok(/min-height:\s*14[0-9]px/.test(box), 'min-height ~145px');
+  assert.ok(/max-width:\s*844px/.test(box), 'hard max-width 844px');
+  assert.ok(/min-height:\s*14[0-9]px|15[0-5]px/.test(box), 'min-height ~145–155px');
   assert.ok(/box-sizing:\s*border-box/.test(box), 'border-box');
+  // HX-6V-O root-cause fix: flex:none + min-width:0 so the declared width is
+  // authoritative (the box no longer grows to its tool-row min-content).
+  assert.ok(/flex:\s*none/.test(box) && /min-width:\s*0/.test(box), 'flex:none + min-width:0 pin the width');
   assert.ok(/flex-direction:\s*column/.test(box) && /justify-content:\s*space-between/.test(box),
     'column with space-between');
   // The box is NOT display:contents / a pseudo-element / positioned children.
@@ -59,7 +63,8 @@ test('preloaded prompt sits in the text region; status dot inside the box; contr
   const rows = Number(src.match(/claw-composer-field-home[\s\S]*?rows={(\d+)}/)?.[1] ?? '0');
   assert.ok(rows >= 2, `multiline text region (rows=${rows})`);
   const fieldCss = css.match(/\.claw-composer-field-home\s*{[^}]*}/)?.[0] ?? '';
-  assert.ok(/min-height:\s*[5-9][0-9]px/.test(fieldCss) && /resize/.test(css) === true, 'text region height + no resize');
+  // Smallest accessible two-line region (~48px) — not an over-reserved 3-row box.
+  assert.ok(/min-height:\s*(?:4[0-9]|5[0-9])px/.test(fieldCss) && /resize/.test(css) === true, 'two-line text region height + no resize');
 });
 
 test('lower control row order + Send active with preloaded prompt', () => {

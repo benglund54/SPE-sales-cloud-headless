@@ -1,0 +1,120 @@
+/**
+ * HX-6V-O — final Claude web-UI polish: composer sizing root-cause fix, raised
+ * cluster, response reading column, content-driven cards, Risks list, selection
+ * states, conversation-composer column alignment.
+ *
+ * Runner: node --import tsx --test tests/*.test.tsx
+ */
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'node:path';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { createElement } from 'react';
+
+import { ClaudeScene } from '../client/src/sony/ClaudeScene.tsx';
+import { ExecutiveBrief } from '../client/src/sony/ExecutiveBrief.tsx';
+import { SONY_ACTIVATION_CONTEXT as ctx } from '../shared/src/sonyActivation.ts';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const repoRoot = resolve(__dirname, '..');
+const read = (rel: string) => readFileSync(resolve(repoRoot, rel), 'utf8');
+const home = renderToStaticMarkup(createElement(ClaudeScene, { context: ctx, activationUrl: null }));
+const src = read('client/src/sony/ClaudeScene.tsx');
+const css = read('client/src/sony/sony.css');
+const brief = (revealed?: number) =>
+  renderToStaticMarkup(createElement(ExecutiveBrief, { context: ctx, activationUrl: 'https://x.example/a', revealed }));
+
+// ---- Composer sizing root-cause fix --------------------------------------
+test('home composer width is pinned (flex:none + min-width:0 + width + max-width)', () => {
+  const box = css.match(/\.claw-composer-home \.claw-composer-box\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/flex:\s*none/.test(box), 'flex:none — not a growable flex item');
+  assert.ok(/min-width:\s*0/.test(box), 'min-width:0 — no min-content blowout');
+  assert.ok(/width:\s*min\(844px,\s*calc\(100% - 48px\)\)/.test(box), 'declared width ~844px');
+  assert.ok(/max-width:\s*844px/.test(box), 'hard max-width 844px');
+  // Two-line region, not three over-reserved rows.
+  const rows = Number(src.match(/claw-composer-field-home[\s\S]*?rows={(\d+)}/)?.[1] ?? '0');
+  assert.equal(rows, 2, 'two-line home textarea');
+  assert.ok(/min-height:\s*14[0-9]px|15[0-5]px/.test(box), 'box min-height ~145–155px');
+});
+
+test('starting cluster is raised with explicit greeting/composer/chip gaps', () => {
+  const homeCss = css.match(/\.claw-home\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/padding:\s*0 24px \d{2,3}px/.test(homeCss), 'bottom padding raises the centered cluster');
+  const greet = css.match(/\.claw-greeting\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/margin:\s*0 0 4[0-8]px/.test(greet), 'greeting→composer gap ~40–48px');
+  const comp = css.match(/\.claw-composer-home\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/margin-bottom:\s*3[2-8]px/.test(comp), 'composer→chips gap ~32–38px');
+});
+
+// ---- Response reading column ---------------------------------------------
+test('response turns + conversation composer share one ~940px reading column', () => {
+  const turn = css.match(/\.claw-turn\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/max-width:\s*9[24]0px/.test(turn), 'reading column ~920–960px');
+  assert.ok(/min-width:\s*0/.test(turn), 'turn min-width:0 for wrapping');
+  const convo = css.match(/\.claw-composer-convo \.claw-composer-box\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/max-width:\s*8[0-9]{2}px/.test(convo), 'convo composer bounded to ~the column width');
+  // Scroll padding keeps followed content clear of the pinned composer.
+  assert.ok(/scroll-padding-bottom/.test(css), 'scroll padding for the pinned composer');
+});
+
+// ---- Content-driven cards + Risks list -----------------------------------
+test('brief cards use content-driven heights (no forced equal-row stretch)', () => {
+  const grid = css.match(/\.claw \.sony-brief-grid\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/align-items:\s*start/.test(grid), 'cards align to start (no stretch)');
+  assert.ok(/grid-auto-rows:\s*max-content/.test(grid), 'auto rows sized to content');
+  const cards = css.match(/\.claw \.sony-brief-facts,[^{]*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/align-self:\s*start/.test(cards) && /height:\s*auto/.test(cards), 'cards do not stretch');
+});
+
+test('Risks is a clean stacked list (not the cramped 2×2 mini-cards), all four statements kept', () => {
+  const risks = css.match(/\.claw \.sony-brief-risks\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/flex-direction:\s*column/.test(risks) && /flex-wrap:\s*nowrap/.test(risks), 'stacked, not wrapped 2×2');
+  const chip = css.match(/\.claw \.sony-brief-risk-chip\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/max-width:\s*none/.test(chip) && /width:\s*100%/.test(chip), 'full-width rows, not 48% minis');
+  // All four approved risk statements still render.
+  const full = brief(undefined);
+  for (const r of ctx.keyRisks) assert.ok(full.includes(r), `risk preserved: ${r}`);
+  // The three green governance confirmations remain.
+  assert.ok(full.includes('Aggregate signals only — no individual-level identifiers'));
+  assert.ok(full.includes('Each operating company retains control'));
+  assert.ok(full.includes('An internal Slack collaboration request has been posted for review'));
+});
+
+// ---- Selection states -----------------------------------------------------
+test('New is selected only on the initial screen; IP Council chat selected in conversation', () => {
+  // New gains claw-nav-selected only when NOT in conversation.
+  assert.ok(/claw-nav-new\$\{inConversation \? '' : ' claw-nav-selected'\}/.test(src), 'New selected home-only');
+  // Home render: New selected, chat row present but not active.
+  assert.ok(/claw-nav-item claw-nav-new claw-nav-selected/.test(home), 'New selected on home');
+  assert.equal(/claw-chat claw-chat-active/.test(home), false, 'chat not selected on home');
+  // Chat row is the first chat item and gains the active class in conversation.
+  assert.ok(/claw-chat\$\{inConversation \? ' claw-chat-active' : ''\}/.test(src), 'chat active in conversation');
+  const sel = css.match(/\.claw-nav-selected\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/background:/.test(sel), 'selected row has a soft background');
+});
+
+// ---- Typography + sidebar width ------------------------------------------
+test('refined serif stack for display text; restrained section labels; wider sidebar', () => {
+  assert.ok(/--claw-serif:\s*'Iowan Old Style'/.test(css), 'refined serif stack (no external font)');
+  const labels = css.match(/\.claw \.sony-brief-h2\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/font-weight:\s*600/.test(labels), 'section labels not weight-inflated (700)');
+  const sidebar = css.match(/\.claw-sidebar\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/width:\s*2[78][0-9]px/.test(sidebar), 'sidebar widened (~280px)');
+  // Colors preserved.
+  assert.ok(/background:\s*#FBFBF9/i.test(sidebar), 'sidebar still #FBFBF9');
+});
+
+// ---- Preservation ---------------------------------------------------------
+test('banner + Salesforce action preserved and last; no Free plan / Upgrade', () => {
+  const full = brief(undefined);
+  assert.ok(full.includes('Draft — no audience activated and no customer communication sent.'), 'exact banner');
+  assert.ok(full.includes('Review governed activation in Salesforce'), 'Salesforce action');
+  // Five section cards intact.
+  assert.equal((full.match(/class="sony-brief-section/g) ?? []).length, 5, 'five section cards');
+  // No plan/upgrade language anywhere in the Claude scene.
+  assert.equal(/free plan|upgrade/i.test(home) || /free plan|upgrade/i.test(src), false, 'no Free plan / Upgrade');
+  // No hard-coded Salesforce URL / record id.
+  assert.equal(/a03bm00001|lightning\.force\.com|Activation__c/.test(src), false, 'no hard-coded SF URL/id');
+});

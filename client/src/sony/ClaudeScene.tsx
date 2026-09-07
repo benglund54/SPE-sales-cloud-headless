@@ -97,11 +97,11 @@ export function ClaudeScene({ context, activationUrl, reducedMotion = false }: P
         <div className="claw-brand"><span className="claw-brand-text">Claude</span></div>
 
         <nav className="claw-nav" aria-label="Claude navigation">
-          <button className="claw-nav-item claw-nav-new" tabIndex={-1}><PlusIcon size={16} /><span>New</span></button>
-          <button className="claw-nav-item" tabIndex={-1}><FolderIcon size={16} /><span>Projects</span></button>
-          <button className="claw-nav-item" tabIndex={-1}><ArtifactIcon size={16} /><span>Artifacts</span></button>
-          <button className="claw-nav-item" tabIndex={-1}><CodeIcon size={16} /><span>Code</span></button>
-          <button className="claw-nav-item" tabIndex={-1}><GearIcon size={16} /><span>Customize</span></button>
+          <button className={`claw-nav-item claw-nav-new${inConversation ? '' : ' claw-nav-selected'}`} tabIndex={-1}><PlusIcon size={18} /><span>New</span></button>
+          <button className="claw-nav-item" tabIndex={-1}><FolderIcon size={18} /><span>Projects</span></button>
+          <button className="claw-nav-item" tabIndex={-1}><ArtifactIcon size={18} /><span>Artifacts</span></button>
+          <button className="claw-nav-item" tabIndex={-1}><CodeIcon size={18} /><span>Code</span></button>
+          <button className="claw-nav-item" tabIndex={-1}><GearIcon size={18} /><span>Customize</span></button>
         </nav>
 
         <div className="claw-recents">
@@ -109,11 +109,15 @@ export function ClaudeScene({ context, activationUrl, reducedMotion = false }: P
             <span>Chats and tasks</span>
             <SlidersIcon size={15} className="claw-recents-filter" />
           </div>
-          {inConversation && (
-            <button className="claw-chat claw-chat-active" aria-current="true" tabIndex={-1}>
-              <span className="claw-chat-dot" aria-hidden="true" />{CONVERSATION_TITLE}
-            </button>
-          )}
+          {/* The IP Council brief is always the first chat item; it gains the
+              selected treatment only once a conversation is active. */}
+          <button
+            className={`claw-chat${inConversation ? ' claw-chat-active' : ''}`}
+            aria-current={inConversation ? 'true' : undefined}
+            tabIndex={-1}
+          >
+            <span className={`claw-chat-dot${inConversation ? '' : ' claw-chat-dot-idle'}`} aria-hidden="true" />{CONVERSATION_TITLE}
+          </button>
           {RECENT_CHATS.map((c) => (
             <button key={c} className="claw-chat" tabIndex={-1}>
               <span className="claw-chat-dot claw-chat-dot-idle" aria-hidden="true" />{c}
@@ -239,7 +243,7 @@ export function ClaudeScene({ context, activationUrl, reducedMotion = false }: P
                       value={prompt}
                       onChange={(e) => setPrompt(e.target.value)}
                       onKeyDown={onKeyDown}
-                      rows={3}
+                      rows={2}
                       placeholder={HOME_PLACEHOLDER}
                       aria-label="Message Claude"
                     />

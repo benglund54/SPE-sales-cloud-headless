@@ -288,7 +288,9 @@
 /* ======================================================================= */
 /* CLAUDE WEB CHAT (HX-6V-L) — replaces the former Cowork shell             */
 /* ======================================================================= */
-:root { --claw-serif: 'Georgia', 'Times New Roman', 'Iowan Old Style', serif; }
+/* Refined serif display stack (no external fonts) — used only for the wordmark,
+   greeting, response lead-in, and brief title. Body/UI stay on --sony-font. */
+:root { --claw-serif: 'Iowan Old Style', 'Palatino Linotype', 'Palatino', 'Book Antiqua', Georgia, 'Times New Roman', serif; }
 /* Exact Claude surfaces (HX-6V-M), scoped to .claw only. */
 .claw {
   flex: 1; min-width: 0; min-height: 0; display: flex;
@@ -296,22 +298,26 @@
 }
 
 /* ---- Fixed light sidebar — one continuous #FBFBF9 surface --------------- */
+/* HX-6V-O: slightly wider to match the real reference; padding rebalanced so
+   the wordmark and nav items share one visual column. */
 .claw-sidebar {
-  width: 264px; flex-shrink: 0; background: #FBFBF9; border-right: 1px solid #ECEAE1;
-  display: flex; flex-direction: column; padding: 16px 12px 12px;
+  width: 280px; flex-shrink: 0; background: #FBFBF9; border-right: 1px solid #ECEAE1;
+  display: flex; flex-direction: column; padding: 16px 14px 12px;
 }
-.claw-brand { padding: 2px 8px 16px; }
+.claw-brand { padding: 2px 10px 18px; }
 /* Wordmark as styled serif text — blends into #FBFBF9, crisp at 200%. */
 .claw-brand-text { font-family: var(--claw-serif); font-size: 22px; font-weight: 600; color: #1f1e1c; letter-spacing: -0.01em; }
 .claw-nav { display: flex; flex-direction: column; gap: 1px; }
 .claw-nav-item {
   display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
   background: transparent; border: none; cursor: default;
-  font-size: 14px; color: #3d3c37; padding: 8px 8px; border-radius: 8px; font-family: var(--sony-font);
+  font-size: 14px; color: #3d3c37; padding: 8px 10px; border-radius: 9px; font-family: var(--sony-font);
 }
-.claw-nav-item:hover { background: #e8e6dd; }
-.claw-nav-new { color: #2b2a27; }
+.claw-nav-item:hover { background: #efeee7; }
 .claw-nav-item span { line-height: 1; }
+/* Selected nav row — soft rounded neutral background (New on the initial
+   screen only; removed once a conversation is active). */
+.claw-nav-selected { background: #efede4; color: #2b2a27; }
 .claw-recents { flex: 1; min-height: 0; margin-top: 18px; display: flex; flex-direction: column; gap: 1px; overflow: hidden; }
 .claw-recents-head {
   display: flex; align-items: center; justify-content: space-between;
@@ -353,11 +359,16 @@
 }
 .claw-home-util { background: transparent; border: none; cursor: default; color: #8a887e; padding: 4px; display: inline-flex; }
 
-/* Home body — centered greeting + composer + suggestions. */
-.claw-home { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 24px; gap: 26px; }
+/* Home body — centered greeting + composer + suggestions. The cluster is
+   raised ~60px above dead-center (padding-bottom) to match the real reference;
+   explicit gaps set greeting→composer (~48px) and composer→chips (~38px). */
+.claw-home {
+  flex: 1; min-height: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; padding: 0 24px 120px; gap: 0;
+}
 .claw-greeting {
-  display: flex; align-items: center; gap: 16px; margin: 0;
-  font-family: var(--claw-serif); font-weight: 500; font-size: 40px; color: #3a3833; letter-spacing: -0.01em;
+  display: flex; align-items: center; gap: 16px; margin: 0 0 48px;
+  font-family: var(--claw-serif); font-weight: 500; font-size: 38px; color: #3a3833; letter-spacing: -0.01em;
 }
 .claw-greeting-star { flex-shrink: 0; }
 
@@ -367,12 +378,17 @@
    greeting — a text region on top and a control row below, split vertically
    with space-between. Visible neutral border + very soft shadow, bounded width,
    real min-height; never a thin strip, never floating children. */
-.claw-composer-home { width: 100%; display: flex; justify-content: center; }
+.claw-composer-home { width: 100%; display: flex; justify-content: center; margin-bottom: 38px; }
 .claw-composer-home .claw-composer-box {
   box-sizing: border-box;
-  width: min(844px, calc(100% - 48px)); min-height: 146px;
-  flex-direction: column; align-items: stretch; justify-content: space-between; gap: 12px;
-  padding: 20px 22px; border: 1px solid #D9D8D3; border-radius: 20px;
+  /* HX-6V-O: as a flex child the default min-width:auto let the box grow to its
+     wide tool-row min-content (~1110px), overriding the declared width. Pin the
+     size with flex:none + min-width:0 + max-width so ~844px is authoritative. */
+  flex: none; min-width: 0;
+  width: min(844px, calc(100% - 48px)); max-width: 844px;
+  min-height: 148px;
+  flex-direction: column; align-items: stretch; justify-content: space-between; gap: 10px;
+  padding: 18px 20px; border: 1px solid #D9D8D3; border-radius: 19px;
   background: #FFFFFF; box-shadow: 0 8px 24px rgba(0,0,0,0.04);
 }
 .claw-composer-textrow { display: flex; align-items: flex-start; gap: 12px; }
@@ -386,19 +402,22 @@
   font-family: var(--sony-font); font-size: 15px; color: #2b2a27; line-height: 1.5;
   max-height: 120px; padding: 8px 0;
 }
-/* Multiline home text region — real height, wraps naturally, never clips. */
+/* Multiline home text region — smallest accessible size that fits the two-line
+   prompt with comfortable padding; wraps naturally, never clips. */
 .claw-composer-field-home {
-  width: 100%; flex: 1; font-size: 16px; line-height: 1.55; padding: 0;
-  min-height: 64px; max-height: 168px; overflow-y: auto;
+  width: 100%; flex: 1; font-size: 16px; line-height: 1.5; padding: 0;
+  min-height: 48px; max-height: 140px; overflow-y: auto;
 }
 .claw-composer-field::placeholder { color: #9a988e; }
 .claw-composer-plus { background: transparent; border: none; cursor: default; color: #6b6a63; padding: 4px; display: inline-flex; flex-shrink: 0; }
 .claw-composer-right { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-shrink: 0; }
 .claw-composer-mic { color: #6b6a63; }
 .claw-status-dot { width: 8px; height: 8px; border-radius: 50%; background: #4caf7d; }
-.claw-composer-convo { padding: 6px 24px 14px; }
-.claw-composer-convo .claw-composer-box { max-width: 900px; margin: 0 auto; min-height: 48px; }
-.claw-composer-meta { max-width: 900px; margin: 4px auto 0; display: flex; justify-content: flex-end; gap: 8px; font-size: 12px; color: #8a887e; }
+/* Conversation composer shares the response reading column (centered, ~940px
+   incl. the column's 28px side padding) so it reads as part of the answer. */
+.claw-composer-convo { padding: 6px 28px 14px; }
+.claw-composer-convo .claw-composer-box { max-width: 884px; margin: 0 auto; min-height: 48px; }
+.claw-composer-meta { max-width: 884px; margin: 4px auto 0; display: flex; justify-content: flex-end; gap: 8px; font-size: 12px; color: #8a887e; }
 
 /* Home composer tool row. */
 .claw-home-tools { display: flex; align-items: center; gap: 10px; }
@@ -439,8 +458,10 @@
 }
 
 /* Conversation thread + turns. */
-.claw-thread { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 26px 0; }
-.claw-turn { max-width: 740px; margin: 0 auto; padding: 0 24px; }
+.claw-thread { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 26px 0; scroll-padding-bottom: 96px; }
+/* One centered reading column shared by every turn (user, lead-in, brief,
+   banner, action) — ~940px at presentation widths. */
+.claw-turn { max-width: 940px; margin: 0 auto; padding: 0 28px; min-width: 0; }
 .claw-turn-user { display: flex; justify-content: flex-end; margin-bottom: 26px; }
 .claw-user-bubble {
   background: #f0eee7; border-radius: 14px; padding: 13px 17px; font-size: 15px; line-height: 1.55;
@@ -785,20 +806,36 @@
 }
 .claw .sony-brief-reco .sony-brief-h2 { color: #b5522f; }
 .claw .sony-brief-reco-conclusion { color: #b5522f; }
-.claw .sony-brief-grid { gap: 24px; }
+/* Restrained section labels — clearly subordinate, not weight-inflated. */
+.claw .sony-brief-h2 { font-weight: 600; }
+.claw .sony-brief-section p, .claw .sony-brief-section li { line-height: 1.45; }
+/* Content-driven card heights — same-row cards no longer stretch to the
+   tallest, so Decisions no longer shows a large empty area. */
+.claw .sony-brief-grid { gap: 20px; align-items: start; grid-auto-rows: max-content; }
 .claw .sony-brief-facts, .claw .sony-brief-value, .claw .sony-brief-decisions, .claw .sony-brief-guardrails {
-  background: #f6f4ec !important; border: 1px solid #ece9df !important; border-radius: 12px; padding: 15px !important;
+  background: #f6f4ec !important; border: 1px solid #ece9df !important; border-radius: 12px; padding: 16px !important;
+  align-self: start; height: auto;
 }
 .claw .sony-brief-facts .sony-brief-h2 { color: #6b6a63; }
 .claw .sony-brief-decisions .sony-brief-h2,
 .claw .sony-brief-decisions-note { color: #b5792f; }
 .claw .sony-brief-guardrails .sony-brief-h2 { color: #4a7a52; }
-.claw .sony-brief-risk-chip { background: #fff; border-color: #ece9df; }
+/* Risks: a clean full-width stacked list inside the one card — not a cramped
+   2×2 of narrow nested boxes. All four statements preserved. */
+.claw .sony-brief-risks { flex-direction: column; flex-wrap: nowrap; gap: 6px; }
+.claw .sony-brief-risk-chip { background: #fff; border-color: #ece9df; max-width: none; width: 100%; box-sizing: border-box; }
 .claw .sony-brief-banner {
   background: #faf3e6 !important; border: 1px solid #ecd9b0 !important; color: #96701f;
 }
 .claw .sony-brief section p, .claw .sony-brief li { font-size: 14px; }
-.claw .sony-brief .sony-activation-link { background: #d97757; }
+/* Salesforce action: a compact, column-aligned Claude action (not oversized,
+   not full-width, not dominant). Governed URL behavior unchanged. */
+.claw .sony-brief-actions { margin-top: 16px; justify-content: flex-start; }
+.claw .sony-brief .sony-activation-link { background: #d97757; padding: 9px 15px; font-size: 13px; border-radius: 9px; }
+/* Connected value: give role name + badge room so they never collide/wrap. */
+.claw .sony-brief-roles li { gap: 12px; }
+.claw .sony-role-name { min-width: 0; }
+.claw .sony-role-tag { white-space: nowrap; flex-shrink: 0; }
 
 /* ---- HX-6V-C Teams refinement (pale blue-gray, native proportions) ----- */
 .tms { background: #eef1f6; }
