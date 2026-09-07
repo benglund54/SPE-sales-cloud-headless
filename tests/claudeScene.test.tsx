@@ -61,9 +61,10 @@ test('renders the Claude lead-in once revealed', () => {
 });
 
 test('grounded facts show authoritative metric labels and values', () => {
+  // HX-7H-C: metrics condensed to compact chips — every value + meaning kept.
   assert.ok(brief.includes('1.85M'));
-  assert.ok(brief.includes('Opportunity / Priority Score') && brief.includes('91.58'));
-  assert.ok(brief.includes('Ranked #1') || brief.includes('#1 qualified'));
+  assert.ok(brief.includes('Opportunity / Priority') && brief.includes('91.58'));
+  assert.ok(brief.includes('Ranked #1') || brief.includes('#1'));
   assert.ok(brief.includes('#3 by modeled revenue'));
   assert.ok(brief.includes('Engagement Score') && brief.includes('82.3'));
   assert.ok(brief.includes('Cross-Affinity Score') && brief.includes('84'));

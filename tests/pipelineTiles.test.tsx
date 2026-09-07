@@ -91,7 +91,9 @@ test('the production build emits all six property assets', () => {
 // 7 — two rows of three tiles render
 test('two rows of three tiles render (six tiles, two rows)', () => {
   assert.equal((full.match(/class="sony-tiles-row"/g) ?? []).length, 2, 'two rows');
-  assert.equal((full.match(/class="sony-tile"/g) ?? []).length, 6, 'six tiles');
+  // Tiles may carry the sony-tile-nobadge modifier (PlayStation rows) — count
+  // the opening class attribute that starts with sony-tile.
+  assert.equal((full.match(/class="sony-tile(?: sony-tile-nobadge)?"/g) ?? []).length, 6, 'six tiles');
   assert.ok(full.includes('Pictures Pipeline') && full.includes('PlayStation Catalog Anchors'), 'both labels');
   // Six poster images with object-fit cover (asserted via the img class + CSS).
   assert.equal((full.match(/sony-tile-img/g) ?? []).length, 6, 'six poster images');

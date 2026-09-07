@@ -199,13 +199,15 @@ test('updated timing: reasoning ~4.7s, reveal ~640ms/step (total ~10–11.5s)', 
 });
 
 // ---- Opening notification still complete ---------------------------------
-test('v14 opening notification content preserved within the refined chrome', () => {
+test('opening collaboration notification content preserved within the refined chrome', () => {
   assert.ok(teams.includes('Cross-Sony Collaboration Request'));
   assert.ok(teams.includes('Spider-Man EMEA opportunity ready for review'));
-  assert.ok(teams.includes('Source: Governed Sony IP360 CRM signals'));
-  for (const m of ['1.85M', '91.58', '82.3', '84', '53.9']) assert.ok(teams.includes(m));
+  // HX-7H-C: four primary metrics (whitespace 53.9 removed); source line dropped.
+  for (const m of ['1.85M', '91.58', '82.3', '84']) assert.ok(teams.includes(m));
+  assert.equal(teams.includes('53.9'), false, 'whitespace score removed');
   assert.ok(teams.includes('Draft — no audience activated and no customer communication sent.'));
-  assert.ok(teams.includes('Open Sony IP360 Advisor'));
+  assert.ok(teams.includes('Review activation in Salesforce'), 'governed Salesforce CTA');
+  assert.ok(teams.includes('Open Sony IP360 Advisor'), 'secondary Advisor affordance');
 });
 
 // ---- HX-6V-H: Favorites Advisor avatar, one-line profile, supplied icons ---

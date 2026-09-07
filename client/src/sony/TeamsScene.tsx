@@ -5,6 +5,9 @@ import { useConversation } from './useConversation';
 import { useFollowScroll } from './useFollowScroll';
 import { TEAMS_PROMPT, TEAMS_STAGES, TEAMS_SECTION_COUNT } from './interactiveFixtures';
 import { formatTeamsTime } from './teamsTime';
+import { buildCollaborationRequest } from './collaborationView';
+import { resolvePropertyAsset, propertyInitials } from './propertyAssets';
+import { ActivationLink } from './ActivationLink';
 import {
   AdvisorIcon, ChevronLeft, ChevronRight, PlusIcon,
   TeamsMark, PeopleIcon, CalendarIcon,
@@ -70,14 +73,9 @@ export function TeamsScene({ context, activationUrl, reducedMotion = false, now 
   };
   const canSend = prompt.trim().length > 0 && !convo.submitted && !convo.busy;
 
-  const { audience, governance, modelScores, releaseMoments, opCoRoles, evidenceSignals } = context;
-  const engagement = modelScores.find((m) => m.label === 'Engagement Score');
-  const crossAffinity = modelScores.find((m) => m.label === 'Cross-Affinity Score');
-  const whitespace = modelScores.find((m) => m.label === 'Whitespace Score');
-  const lead = opCoRoles.find((r) => r.participationStatus === 'Accountable');
-  const participants = opCoRoles.filter((r) => r.participationStatus === 'Pending');
-  const bnd = releaseMoments.find((r) => r.title === 'Spider-Man: Brand New Day');
-  const bsv = releaseMoments.find((r) => r.title === 'Beyond the Spider-Verse');
+  // Same approved intelligence as the Slack message, derived from the canonical
+  // context via a presentation-neutral view model (HX-7H-C).
+  const collab = buildCollaborationRequest(context);
 
   return (
     <div className="tms" data-theme="teams">
@@ -175,25 +173,45 @@ export function TeamsScene({ context, activationUrl, reducedMotion = false, now 
                     <span className="tms-turn-name">{ASSISTANT}</span>
                     <span className="tms-context-label">{CONTEXT_LABEL}</span>
                   </div>
-                  {/* Teams-native adaptive card — same information hierarchy as
-                      the Slack notification, rendered in Teams styling. Wide,
-                      responsive two-column layout (collapses to one column when
-                      width genuinely requires it via CSS). */}
+                  {/* Teams-native Adaptive-Card-inspired collaboration request —
+                      the SAME approved intelligence as the Slack message, driven
+                      by the shared collaboration view model (HX-7H-C). */}
                   <article className="tms-notify" aria-label="Governed opportunity notification">
                     <div className="tms-notify-head">
-                      <span className="tms-notify-tag">Cross-Sony Collaboration Request</span>
+                      <span className="tms-notify-tag">{collab.headline.tag}</span>
                     </div>
-                    <h2 className="tms-notify-title">Spider-Man EMEA opportunity ready for review</h2>
-                    <p className="tms-notify-source">Source: Governed Sony IP360 CRM signals</p>
-                    <p className="tms-notify-audience">Audience: {audience.name}</p>
+                    <h2 className="tms-notify-title">{collab.headline.title}</h2>
 
-                    {/* Metric chips */}
+                    {/* Exactly four primary metrics (no whitespace score). */}
                     <div className="tms-notify-metrics">
-                      <span className="tms-chip"><b>{audience.size}</b> qualified {context.region} audience</span>
-                      <span className="tms-chip"><b>{audience.opportunityScore}</b> opportunity / priority · #{audience.qualifiedOpportunityRank}</span>
-                      <span className="tms-chip"><b>{engagement?.value}</b> engagement score</span>
-                      <span className="tms-chip"><b>{crossAffinity?.value}</b> cross-affinity score</span>
-                      <span className="tms-chip"><b>{whitespace?.value}</b> whitespace score</span>
+                      {collab.metrics.map((m) => (
+                        <span key={m.label} className="tms-chip"><b>{m.value}</b> {m.label}</span>
+                      ))}
+                    </div>
+
+                    {/* IP moments — packaged poster art + status + two lines. */}
+                    <div className="tms-ipmoments">
+                      {collab.ipMoments.map((mo) => {
+                        const asset = resolvePropertyAsset(mo.propertyKey);
+                        return (
+                          <div className="tms-ipmoment" key={mo.propertyKey}>
+                            <span className="tms-ipmoment-poster" aria-hidden={asset ? undefined : 'true'}>
+                              {asset ? (
+                                <img src={asset.src} alt={asset.alt} width={44} height={60} loading="lazy" decoding="async" />
+                              ) : (
+                                <span className="tms-ipmoment-fallback">{propertyInitials(mo.title)}</span>
+                              )}
+                            </span>
+                            <div className="tms-ipmoment-body">
+                              <div className="tms-ipmoment-head">
+                                <span className={`tms-ipmoment-badge tms-ipmoment-badge-${mo.status.toLowerCase()}`}>{mo.status}</span>
+                                <span className="tms-ipmoment-title">{mo.title}</span>
+                              </div>
+                              <p className="tms-ipmoment-lines">{mo.lines[0]} {mo.lines[1]}</p>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
 
                     <div className="tms-notify-grid">
@@ -201,24 +219,11 @@ export function TeamsScene({ context, activationUrl, reducedMotion = false, now 
                       <div className="tms-notify-col">
                         <section className="tms-notify-block">
                           <h3 className="tms-notify-h">Why now</h3>
-                          <p>{context.scenes.slack.whyNow}</p>
-                        </section>
-                        <section className="tms-notify-block">
-                          <h3 className="tms-notify-h">IP moments</h3>
-                          <ul className="tms-notify-moments">
-                            <li><b>{bnd?.title}</b> — {bnd?.status}</li>
-                            <li><b>{bsv?.title}</b> — {bsv?.status}</li>
-                          </ul>
+                          <p>{collab.whyNow}</p>
                         </section>
                         <section className="tms-notify-block">
                           <h3 className="tms-notify-h">Connected fan idea</h3>
-                          <p>{context.scenes.slack.experienceSummary}. Pictures-led fan moment extended through eligible PlayStation and Sony Music experiences.</p>
-                        </section>
-                        <section className="tms-notify-block">
-                          <h3 className="tms-notify-h">Contributing signals</h3>
-                          <ul className="tms-notify-signals">
-                            {evidenceSignals.map((s) => <li key={s.label}>{s.label}</li>)}
-                          </ul>
+                          <p>{collab.connectedFanIdea}</p>
                         </section>
                       </div>
 
@@ -227,32 +232,37 @@ export function TeamsScene({ context, activationUrl, reducedMotion = false, now 
                         <section className="tms-notify-block">
                           <h3 className="tms-notify-h">OpCo status</h3>
                           <ul className="tms-notify-opcos">
-                            {lead && (
-                              <li><span className="tms-dot tms-dot-lead" aria-hidden="true" /><b>{lead.name}</b> — {lead.role}</li>
-                            )}
-                            {participants.map((p) => (
-                              <li key={p.name}><span className="tms-dot tms-dot-pending" aria-hidden="true" /><b>{p.name}</b> — Participation pending</li>
+                            {collab.opCoStatuses.map((o) => (
+                              <li key={o.name}>
+                                <span className={`tms-dot ${o.state === 'Lead' ? 'tms-dot-lead' : 'tms-dot-pending'}`} aria-hidden="true" />
+                                <b>{o.name}</b> — {o.state}
+                              </li>
                             ))}
                           </ul>
                         </section>
                         <section className="tms-notify-block">
-                          <h3 className="tms-notify-h">Lifecycle</h3>
-                          <p>{governance.currentLifecycleStage} → {governance.nextLifecycleStage}</p>
-                          <p className="tms-notify-rights">Rights review — pending</p>
-                        </section>
-                        <section className="tms-notify-block">
                           <h3 className="tms-notify-h">Decisions needed</h3>
                           <ol className="tms-notify-decisions">
-                            {context.decisions.shared.map((d) => <li key={d}>{d}</li>)}
+                            {collab.decisions.map((d) => <li key={d}>{d}</li>)}
                           </ol>
                         </section>
                       </div>
                     </div>
 
-                    <div className="tms-notify-banner">{governance.statusBanner}</div>
-                    <button className="tms-notify-cta" onClick={() => setView('advisor')}>
-                      Open Sony IP360 Advisor →
-                    </button>
+                    {/* Compact footer: lifecycle · rights · governance banner. */}
+                    <p className="tms-notify-footer">
+                      <span>Lifecycle: {collab.lifecycle}</span>
+                      <span className="tms-notify-rights">{collab.rights}</span>
+                    </p>
+                    <div className="tms-notify-banner">{collab.governanceBanner}</div>
+
+                    <div className="tms-notify-actions">
+                      <ActivationLink url={activationUrl} label={collab.actionLabel} />
+                      {/* Secondary in-card path to the interactive Advisor demo. */}
+                      <button className="tms-notify-advisor" onClick={() => setView('advisor')}>
+                        Open Sony IP360 Advisor →
+                      </button>
+                    </div>
                   </article>
                 </div>
               </div>

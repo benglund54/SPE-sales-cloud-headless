@@ -63,12 +63,17 @@ test('response turns + conversation composer share one ~940px reading column', (
 });
 
 // ---- Content-driven cards + Risks list -----------------------------------
-test('brief cards use content-driven heights (no forced equal-row stretch)', () => {
+test('brief uses independent column stacks (no cross-column row-height coupling)', () => {
+  // HX-7H-C: two independent .sony-brief-col flex stacks inside the grid — a
+  // taller card in one column never opens a void beside the other column.
+  const scene = readFileSync(resolve(repoRoot, 'client/src/sony/ExecutiveBrief.tsx'), 'utf8');
+  assert.equal((scene.match(/className="sony-brief-col"/g) ?? []).length, 2, 'two column stacks');
   const grid = css.match(/\.claw \.sony-brief-grid\s*{[^}]*}/)?.[0] ?? '';
-  assert.ok(/align-items:\s*start/.test(grid), 'cards align to start (no stretch)');
-  assert.ok(/grid-auto-rows:\s*max-content/.test(grid), 'auto rows sized to content');
+  assert.ok(/align-items:\s*start/.test(grid), 'columns align to start (no stretch)');
+  const col = css.match(/\.sony-brief-col\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/flex-direction:\s*column/.test(col) && /min-width:\s*0/.test(col), 'each column flows its own cards');
   const cards = css.match(/\.claw \.sony-brief-facts,[^{]*{[^}]*}/)?.[0] ?? '';
-  assert.ok(/align-self:\s*start/.test(cards) && /height:\s*auto/.test(cards), 'cards do not stretch');
+  assert.ok(/height:\s*auto/.test(cards), 'cards content-driven');
 });
 
 test('Risks is a clean stacked list (not the cramped 2×2 mini-cards), all four statements kept', () => {

@@ -34,32 +34,40 @@ test('Teams opens on the IP360 Planning notification with the Advisor identity',
   assert.ok(teams.includes('Spider-Man EMEA opportunity ready for review'), 'notification title');
 });
 
-test('expanded notification: header, source, audience, 5 metric chips, both columns', () => {
+test('HX-7H-C collaboration card: header, exactly 4 metrics (no whitespace), both columns', () => {
   assert.ok(teams.includes('Cross-Sony Collaboration Request'), 'header tag');
-  assert.ok(teams.includes('Source: Governed Sony IP360 CRM signals'), 'source line');
-  assert.ok(teams.includes('EMEA Spider-Verse Player-Fans'), 'audience');
-  // Five metric chips.
-  for (const m of ['1.85M', '91.58', '82.3', '84', '53.9']) assert.ok(teams.includes(m), `metric ${m}`);
-  // Two-column structure present.
-  assert.ok(teams.includes('tms-notify-grid'), 'responsive two-column grid');
-  // Left column anchors + right column anchors.
+  assert.ok(teams.includes('Spider-Man EMEA opportunity ready for review'), 'title');
+  // Exactly four primary metrics; the 53.9 whitespace score is removed.
+  for (const m of ['1.85M', '91.58', '82.3', '84']) assert.ok(teams.includes(m), `metric ${m}`);
+  assert.equal(teams.includes('53.9'), false, 'whitespace score removed');
+  assert.equal(teams.includes('whitespace'), false, 'no whitespace label');
+  assert.equal((teams.match(/class="tms-chip"/g) ?? []).length, 4, 'exactly four metric chips');
+  // Two-column operating grid with the approved anchors (no contributing signals).
+  assert.ok(teams.includes('tms-notify-grid'), 'two-column grid');
   const flat = teams.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').toLowerCase();
-  for (const anchor of ['why now', 'ip moments', 'connected fan idea', 'opco status', 'lifecycle', 'decisions needed']) {
+  for (const anchor of ['why now', 'connected fan idea', 'opco status', 'decisions needed']) {
     assert.ok(flat.includes(anchor), `missing anchor: ${anchor}`);
   }
-  // IP moments statuses + shared decisions.
-  assert.ok(teams.includes('Active release moment') && teams.includes('In Development'));
-  for (const d of ctx.decisions.shared) assert.ok(teams.includes(d), `missing decision: ${d}`);
+  assert.equal(flat.includes('contributing signals'), false, 'contributing-signals block removed');
 });
 
-test('Teams notification preserves the governed facts', () => {
-  assert.ok(teams.includes('1.85M'));
-  assert.ok(teams.includes('91.58'));
-  assert.ok(teams.includes('82.3'));
-  assert.ok(teams.includes('84'));
-  assert.ok(teams.includes('Sony Pictures'));
-  assert.ok(teams.includes('OpCo Approval') && teams.includes('Ready for Orchestration'));
-  assert.ok(teams.includes('Draft — no audience activated and no customer communication sent.'));
+test('HX-7H-C: IP moments render packaged posters + CURRENT/FUTURE + description lines', () => {
+  assert.ok(teams.includes('/assets/properties/PROP-BND.webp'), 'BND poster');
+  assert.ok(teams.includes('/assets/properties/PROP-BTSV.webp'), 'BTSV poster');
+  assert.ok(teams.includes('Spider-Man: Brand New Day') && teams.includes('Spider-Man: Beyond the Spider-Verse'), 'titles');
+  assert.ok(teams.includes('CURRENT') && teams.includes('FUTURE'), 'status badges');
+  assert.ok(teams.includes('active release anchor for the EMEA opportunity'), 'BND line');
+  assert.ok(teams.includes('Future Pictures moment extending the Spider-Man engagement window'), 'BTSV line');
+});
+
+test('Teams notification preserves the governed facts + new CTA/lifecycle', () => {
+  assert.ok(teams.includes('1.85M') && teams.includes('91.58') && teams.includes('82.3') && teams.includes('84'));
+  assert.ok(teams.includes('Sony Pictures') && /Lead/.test(teams) && /Pending/.test(teams), 'OpCo statuses');
+  assert.ok(teams.includes('OpCo approval → orchestration') && teams.includes('Rights review pending'), 'compact lifecycle');
+  assert.ok(teams.includes('Draft — no audience activated and no customer communication sent.'), 'exact banner');
+  // CTA is the governed Salesforce action; the secondary Advisor affordance remains.
+  assert.ok(teams.includes('Review activation in Salesforce'), 'Salesforce CTA');
+  assert.ok(teams.includes('Open Sony IP360 Advisor'), 'secondary Advisor affordance kept');
 });
 
 test('Teams preloads the exact PlayStation prompt (advisor-view composer)', () => {

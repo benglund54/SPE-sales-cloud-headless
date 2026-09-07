@@ -23,7 +23,7 @@ function Tile({ item, showBadge }: { item: PipelineTitle; showBadge: boolean }) 
   const useImage = asset !== null && !failed;
 
   return (
-    <div className="sony-tile" data-prop={item.propertyKey}>
+    <div className={`sony-tile${showBadge ? '' : ' sony-tile-nobadge'}`} data-prop={item.propertyKey}>
       <span className="sony-tile-poster" aria-hidden={useImage ? undefined : 'true'}>
         {useImage ? (
           <img
@@ -31,7 +31,7 @@ function Tile({ item, showBadge }: { item: PipelineTitle; showBadge: boolean }) 
             src={asset!.src}
             alt={asset!.alt}
             width={36}
-            height={50}
+            height={48}
             loading="lazy"
             decoding="async"
             onError={() => setFailed(true)}
@@ -40,10 +40,14 @@ function Tile({ item, showBadge }: { item: PipelineTitle; showBadge: boolean }) 
           <span className="sony-tile-fallback">{propertyInitials(item.title)}</span>
         )}
       </span>
-      <span className="sony-tile-title">{item.title}</span>
-      {showBadge && item.status && (
-        <span className={`sony-tile-badge sony-tile-badge-${item.status.toLowerCase()}`}>{item.status}</span>
-      )}
+      {/* Text region takes the remaining width; the badge stacks ABOVE the
+          title so the title keeps full width and clamps cleanly to two lines. */}
+      <span className="sony-tile-text">
+        {showBadge && item.status && (
+          <span className={`sony-tile-badge sony-tile-badge-${item.status.toLowerCase()}`}>{item.status}</span>
+        )}
+        <span className="sony-tile-title">{item.title}</span>
+      </span>
     </div>
   );
 }

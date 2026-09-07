@@ -668,17 +668,28 @@
 .sony-brief-reco { background: rgba(123,95,214,0.08); border: 1px solid rgba(123,95,214,0.36); }
 .sony-brief-reco .sony-brief-h2 { color: #6a4fca; }
 .sony-brief-reco-conclusion { font-weight: 700; color: #6a4fca; margin-top: 6px; }
-.sony-brief-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+/* HX-7H-C — two independent column stacks (left ~56 / right ~44). Each column
+   flows its own cards with a consistent gap; a taller card in one column never
+   opens a void beside the shorter card in the other. */
+.sony-brief-grid { display: grid; grid-template-columns: 56fr 44fr; gap: 14px; align-items: start; }
+.sony-brief-col { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 .sony-brief-facts { background: rgba(75,99,214,0.06); border: 1px solid rgba(75,99,214,0.3); }
 .sony-brief-facts .sony-brief-h2 { color: #4b63d6; }
 .sony-brief-facts-list { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+/* Compact metric chips — every value preserved, no six full-width lines. */
+.sony-brief-facts-chips { list-style: none; display: flex; flex-wrap: wrap; gap: 5px; margin: 2px 0; }
+.sony-brief-facts-chips li {
+  font-size: 11px; line-height: 1.3; color: #2b2a27; background: #fff;
+  border: 1px solid var(--card-border); border-radius: 6px; padding: 3px 7px;
+}
 .sony-brief-source { font-size: 11px; color: var(--card-text-dim); margin-top: 6px; }
 
 /* HX-7H — compact pipeline title tiles: two labeled rows of three equal tiles.
    No horizontal scroll, no carousel, no links. Poster art is object-fit:cover
-   in a reserved 36×50 frame; titles clamp to two lines; small CURRENT/FUTURE
-   badges on the Pictures row only; a fixed-size initials fallback replaces any
-   missing/failed artwork (never a broken-image icon). */
+   in a reserved ~36×48 frame; the text region takes the remaining width with
+   the badge stacked ABOVE the title so the full canonical title clamps to two
+   lines (never a single-line ellipsis). PlayStation tiles (no badge) center the
+   title. A fixed-size initials fallback replaces missing/failed artwork. */
 .sony-tiles { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
 .sony-tiles-group { display: flex; flex-direction: column; gap: 4px; }
 .sony-tiles-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--card-text-dim); }
@@ -688,18 +699,20 @@
   padding: 6px 8px; border: 1px solid var(--card-border); border-radius: 8px; background: #fff;
 }
 .sony-tile-poster {
-  flex-shrink: 0; width: 36px; height: 50px; border-radius: 4px; overflow: hidden;
+  flex-shrink: 0; width: 36px; height: 48px; border-radius: 4px; overflow: hidden;
   background: #ece9df; display: flex; align-items: center; justify-content: center;
 }
-.sony-tile-img { width: 36px; height: 50px; object-fit: cover; display: block; }
+.sony-tile-img { width: 36px; height: 48px; object-fit: cover; display: block; }
 .sony-tile-fallback { font-size: 12px; font-weight: 700; color: #6b6a63; }
+.sony-tile-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.sony-tile-nobadge .sony-tile-text { justify-content: center; }
 .sony-tile-title {
-  flex: 1; min-width: 0; font-size: 11.5px; line-height: 1.25; color: #2b2a27;
+  min-width: 0; font-size: 11.5px; line-height: 1.22; color: #2b2a27;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 .sony-tile-badge {
-  flex-shrink: 0; align-self: flex-start; font-size: 9px; font-weight: 700; letter-spacing: 0.03em;
-  text-transform: uppercase; border-radius: 4px; padding: 2px 5px;
+  align-self: flex-start; font-size: 9px; font-weight: 700; letter-spacing: 0.03em;
+  text-transform: uppercase; border-radius: 4px; padding: 1px 5px;
 }
 .sony-tile-badge-current { background: rgba(26,138,90,0.12); color: #1a8a5a; }
 .sony-tile-badge-future { background: rgba(75,99,214,0.12); color: #4b63d6; }
@@ -841,12 +854,12 @@
 /* Restrained section labels — clearly subordinate, not weight-inflated. */
 .claw .sony-brief-h2 { font-weight: 600; }
 .claw .sony-brief-section p, .claw .sony-brief-section li { line-height: 1.45; }
-/* Content-driven card heights — same-row cards no longer stretch to the
-   tallest, so Decisions no longer shows a large empty area. */
-.claw .sony-brief-grid { gap: 20px; align-items: start; grid-auto-rows: max-content; }
+/* HX-7H-C — independent column stacks: no cross-column row-height coupling. */
+.claw .sony-brief-grid { gap: 18px; align-items: start; }
+.claw .sony-brief-col { gap: 14px; }
 .claw .sony-brief-facts, .claw .sony-brief-value, .claw .sony-brief-decisions, .claw .sony-brief-guardrails {
   background: #f6f4ec !important; border: 1px solid #ece9df !important; border-radius: 12px; padding: 16px !important;
-  align-self: start; height: auto;
+  height: auto;
 }
 .claw .sony-brief-facts .sony-brief-h2 { color: #6b6a63; }
 .claw .sony-brief-decisions .sony-brief-h2,
@@ -902,9 +915,12 @@
 .claw .sony-brief-decisions, .claw .sony-brief-guardrails {
   background: #f6f4ec !important; border: 1px solid #eae7dc !important; border-radius: 12px; padding: 15px !important;
 }
-.claw .sony-brief-risk-chip { background: #fbfaf6; border-color: #eae7dc; }
+.claw .sony-brief-risk-chip { background: #fbfaf6; border-color: #eae7dc; padding: 4px 8px; font-size: 11.5px; }
 .claw .sony-brief-banner { background: #faf3e6 !important; border-color: #ecdcb8 !important; }
-.claw .sony-brief-grid { gap: 20px; }
+.claw .sony-brief-grid { gap: 18px; }
+/* HX-7H-C — compact risks list (tightened stacked rows, all four kept). */
+.claw .sony-brief-risks { gap: 4px; }
+.claw .sony-brief-guards { gap: 3px; margin-top: 6px; }
 
 /* ======================================================================= */
 /* HX-6V-D interactive elements                                            */
@@ -946,9 +962,36 @@
 .tms-notify-decisions li { font-size: 13.5px; line-height: 1.45; }
 .tms-notify-banner { font-size: 13px; font-weight: 600; color: #b5791a; background: rgba(181,121,26,0.08); border: 1px solid rgba(181,121,26,0.35); border-radius: 8px; padding: 10px 14px; text-align: center; margin-bottom: 14px; }
 .tms-notify-cta { font-size: 13.5px; font-weight: 600; color: #fff; background: #5b5fc7; border: none; border-radius: 8px; padding: 10px 18px; cursor: pointer; }
+/* HX-7H-C — IP moments: packaged poster art + status badge + two lines. */
+.tms-ipmoments { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.tms-ipmoment { display: flex; gap: 12px; align-items: flex-start; }
+.tms-ipmoment-poster {
+  flex-shrink: 0; width: 44px; height: 60px; border-radius: 5px; overflow: hidden;
+  background: #e6e8ef; display: flex; align-items: center; justify-content: center;
+}
+.tms-ipmoment-poster img { width: 44px; height: 60px; object-fit: cover; display: block; }
+.tms-ipmoment-fallback { font-size: 13px; font-weight: 700; color: #5b5b5b; }
+.tms-ipmoment-body { min-width: 0; }
+.tms-ipmoment-head { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+.tms-ipmoment-title { font-size: 13.5px; font-weight: 700; color: #242424; }
+.tms-ipmoment-badge {
+  flex-shrink: 0; font-size: 9px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase;
+  border-radius: 4px; padding: 2px 6px;
+}
+.tms-ipmoment-badge-current { background: rgba(46,182,125,0.14); color: #1a8a5a; }
+.tms-ipmoment-badge-future { background: rgba(91,95,199,0.14); color: #5b5fc7; }
+.tms-ipmoment-lines { font-size: 12.5px; line-height: 1.4; color: #444; margin: 0; }
+/* Compact footer + actions row (governed Salesforce link + secondary Advisor). */
+.tms-notify-footer { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: #616161; margin: 0 0 10px; }
+.tms-notify-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.tms-notify-actions .sony-activation-link { background: #5b5fc7; font-size: 13.5px; padding: 10px 16px; border-radius: 8px; }
+.tms-notify-advisor { font-size: 13px; font-weight: 600; color: #5b5fc7; background: transparent; border: none; cursor: pointer; padding: 6px 4px; }
 /* Collapse to one column only when width genuinely requires it. */
 @media (max-width: 900px) {
   .tms-notify-grid { grid-template-columns: 1fr; gap: 14px; }
+  /* Brief column stacks + tile rows collapse to one column when genuinely narrow. */
+  .sony-brief-grid { grid-template-columns: 1fr; }
+  .sony-tiles-row { grid-template-columns: 1fr; }
 }
 /* (HX-6V-D progress-dot + composer rules superseded by the HX-6V-F/G blocks.) */
 
