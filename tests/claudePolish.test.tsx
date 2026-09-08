@@ -178,9 +178,14 @@ test('Decisions copy is the concise HX-7H-D wording; stages + rights preserved',
 
 test('middle-card balance + compact risks (content-driven, no fixed heights)', () => {
   const roles = css.match(/\.claw \.sony-brief-roles\s*{[^}]*}/)?.[0] ?? '';
-  assert.ok(/gap:\s*7px/.test(roles), 'modest gap between OpCo rows');
-  // No arbitrary min-heights forcing balance.
-  assert.equal(/min-height:\s*[1-9]/.test(css.match(/\.claw \.sony-brief-value[^{]*{[^}]*}/)?.[0] ?? ''), false, 'no forced value min-height');
+  assert.ok(/gap:\s*9px/.test(roles), 'modest 8–10px gap between OpCo rows');
+  // Equal height via grid stretch + height:100% (no brittle fixed px height).
+  const pair = css.match(/\.claw \.sony-area-value,\s*\.claw \.sony-area-decisions\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/align-self:\s*stretch/.test(pair) && /height:\s*100%/.test(pair), 'middle pair stretches to equal height');
+  assert.equal(/min-height:\s*[1-9]\d/.test(pair), false, 'no fixed px min-height');
+  // Connected Value distributes content within the shared height (flex column).
+  const val = css.match(/\.claw \.sony-area-value\s*{[^}]*}/)?.[0] ?? '';
+  assert.ok(/flex-direction:\s*column/.test(val), 'value card is a flex column');
   // All four risks + three confirmations still render.
   const full = brief(undefined);
   for (const r of ctx.keyRisks) assert.ok(full.includes(r), `risk kept: ${r}`);

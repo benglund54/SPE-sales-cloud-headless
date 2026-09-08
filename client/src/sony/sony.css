@@ -947,7 +947,15 @@
 /* Middle-card balance: a modest, consistent gap between the three OpCo rows in
    Connected Sony Value; tighter Decisions list rhythm. Content-driven — no
    arbitrary min-heights. */
-.claw .sony-brief-roles { gap: 7px; }
+/* HX-7H-D balance: the value|decisions pair stretches to equal height (facts +
+   risks stay content-driven start). Connected Value becomes a flex column that
+   distributes its content within the shared height — no fixed px, no filler. */
+.claw .sony-area-value, .claw .sony-area-decisions { align-self: stretch; height: 100%; }
+.claw .sony-area-value { display: flex; flex-direction: column; }
+/* Vertical rhythm inside Connected Sony Value. */
+.claw .sony-brief-chain { margin-bottom: 11px; }
+.claw .sony-brief-roles { gap: 9px; margin-bottom: 11px; }
+.claw .sony-brief-value-note { margin-top: auto; }
 .claw .sony-brief-decisions-list { padding-left: 16px; line-height: 1.4; }
 .claw .sony-brief-decisions-list li { margin-bottom: 3px; }
 
@@ -1026,6 +1034,9 @@
   }
   .sony-tiles-row { grid-template-columns: 1fr; }
   .sony-brief-risks { grid-template-columns: 1fr; }
+  /* Stacked: cards size to their own content (no forced equal heights). */
+  .claw .sony-area-value, .claw .sony-area-decisions { align-self: start; height: auto; }
+  .claw .sony-brief-value-note { margin-top: 11px; }
 }
 /* (HX-6V-D progress-dot + composer rules superseded by the HX-6V-F/G blocks.) */
 
