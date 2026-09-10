@@ -25,7 +25,7 @@ test('exact preloaded prompt text per scene', () => {
   assert.equal(TEAMS_PROMPT, 'What does PlayStation need to decide?');
   assert.equal(
     CLAUDE_PROMPT,
-    'Prepare a one-minute executive brief for the Sony IP Council. Separate grounded facts, your recommendation, and the decisions still pending.'
+    'Prepare a one-minute executive brief for the Spider-Man: Brand New Day opportunity.'
   );
   assert.equal(SLACKBOT_PROMPT, 'Catch me up on the Spider-Man EMEA opportunity and what’s still pending.');
 });

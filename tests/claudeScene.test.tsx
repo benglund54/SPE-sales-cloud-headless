@@ -43,7 +43,7 @@ test('does NOT use the phrase "Executive Coworker" anywhere visible', () => {
 test('renders the exact visible user prompt', () => {
   assert.ok(
     scene.includes(
-      'Prepare a one-minute executive brief for the Sony IP Council. Separate grounded facts, your recommendation, and the decisions still pending.'
+      'Prepare a one-minute executive brief for the Spider-Man: Brand New Day opportunity.'
     )
   );
 });
