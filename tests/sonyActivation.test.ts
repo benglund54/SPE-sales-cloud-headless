@@ -39,7 +39,7 @@ test('exact approved core identity', () => {
 });
 
 test('exact approved audience name and size', () => {
-  assert.equal(SONY_ACTIVATION_CONTEXT.audience.name, 'EMEA Spider-Verse Player-Fans');
+  assert.equal(SONY_ACTIVATION_CONTEXT.audience.name, 'EMEA Spider-Man Film and Game Fans');
   assert.equal(SONY_ACTIVATION_CONTEXT.audience.size, '1.85M');
 });
 

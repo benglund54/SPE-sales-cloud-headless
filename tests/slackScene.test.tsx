@@ -48,7 +48,7 @@ test('slack shell reads as authentic Slack chrome (rail, sidebar, channel header
 
 test('renders qualified audience size and name', () => {
   assert.ok(html.includes('1.85M'));
-  assert.ok(html.includes('EMEA Spider-Verse Player-Fans'));
+  assert.ok(html.includes('EMEA Spider-Man Film and Game Fans'));
 });
 
 test('renders the priority score 91.58', () => {

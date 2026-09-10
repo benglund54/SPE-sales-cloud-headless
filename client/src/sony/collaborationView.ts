@@ -77,8 +77,9 @@ export function buildCollaborationRequest(context: SonyActivationContext): Colla
       { name: lead?.name ?? 'Sony Pictures', state: 'Lead' },
       ...pending.map((p) => ({ name: p.name, state: 'Pending' as const })),
     ],
-    connectedFanIdea:
-      'Extend the Pictures-led moment through eligible PlayStation rewards and Sony Music soundtrack or artist experiences.',
+    // HX-7H: source the canonical proposed experience (the Fan Pack) directly
+    // from the context — single source of truth, no duplicated local string.
+    connectedFanIdea: context.proposedFanExperience,
     decisions: [
       'Confirm EMEA window',
       'Confirm OpCo participation',

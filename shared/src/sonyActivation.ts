@@ -237,7 +237,7 @@ const rawContext: SonyActivationContext = {
   region: 'EMEA',
 
   audience: {
-    name: 'EMEA Spider-Verse Player-Fans',
+    name: 'EMEA Spider-Man Film and Game Fans',
     size: '1.85M',
     qualifiedOpportunityRank: 1,
     modeledRevenueRegionRank: 3,
@@ -291,10 +291,10 @@ const rawContext: SonyActivationContext = {
     'EMEA is only the number-three region in modeled Spider-Man revenue, but it ranks first among qualified opportunities because eligible audience size, engagement, cross-affinity, whitespace, and timing are currently aligned.',
 
   proposedFanExperience:
-    'A coordinated EMEA Spider-Man fan moment in which Sony Pictures leads with relevant Brand New Day content and the primary fan invitation, PlayStation may extend the experience with an eligible digital reward, challenge, or discovery moment through a PlayStation-controlled channel, and Sony Music may deepen the experience with an eligible soundtrack, playlist, or artist moment through a Sony Music-controlled channel.',
+    'Offer eligible EMEA Spider-Man players a limited-edition Brand New Day PlayStation Fan Pack featuring an exclusive PlayStation reward, a physical Spider-Man collectible, Sony Pictures bonus content, and a Sony Music experience.',
 
   fanValue:
-    'A more connected Spider-Man experience across the Sony relationships the fan already chooses to have.',
+    'One proposed Fan Pack connects a PlayStation reward, a physical Spider-Man collectible, Sony Pictures bonus content, and a Sony Music experience.',
 
   businessHypothesis:
     'Increase engagement and cross-property discovery within the qualified EMEA cohort while creating measurable value for each participating Sony business.',

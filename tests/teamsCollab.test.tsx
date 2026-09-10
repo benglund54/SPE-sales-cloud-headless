@@ -78,7 +78,9 @@ test('Why Now / OpCo / Connected Fan Idea / Decisions match the shared intellige
   assert.ok(html.includes('Brand New Day momentum, PlayStation engagement, and Music affinity create a near-term EMEA window.'));
   assert.ok(html.includes('Sony Pictures') && html.includes('PlayStation') && html.includes('Sony Music'));
   assert.ok(/Lead/.test(html) && /Pending/.test(html), 'OpCo states');
-  assert.ok(html.includes('Extend the Pictures-led moment through eligible PlayStation rewards and Sony Music soundtrack or artist experiences.'));
+  // HX-7H: Connected Fan Idea now sources the canonical proposed experience
+  // (the Fan Pack) from the context — single source of truth.
+  assert.ok(html.includes('Offer eligible EMEA Spider-Man players a limited-edition Brand New Day PlayStation Fan Pack featuring an exclusive PlayStation reward, a physical Spider-Man collectible, Sony Pictures bonus content, and a Sony Music experience.'));
   for (const d of ['Confirm EMEA window', 'Confirm OpCo participation', 'Proceed after rights review']) {
     assert.ok(html.includes(d), `decision: ${d}`);
   }

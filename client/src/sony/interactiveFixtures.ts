@@ -41,7 +41,7 @@ export const SLACKBOT_ANSWER: AnswerSection[] = [
   {
     heading: 'The opportunity',
     body:
-      'The EMEA Spider-Man Connected Fan Moment is a proposed, coordinated fan experience across Sony Pictures, PlayStation, and Sony Music, grounded in a 1.85M qualified aggregate EMEA audience. Sony Pictures leads with current Spider-Man: Brand New Day content; PlayStation and Sony Music could extend it through their own eligible, controlled experiences.',
+      'The EMEA Spider-Man Connected Fan Moment is a proposed, coordinated fan experience across Sony Pictures, PlayStation, and Sony Music, grounded in a 1.85M qualified aggregate EMEA audience. The working concept is a limited-edition Brand New Day PlayStation Fan Pack — an exclusive PlayStation reward, a physical Spider-Man collectible, Sony Pictures bonus content, and a Sony Music experience. Sony Pictures leads with current Spider-Man: Brand New Day content; the Fan Pack remains proposed and subject to PlayStation and Sony Music participation, rights review, and approval.',
   },
   {
     heading: 'Why it matters',
