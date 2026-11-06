@@ -4,7 +4,14 @@ import { config } from '../config.js';
 import { processMockChat } from '../services/mockAgent.js';
 import type { ChatRequest, ChatResponse } from '../types/index.js';
 
+// In production the deployment is mock-only: the Live/Mock mode cannot be
+// changed over HTTP and the effective mode is always Mock. Evaluated per
+// request so behavior follows NODE_ENV at call time. Local development keeps
+// the Live/Mock toggle.
+const isProduction = () => process.env.NODE_ENV === 'production';
+
 let useLiveAgent = true;
+const effectiveLive = () => !isProduction() && useLiveAgent;
 
 const EXACT_DISTRIBUTION_DEAL_PROMPTS = new Set([
   'give me my active distribution deals',
@@ -23,16 +30,24 @@ const DISTRIBUTION_DEALS_INTENT =
 export const chatRouter = Router();
 
 chatRouter.get('/agent-mode', (_req, res) => {
-  res.json({ live: useLiveAgent });
+  res.json({ live: effectiveLive(), locked: isProduction() });
 });
 
 chatRouter.post('/agent-mode', (req, res) => {
-  const { live } = req.body;
+  if (isProduction()) {
+    res.status(403).json({
+      error: 'Agent mode cannot be changed in production (mock-only deployment)',
+      live: false,
+      locked: true,
+    });
+    return;
+  }
+  const { live } = req.body ?? {};
   if (typeof live === 'boolean') {
     useLiveAgent = live;
     console.log(`Agent mode switched to ${live ? 'LIVE' : 'MOCK'}`);
   }
-  res.json({ live: useLiveAgent });
+  res.json({ live: effectiveLive(), locked: false });
 });
 
 chatRouter.post('/chat', async (req, res) => {
@@ -60,7 +75,7 @@ chatRouter.post('/chat', async (req, res) => {
       result = await processMockChat('show me tv rights deals', conversationHistory || []);
     } else
 
-    if (useLiveAgent && config.anthropic.apiKey) {
+    if (effectiveLive() && config.anthropic.apiKey) {
       const { processChat } = await import('../services/claude.js');
       result = await processChat(message, conversationHistory || []);
     } else {

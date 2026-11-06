@@ -13,23 +13,42 @@ const themeIcons: Record<ThemeId, string> = {
 
 function AgentModeToggle() {
   const [live, setLive] = useState(true);
+  const [locked, setLocked] = useState(false);
 
   useEffect(() => {
-    fetch('/api/agent-mode').then(r => r.json()).then(d => setLive(d.live)).catch(() => {});
+    fetch('/api/agent-mode')
+      .then(r => r.json())
+      .then(d => {
+        setLive(d.live);
+        setLocked(d.locked === true);
+      })
+      .catch(() => {});
   }, []);
 
   async function toggle() {
+    if (locked) return;
     const next = !live;
     setLive(next);
-    await fetch('/api/agent-mode', {
+    const res = await fetch('/api/agent-mode', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ live: next }),
     });
+    if (res.ok) {
+      const d = await res.json();
+      setLive(d.live);
+    } else {
+      setLive(!next);
+    }
   }
 
   return (
-    <button className="agent-mode-toggle" onClick={toggle} title={live ? 'Using live Claude + Salesforce' : 'Using mock responses'}>
+    <button
+      className="agent-mode-toggle"
+      onClick={toggle}
+      disabled={locked}
+      title={locked ? 'Mock-only deployment (mode locked)' : live ? 'Using live Claude + Salesforce' : 'Using mock responses'}
+    >
       <span className={`agent-mode-dot ${live ? 'agent-mode-live' : 'agent-mode-mock'}`} />
       <span>{live ? 'Live' : 'Mock'}</span>
     </button>

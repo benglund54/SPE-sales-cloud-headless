@@ -1,28 +1,22 @@
 import express from 'express';
-import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { config } from './config.js';
 import { chatRouter } from './routes/chat.js';
 import { activationRouter } from './routes/activation.js';
-import { getSalesforceConnection } from './services/salesforce.js';
 
 const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const clientDistPath = path.resolve(__dirname, '../../client/dist');
 
-app.use(cors());
+// No CORS middleware: the React client is served from this same origin, so
+// cross-origin browser access is intentionally not enabled.
 app.use(express.json());
 
-app.get('/api/health', async (_req, res) => {
-  let sfStatus = 'disconnected';
-  try {
-    const conn = await getSalesforceConnection();
-    if (conn.accessToken) sfStatus = 'connected';
-  } catch {
-    sfStatus = 'disconnected';
-  }
-  res.json({ status: 'ok', salesforce: sfStatus });
+// Lightweight liveness check. Intentionally makes no Salesforce call (no CLI,
+// no network) so it is cheap and cannot be used to trigger outbound work.
+app.get('/api/health', (_req, res) => {
+  res.json({ status: 'ok' });
 });
 
 app.use('/api', chatRouter);
