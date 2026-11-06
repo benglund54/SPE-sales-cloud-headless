@@ -1,6 +1,6 @@
 # Project Handoff — Sony Pictures Sales Cloud Headless
 
-**Last verified**: 2026-11-06 (updated after Stage 4B-1 hardening), against a live inspection of this working directory (not from memory or prior chat — every claim below was checked against the actual filesystem, Git state, or CLI output on that date).
+**Last verified**: 2026-11-06 (updated after Stage 4B-2 demo access control), against a live inspection of this working directory (not from memory or prior chat — every claim below was checked against the actual filesystem, Git state, or CLI output on that date).
 
 This document is self-contained. A new Claude Code session with no access to prior conversation history should be able to resume this project using only this file, `CLAUDE.md`, and the repository itself.
 
@@ -137,6 +137,16 @@ All of the following has been verified in this session, not assumed from prior d
    - Tests: new `tests/hardeningHx.test.ts` (6 tests); **305/305 passing**, build clean.
    - Production audit (`npm audit --omit=dev`): 10 → **8 findings, including 3 critical** (all via `jsforce`'s legacy chain). `body-parser` and `proxy-addr` findings resolved. Full audit still 18 findings.
    - Verified with a production-mode run and zero credentials: health 200, no CORS headers, agent-mode POST 403, mock chat works, `/` serves.
+8. **Stage 4B-2 — Demo access control** (completed, committed locally, **not yet pushed**):
+   - Server-side HTTP Basic Authentication: new `server/src/demoAuth.ts`, wired in `server/src/index.ts`; `.env.example` documents the variable names (blank values only).
+   - **Production fails closed**: `DEMO_AUTH_USER` and `DEMO_AUTH_PASS` are **required** (non-empty) when `NODE_ENV=production`; otherwise startup throws a safe error (no values in the message).
+   - Everything is protected (pages, static assets, SPA fallback, all API routes) **except `GET /api/health`**, which returns only `{status:"ok"}`. The gate runs before the JSON body parser.
+   - Constant-time comparison (SHA-256 digests + `timingSafeEqual`); 401 with `WWW-Authenticate: Basic realm=...`; `Cache-Control: no-store`; no credentials or Authorization headers are logged.
+   - HTTPS enforcement: in production, `trust proxy` = 1 and `req.secure` (from Heroku's `X-Forwarded-Proto`) must be true. Plain-HTTP requests get a 308 redirect to HTTPS (GET/HEAD, Host header strictly validated) or 403 (other methods), never a challenge, and credentials are never evaluated. **Verified only with simulated headers locally; must be verified against actual Heroku routing (see Section 6).**
+   - Local development remains accessible without authentication by default (opt-in if both variables are set; setting only one throws).
+   - Build succeeds; **315/315 tests pass** (305 + 10 new in `tests/demoAuth.test.ts`).
+   - Production mock-only restrictions unchanged (`/api/agent-mode` POST still 403).
+   - **No Heroku app or deployment and no Salesforce connection exists.**
 6. **Stage 4A — Heroku deployment readiness assessment** (read-only, completed): confirmed the app boots and the mock demo works fully with zero config vars; ran `npm audit` (20 findings: 6 critical/6 high/6 moderate/2 low) and `npm audit --omit=dev` (10 production-path findings: 4 critical/1 high/5 moderate); traced each production finding to its dependency chain; identified two pre-deployment concerns (unauthenticated `/api/agent-mode` toggle, unauthenticated CLI-shelling `/api/health`); confirmed Heroku CLI is installed but **not authenticated** in this environment; confirmed no `engines` field exists in any `package.json`; proposed the `heroku git:remote` + `git push heroku feature/sony-headless-360:main` deployment method. **No Heroku app was created.**
 
 ### Relevant commits / checkpoints
@@ -147,6 +157,8 @@ All of the following has been verified in this session, not assumed from prior d
 ---
 
 ## 4. Current project state (verified live, this session)
+
+> **Stage 4B-2 update**: HEAD is now the Stage 4B-2 commit ("Add protected demo access and update project handoff"), on top of Stage 4B-1 (`85a5e2a`, pushed). The Stage 4B-2 commit is local only and **not pushed**. Test baseline is now **315/315**.
 
 > **Stage 4B-1 update**: HEAD is now the Stage 4B-1 hardening commit ("Harden mock-only deployment and update project handoff"), on top of `992827a`; it is local only and **not pushed** to `origin` until approved. Where the bullets below say HEAD is `992827a`, clean tree, or 299 tests, that is the pre-4B-1 baseline. Still true: no Heroku app or `heroku` remote, no Salesforce connection, no `.env`.
 
@@ -175,7 +187,8 @@ All of the following has been verified in this session, not assumed from prior d
 | Stage 3 — GitHub repository setup | ✅ Done | Private repo, pushed, verified byte-identical to local |
 | **Stage 4A — Heroku deployment readiness & security assessment** | ✅ Done (read-only) | See Section 3, item 6 |
 | **Stage 4B-1 — Pre-deployment hardening** | ✅ Done (committed locally, not pushed) | See Section 3, item 7. 305/305 tests |
-| **Stage 4B-2 — Create independent Heroku app + initial deployment** | ⏳ Next (not started). **Access control must be decided before public deployment** | Blocked on `heroku login` (CLI not authenticated here). App name `spe-sales-cloud-headless` proposed but **availability not yet verified** |
+| **Stage 4B-2 — Demo access control** | ✅ Done (committed locally, not pushed) | See Section 3, item 8. 315/315 tests |
+| **Stage 4B-3 — Create independent Heroku app + initial deployment** | ⏳ Next (not started). Access control is now implemented; must verify HTTPS/forwarded-proto behavior on real Heroku and test sign-in in a real browser | Blocked on `heroku login` (CLI not authenticated here). App name `spe-sales-cloud-headless` proposed but **availability not yet verified** |
 | Salesforce CRM demo org selection | ❌ Not started | No org has been chosen or aliased `headless`. This is a decision point for the user, not something to infer |
 | Secure server-side OAuth authentication | ❌ Not started | CLAUDE.md requires JWT bearer flow or Connected App OAuth; current CLI-passthrough approach is explicitly disallowed for any deployment |
 | Connect Teams-style UI to real Salesforce backend | ❌ Not started | Currently only mock-mode has been exercised end-to-end |
@@ -188,8 +201,9 @@ All of the following has been verified in this session, not assumed from prior d
 
 ## 6. Exact next steps
 
-### 0. Address access control before any public deployment (new, required)
-- The app serves all Sony demo content (scenes, mock deal data) to anyone with the URL, and `/api/chat` is unauthenticated. Decide on protection (e.g., HTTP basic auth in front of the app, an auth proxy, or an internal-only/unguessable URL) **before** Stage 4B-2. Not yet implemented; needs explicit approval.
+### 0. Access control — IMPLEMENTED in Stage 4B-2 (verification on Heroku still required)
+- Before first deploy, set Heroku config vars `NODE_ENV=production`, `DEMO_AUTH_USER`, `DEMO_AUTH_PASS` (long random password; never committed). Without the two auth vars the app refuses to start.
+- After deploy, verify against real Heroku routing: `http://` redirects to `https://` without prompting; `https://` prompts in a real browser and grants access with the right credentials; wrong credentials are rejected; `/api/health` is open; Basic Auth is never accepted over HTTP.
 
 ### 1. Authenticate Heroku CLI and verify app name availability
 - **Objective**: Unblock Stage 4B by establishing Heroku CLI auth and confirming `spe-sales-cloud-headless` (or an alternative name) is free.
@@ -375,7 +389,7 @@ git push heroku feature/sony-headless-360:main    # Heroku always deploys to its
 - **`GET /api/health`**: *resolved in Stage 4B-1* — static response, no CLI call.
 - **CORS**: *resolved in Stage 4B-1* — middleware removed (same-origin app). Unused `cors` dependency remains.
 - **Node version**: *resolved in Stage 4B-1* — `engines.node` `22.x`.
-- **No access control on the public demo** (content and `/api/chat` open to anyone with the URL) — must be addressed before Stage 4B-2.
+- **Access control (Stage 4B-2) limitations**: single shared credential (no per-user identity or audit trail); no brute-force throttling; `/api/health` is intentionally public; HTTPS enforcement relies on Heroku's router setting `X-Forwarded-Proto` (clients cannot spoof it through the router, which overwrites it, but this has not been verified on a real Heroku app; if the app is ever reachable around the router, the header could be spoofed); not tested in a real browser. Rotate the password after demos.
 - **No dedicated Salesforce demo org has been selected** — this is an open decision, not a technical blocker, but nothing downstream (OAuth setup, live retrieval, write actions) can proceed without it.
 - **Technical debt inherited from the original IP360 build**: `mockAgent.ts` (684 lines) and the hardcoded distribution-deal prompt matching in `chat.ts` are demo-specific scaffolding, not general-purpose code — expect this to need rework if the demo scenarios expand significantly.
 
